@@ -99,7 +99,7 @@ function renderSug(s: Suggestion): string {
           <div class="sug-box"><div class="lbl">SOURCE</div>${escHtml(s.source_text)}</div>
           <div class="sug-box"><div class="lbl">TRANSLATION</div>${escHtml(s.translation)}</div>
         </div>
-        <div class="sug-verify"><b>${s.verification_type === 'regex' ? 'Regex' : 'LLM prompt'}:</b> <code>${escHtml(s.verification_content)}</code></div>
+        <div class="sug-verify"><b>${s.verification_type === 'regex' ? 'Regex' : 'LLM prompt'}:</b> <code>${escHtml(s.verification_content)}</code>${s.verification_type === 'regex' && s.verification_polarity === 'negative' ? ' <span style="color:#dc2626;font-size:0.85em">(must NOT match)</span>' : ''}</div>
         <div class="sug-scoring"><span class="score-label">Score:</span>${btns}</div>
     </div>`;
 }

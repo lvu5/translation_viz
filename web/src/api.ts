@@ -10,6 +10,7 @@ export interface User {
     quota_used: number;
     quota_remaining: number;
     daily_quota: number;
+    total_points: number;
 }
 
 export interface Suggestion {
@@ -22,6 +23,7 @@ export interface Suggestion {
     target_lang: string;
     verification_type: 'regex' | 'llm';
     verification_content: string;
+    verification_polarity: 'positive' | 'negative';
     points: number;
     created_at: string;
 }
@@ -79,14 +81,20 @@ export function getMe() {
 }
 
 export function translate(text: string, source_lang: string, target_lang: string) {
-    return apiCall<{ translation: string; quota_remaining: number }>(
-        'POST', '/api/translate', { text, source_lang, target_lang }
-    );
+    return apiCall<{
+        results: Array<{ api: string; translation: string | null; error: string | null }>;
+        quota_remaining: number;
+    }>('POST', '/api/translate', { text, source_lang, target_lang });
 }
 
-export function verify(translation: string, verification_type: string, verification_content: string) {
+export function verify(
+    translation: string,
+    verification_type: string,
+    verification_content: string,
+    verification_polarity: string = 'positive',
+) {
     return apiCall<{ verified: boolean; detail: string }>(
-        'POST', '/api/verify', { translation, verification_type, verification_content }
+        'POST', '/api/verify', { translation, verification_type, verification_content, verification_polarity }
     );
 }
 
@@ -101,6 +109,7 @@ export function createSuggestion(data: {
     target_lang: string;
     verification_type: string;
     verification_content: string;
+    verification_polarity: string;
 }) {
     return apiCall<{ ok: boolean }>('POST', '/api/suggestions', data);
 }

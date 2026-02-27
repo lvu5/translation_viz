@@ -2,6 +2,7 @@
 Last Translation Benchmark — FastAPI backend
 """
 
+import asyncio
 import hashlib
 import os
 import re
@@ -67,6 +68,15 @@ def _init_db() -> None:
         """
     )
     conn.commit()
+
+    # Migration: add verification_polarity if missing
+    try:
+        conn.execute(
+            "ALTER TABLE suggestions ADD COLUMN verification_polarity TEXT DEFAULT 'positive'"
+        )
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # column already exists
 
     # Seed default users only on first run
     if conn.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
@@ -137,6 +147,7 @@ class VerifyReq(BaseModel):
     translation: str
     verification_type: str
     verification_content: str
+    verification_polarity: str = 'positive'
 
 
 class SuggestionReq(BaseModel):
@@ -146,6 +157,7 @@ class SuggestionReq(BaseModel):
     target_lang: str = "de"
     verification_type: str
     verification_content: str
+    verification_polarity: str = 'positive'
 
 
 class ScoreReq(BaseModel):
@@ -187,18 +199,59 @@ async def logout(user=Depends(_auth), authorization: Optional[str] = Header(None
 async def me(user=Depends(_auth)):
     today = date.today().isoformat()
     quota_used = user["quota_used"] if user["quota_date"] == today else 0
+    conn = _get_db()
+    total_points = conn.execute(
+        "SELECT COALESCE(SUM(points), 0) FROM suggestions WHERE user_id = ? AND points >= 0",
+        (user["id"],),
+    ).fetchone()[0]
+    conn.close()
     return {
         "username": user["username"],
         "role": user["role"],
         "quota_used": quota_used,
         "quota_remaining": max(0, DAILY_QUOTA - quota_used),
         "daily_quota": DAILY_QUOTA,
+        "total_points": int(total_points),
     }
 
 
 # ---------------------------------------------------------------------------
 # Routes — translation + verification
 # ---------------------------------------------------------------------------
+
+async def _call_mymemory(
+    client: httpx.AsyncClient, text: str, src: str, tgt: str
+) -> dict:
+    try:
+        resp = await client.get(
+            "https://api.mymemory.translated.net/get",
+            params={"q": text, "langpair": f"{src}|{tgt}"},
+            timeout=10,
+        )
+        data = resp.json()
+        if data.get("responseStatus") == 200:
+            return {"api": "MyMemory", "translation": data["responseData"]["translatedText"], "error": None}
+        return {"api": "MyMemory", "translation": None, "error": "API returned an error"}
+    except Exception as exc:
+        return {"api": "MyMemory", "translation": None, "error": str(exc)}
+
+
+async def _call_libretranslate(
+    client: httpx.AsyncClient, text: str, src: str, tgt: str
+) -> dict:
+    try:
+        resp = await client.post(
+            "https://translate.argosopentech.com/translate",
+            json={"q": text, "source": src, "target": tgt, "format": "text"},
+            timeout=10,
+        )
+        data = resp.json()
+        if "translatedText" in data:
+            return {"api": "LibreTranslate", "translation": data["translatedText"], "error": None}
+        return {"api": "LibreTranslate", "translation": None, "error": data.get("error", "API error")}
+    except Exception as exc:
+        return {"api": "LibreTranslate", "translation": None, "error": str(exc)}
+
 
 @app.post("/api/translate")
 async def translate(req: TranslateReq, user=Depends(_auth)):
@@ -216,30 +269,19 @@ async def translate(req: TranslateReq, user=Depends(_auth)):
         conn.close()
         raise HTTPException(status_code=429, detail="Daily quota exceeded")
 
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(
-                "https://api.mymemory.translated.net/get",
-                params={"q": req.text, "langpair": f"{req.source_lang}|{req.target_lang}"},
-                timeout=10,
-            )
-        data = resp.json()
-    except Exception as exc:
-        conn.close()
-        raise HTTPException(status_code=502, detail=f"Translation API error: {exc}") from exc
+    async with httpx.AsyncClient() as client:
+        results = await asyncio.gather(
+            _call_mymemory(client, req.text, req.source_lang, req.target_lang),
+            _call_libretranslate(client, req.text, req.source_lang, req.target_lang),
+        )
 
-    if data.get("responseStatus") != 200:
-        conn.close()
-        raise HTTPException(status_code=502, detail="Translation API returned an error")
-
-    translation = data["responseData"]["translatedText"]
     conn.execute(
         "UPDATE users SET quota_used = ?, quota_date = ? WHERE id = ?",
         (quota_used + 1, today, user["id"]),
     )
     conn.commit()
     conn.close()
-    return {"translation": translation, "quota_remaining": DAILY_QUOTA - quota_used - 1}
+    return {"results": list(results), "quota_remaining": DAILY_QUOTA - quota_used - 1}
 
 
 @app.post("/api/verify")
@@ -249,7 +291,13 @@ async def verify(req: VerifyReq, user=Depends(_auth)):
             matched = bool(re.search(req.verification_content, req.translation, re.IGNORECASE))
         except re.error as exc:
             raise HTTPException(status_code=400, detail=f"Invalid regex: {exc}") from exc
-        return {"verified": matched, "detail": "matched" if matched else "no match"}
+        if req.verification_polarity == "negative":
+            verified = not matched
+            detail = "not matched (passes)" if verified else "matched (fails)"
+        else:
+            verified = matched
+            detail = "matched" if verified else "no match"
+        return {"verified": verified, "detail": detail}
 
     if req.verification_type == "llm":
         if not OPENAI_API_KEY:
@@ -298,13 +346,14 @@ async def create_suggestion(req: SuggestionReq, user=Depends(_auth)):
     conn.execute(
         """INSERT INTO suggestions
            (user_id, username, source_text, translation, source_lang, target_lang,
-            verification_type, verification_content)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            verification_type, verification_content, verification_polarity)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             user["id"], user["username"],
             req.source_text, req.translation,
             req.source_lang, req.target_lang,
             req.verification_type, req.verification_content,
+            req.verification_polarity,
         ),
     )
     conn.commit()

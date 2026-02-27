@@ -13,3 +13,4 @@ node_modules/
 package-lock.json
 web/node_modules/
 web/package-lock.json
+static/

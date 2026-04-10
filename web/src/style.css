@@ -40,15 +40,15 @@ header button:hover { background: #c0392b; }
   border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;
 }
 
-/* ---------- two-column annotator layout ---------- */
-.annotator-layout {
+/* ---------- two-column contributor layout ---------- */
+.contributor-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 20px;
   align-items: start;
 }
 @media (max-width: 800px) {
-  .annotator-layout { grid-template-columns: 1fr; }
+  .contributor-layout { grid-template-columns: 1fr; }
 }
 .main-col .card { margin-bottom: 0; }
 .sidebar-card { height: calc(100vh - 140px); overflow-y: auto; position: sticky; top: 20px; }
@@ -100,7 +100,7 @@ textarea { min-height: 72px; resize: vertical; }
 .badge-score-2  { background: #dbeafe; color: #1e40af; }
 .badge-score-3  { background: #dcfce7; color: #166534; }
 
-/* ---------- suggestion card (senior view) ---------- */
+/* ---------- suggestion card (reviewer view) ---------- */
 .sug-item { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; margin-bottom: 10px; }
 .sug-meta { font-size: 0.78em; color: #64748b; margin-bottom: 8px; }
 .sug-texts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }

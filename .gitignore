@@ -1,9 +1,9 @@
+data/
+static/
+
 __pycache__/
 *.pyc
 *.pyo
-data/*.sqlite
-data/*.db
-data/*.json
 .env
 *.egg-info/
 dist/
@@ -14,4 +14,3 @@ node_modules/
 package-lock.json
 web/node_modules/
 web/package-lock.json
-static/

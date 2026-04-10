@@ -14,8 +14,8 @@ $(async () => {
 
     try {
         const user = await getMe();
-        if (user.role !== 'senior') { window.location.href = '/annotator.html'; return; }
-        $('#sen-info').text(`${user.username} · Senior Reviewer`);
+        if (user.role !== 'reviewer') { window.location.href = '/contributor.html'; return; }
+        $('#sen-info').text(`${user.username} · Reviewer Reviewer`);
     } catch {
         clearToken();
         window.location.href = '/';

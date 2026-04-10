@@ -19,8 +19,8 @@ $(async () => {
 
     try {
         currentUser = await getMe();
-        if (currentUser.role !== 'annotator') {
-            window.location.href = '/senior.html';
+        if (currentUser.role !== 'contributor') {
+            window.location.href = '/reviewer.html';
             return;
         }
     } catch {
@@ -29,7 +29,7 @@ $(async () => {
         return;
     }
 
-    $('#ann-info').text(`${currentUser.username} · Annotator`);
+    $('#ann-info').text(`${currentUser.username} · Contributor`);
     renderStats(currentUser.quota_remaining, currentUser.daily_quota, currentUser.total_points);
     loadMySuggestions();
 

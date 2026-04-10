@@ -6,12 +6,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = (env, argv) => ({
   entry: {
     index: './src/index.ts',
-    annotator: './src/annotator.ts',
-    senior: './src/senior.ts',
+    contributor: './src/contributor.ts',
+    reviewer: './src/reviewer.ts',
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, '../static'),
+    path: path.resolve(__dirname, '../server/static'),
     clean: true,
   },
   optimization: {
@@ -39,20 +39,20 @@ module.exports = (env, argv) => ({
       hash: true,
     }),
     new HtmlWebpackPlugin({
-      template: './src/annotator.html',
-      filename: 'annotator.html',
-      chunks: ['annotator'],
+      template: './src/contributor.html',
+      filename: 'contributor.html',
+      chunks: ['contributor'],
       hash: true,
     }),
     new HtmlWebpackPlugin({
-      template: './src/senior.html',
-      filename: 'senior.html',
-      chunks: ['senior'],
+      template: './src/reviewer.html',
+      filename: 'reviewer.html',
+      chunks: ['reviewer'],
       hash: true,
     }),
   ],
   devServer: {
-    static: '../static',
+    static: '../server/static',
     port: 8000,
     open: true,
     proxy: [{ context: ['/api'], target: 'http://localhost:8000' }],

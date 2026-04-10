@@ -6,7 +6,7 @@ const TOKEN_KEY = 'ltb_token';
 
 export interface User {
     username: string;
-    role: 'annotator' | 'senior';
+    role: 'contributor' | 'reviewer';
     quota_used: number;
     quota_remaining: number;
     daily_quota: number;

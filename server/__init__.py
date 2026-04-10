@@ -23,8 +23,7 @@ from pydantic import BaseModel
 # ---------------------------------------------------------------------------
 DAILY_QUOTA = 10
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-_HERE = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(_HERE, "data", "db.json")
+DATA_PATH = "data/db.json"
 
 # ---------------------------------------------------------------------------
 # JSON data store
@@ -46,9 +45,9 @@ def _load_data() -> None:
     # Seed default users on first run
     if not _db["users"]:
         default_users = [
-            ("senior1", "senior123", "senior"),
-            ("annotator1", "ann123", "annotator"),
-            ("annotator2", "ann456", "annotator"),
+            ("reviewer1", "reviewer123", "reviewer"),
+            ("contributor1", "ann123", "contributor"),
+            ("contributor2", "ann456", "contributor"),
         ]
         for uid, (username, password, role) in enumerate(default_users, start=1):
             _db["users"].append(
@@ -254,9 +253,9 @@ async def _call_libretranslate(
 
 @app.post("/api/translate")
 async def translate(req: TranslateReq, user=Depends(_auth)):
-    if user["role"] != "annotator":
+    if user["role"] != "contributor":
         raise HTTPException(
-            status_code=403, detail="Only annotators can use translation quota"
+            status_code=403, detail="Only contributors can use translation quota"
         )
 
     today = date.today().isoformat()
@@ -346,9 +345,9 @@ async def verify(req: VerifyReq, user=Depends(_auth)):
 
 @app.post("/api/suggestions")
 async def create_suggestion(req: SuggestionReq, user=Depends(_auth)):
-    if user["role"] != "annotator":
+    if user["role"] != "contributor":
         raise HTTPException(
-            status_code=403, detail="Only annotators can submit suggestions"
+            status_code=403, detail="Only contributors can submit suggestions"
         )
     with _lock:
         sid = _next_id(_db["suggestions"])
@@ -375,7 +374,7 @@ async def create_suggestion(req: SuggestionReq, user=Depends(_auth)):
 @app.get("/api/suggestions")
 async def get_suggestions(user=Depends(_auth)):
     with _lock:
-        if user["role"] == "senior":
+        if user["role"] == "reviewer":
             rows = sorted(
                 _db["suggestions"],
                 key=lambda s: (s["points"], s["created_at"]),
@@ -391,9 +390,9 @@ async def get_suggestions(user=Depends(_auth)):
 
 @app.post("/api/suggestions/{sid}/score")
 async def score_suggestion(sid: int, req: ScoreReq, user=Depends(_auth)):
-    if user["role"] != "senior":
+    if user["role"] != "reviewer":
         raise HTTPException(
-            status_code=403, detail="Only senior users can score suggestions"
+            status_code=403, detail="Only reviewer users can score suggestions"
         )
     if req.points not in (0, 1, 2, 3):
         raise HTTPException(status_code=400, detail="Points must be 0, 1, 2, or 3")
@@ -412,6 +411,8 @@ async def score_suggestion(sid: int, req: ScoreReq, user=Depends(_auth)):
 
 app.mount(
     "/",
-    StaticFiles(directory=os.path.join(_HERE, "static"), html=True),
+    StaticFiles(
+        directory=os.path.dirname(os.path.abspath(__file__)) + "/static", html=True
+    ),
     name="static",
 )

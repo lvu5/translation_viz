@@ -32,5 +32,5 @@ $(async () => {
 });
 
 function redirectByRole(role: string): void {
-    window.location.href = role === 'senior' ? '/senior.html' : '/annotator.html';
+    window.location.href = role === 'reviewer' ? '/reviewer.html' : '/contributor.html';
 }

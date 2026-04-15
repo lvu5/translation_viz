@@ -18,12 +18,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-# ---------------------------------------------------------------------------
-# Config
-# ---------------------------------------------------------------------------
-DAILY_QUOTA = 10
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-DATA_PATH = "data/db.json"
+from .utils import (
+    DAILY_QUOTA,
+    DATA_PATH,
+    OPENAI_API_KEY,
+    _call_deepl,
+    _call_google,
+    _call_libre,
+    _call_mymemory,
+)
 
 # ---------------------------------------------------------------------------
 # JSON data store
@@ -40,7 +43,7 @@ def _load_data() -> None:
         with open(DATA_PATH, "r", encoding="utf-8") as f:
             _db = json.load(f)
     else:
-        _db = {"users": [], "suggestions": [], "tokens": {}}
+        _db = {"users": [], "submissions": [], "tokens": {}}
 
     # Seed default users on first run
     if not _db["users"]:
@@ -126,7 +129,7 @@ class VerifyReq(BaseModel):
     verification_content: str
 
 
-class SuggestionReq(BaseModel):
+class SubmissionReq(BaseModel):
     source_text: str
     translation: str
     source_lang: str = "en"
@@ -179,7 +182,7 @@ async def me(user=Depends(_auth)):
     with _lock:
         total_points = sum(
             s["points"]
-            for s in _db["suggestions"]
+            for s in _db["submissions"]
             if s["user_id"] == user["id"] and s["points"] >= 0
         )
     return {
@@ -195,57 +198,6 @@ async def me(user=Depends(_auth)):
 # ---------------------------------------------------------------------------
 # Routes — translation + verification
 # ---------------------------------------------------------------------------
-
-
-async def _call_mymemory(
-    client: httpx.AsyncClient, text: str, src: str, tgt: str
-) -> dict:
-    try:
-        resp = await client.get(
-            "https://api.mymemory.translated.net/get",
-            params={"q": text, "langpair": f"{src}|{tgt}"},
-            timeout=10,
-        )
-        data = resp.json()
-        if data.get("responseStatus") == 200:
-            return {
-                "api": "MyMemory",
-                "translation": data["responseData"]["translatedText"],
-                "error": None,
-            }
-        return {
-            "api": "MyMemory",
-            "translation": None,
-            "error": "API returned an error",
-        }
-    except Exception as exc:
-        return {"api": "MyMemory", "translation": None, "error": str(exc)}
-
-
-async def _call_libretranslate(
-    client: httpx.AsyncClient, text: str, src: str, tgt: str
-) -> dict:
-    try:
-        resp = await client.post(
-            "https://translate.argosopentech.com/translate",
-            json={"q": text, "source": src, "target": tgt, "format": "text"},
-            timeout=10,
-        )
-        data = resp.json()
-        if "translatedText" in data:
-            return {
-                "api": "LibreTranslate",
-                "translation": data["translatedText"],
-                "error": None,
-            }
-        return {
-            "api": "LibreTranslate",
-            "translation": None,
-            "error": data.get("error", "API error"),
-        }
-    except Exception as exc:
-        return {"api": "LibreTranslate", "translation": None, "error": str(exc)}
-
 
 @app.post("/api/translate")
 async def translate(req: TranslateReq, user=Depends(_auth)):
@@ -263,7 +215,9 @@ async def translate(req: TranslateReq, user=Depends(_auth)):
     async with httpx.AsyncClient() as client:
         results = await asyncio.gather(
             _call_mymemory(client, req.text, req.source_lang, req.target_lang),
-            _call_libretranslate(client, req.text, req.source_lang, req.target_lang),
+            asyncio.to_thread(_call_google, req.text, req.source_lang, req.target_lang),
+            asyncio.to_thread(_call_deepl, req.text, req.source_lang, req.target_lang),
+            asyncio.to_thread(_call_libre, req.text, req.source_lang, req.target_lang),
         )
 
     with _lock:
@@ -342,20 +296,20 @@ async def verify(req: VerifyReq, user=Depends(_auth)):
 
 
 # ---------------------------------------------------------------------------
-# Routes — suggestions
+# Routes — submissions
 # ---------------------------------------------------------------------------
 
 
-@app.post("/api/suggestions")
-async def create_suggestion(req: SuggestionReq, user=Depends(_auth)):
+@app.post("/api/submissions")
+async def create_submission(req: SubmissionReq, user=Depends(_auth)):
     if user["role"] != "contributor":
         raise HTTPException(
-            status_code=403, detail="Only contributors can submit suggestions"
+            status_code=403, detail="Only contributors can submit submissions"
         )
     
     with _lock:
-        sid = _next_id(_db["suggestions"])
-        _db["suggestions"].append(
+        sid = _next_id(_db["submissions"])
+        _db["submissions"].append(
             {
                 "id": sid,
                 "user_id": user["id"],
@@ -373,36 +327,36 @@ async def create_suggestion(req: SuggestionReq, user=Depends(_auth)):
     return {"ok": True}
 
 
-@app.get("/api/suggestions")
-async def get_suggestions(user=Depends(_auth)):
+@app.get("/api/submissions")
+async def get_submissions(user=Depends(_auth)):
     with _lock:
         if user["role"] == "reviewer":
             rows = sorted(
-                _db["suggestions"],
+                _db["submissions"],
                 key=lambda s: (s["points"], s["created_at"]),
             )
         else:
             rows = sorted(
-                [s for s in _db["suggestions"] if s["user_id"] == user["id"]],
+                [s for s in _db["submissions"] if s["user_id"] == user["id"]],
                 key=lambda s: s["created_at"],
                 reverse=True,
             )
     return rows
 
 
-@app.post("/api/suggestions/{sid}/score")
-async def score_suggestion(sid: int, req: ScoreReq, user=Depends(_auth)):
+@app.post("/api/submissions/{sid}/score")
+async def score_submission(sid: int, req: ScoreReq, user=Depends(_auth)):
     if user["role"] != "reviewer":
         raise HTTPException(
-            status_code=403, detail="Only reviewer users can score suggestions"
+            status_code=403, detail="Only reviewer users can score submissions"
         )
     if req.points not in (0, 1, 2):
         raise HTTPException(status_code=400, detail="Points must be 0, 1, or 2")
     with _lock:
-        suggestion = next((s for s in _db["suggestions"] if s["id"] == sid), None)
-        if suggestion is None:
-            raise HTTPException(status_code=404, detail="Suggestion not found")
-        suggestion["points"] = req.points
+        submission = next((s for s in _db["submissions"] if s["id"] == sid), None)
+        if submission is None:
+            raise HTTPException(status_code=404, detail="Submission not found")
+        submission["points"] = req.points
         _save_data()
     return {"ok": True}
 

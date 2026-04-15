@@ -2,11 +2,11 @@ import './style.css';
 import $ from 'jquery';
 import {
     getToken, clearToken, getMe, logout,
-    getSuggestions, scoreSuggestion,
-    Suggestion,
+    getSubmissions, scoreSubmission,
+    Submission,
 } from './api';
 
-let allSugs: Suggestion[] = [];
+let allSugs: Submission[] = [];
 let curFilter = 'pending';
 
 $(async () => {
@@ -22,7 +22,7 @@ $(async () => {
         return;
     }
 
-    await loadSuggestions();
+    await loadSubmissions();
 
     // Filter tabs
     $('.tab[data-filter]').on('click', function () {
@@ -33,14 +33,14 @@ $(async () => {
     });
 
     // Refresh
-    $('#refresh-btn').on('click', loadSuggestions);
+    $('#refresh-btn').on('click', loadSubmissions);
 
     // Score buttons (event delegation — list re-renders on each load)
     $('#sen-list').on('click', '.score-btn', async function () {
         const id     = parseInt(String($(this).data('id')));
         const points = parseInt(String($(this).data('points')));
         try {
-            await scoreSuggestion(id, points);
+            await scoreSubmission(id, points);
             const sug = allSugs.find(s => s.id === id);
             if (sug) sug.points = points;
             const $item = $(`#sug-${id}`);
@@ -52,7 +52,7 @@ $(async () => {
                     $item.fadeOut(250, function () {
                         $(this).remove();
                         if (!$('#sen-list .sug-item').length) {
-                            $('#sen-list').html('<div class="empty">No pending suggestions</div>');
+                            $('#sen-list').html('<div class="empty">No pending submissions</div>');
                         }
                     });
                 }, 400);
@@ -66,13 +66,13 @@ $(async () => {
     });
 });
 
-async function loadSuggestions(): Promise<void> {
+async function loadSubmissions(): Promise<void> {
     $('#sen-list').html('<div class="empty">Loading…</div>');
     try {
-        allSugs = await getSuggestions();
+        allSugs = await getSubmissions();
         renderList();
     } catch {
-        $('#sen-list').html('<div class="empty">Failed to load suggestions</div>');
+        $('#sen-list').html('<div class="empty">Failed to load submissions</div>');
     }
 }
 
@@ -82,11 +82,11 @@ function renderList(): void {
     else if (curFilter === 'scored') list = allSugs.filter(s => s.points >= 0);
 
     const $el = $('#sen-list');
-    if (!list.length) { $el.html('<div class="empty">No suggestions here</div>'); return; }
+    if (!list.length) { $el.html('<div class="empty">No submissions here</div>'); return; }
     $el.html(list.map(renderSug).join(''));
 }
 
-function renderSug(s: Suggestion): string {
+function renderSug(s: Submission): string {
     const btnColors = ['#ef4444', '#f59e0b', '#22c55e'];
     const btns = ([0, 1, 2] as const).map(p => {
         const act = s.points === p ? ' active' : '';

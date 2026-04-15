@@ -13,7 +13,7 @@ export interface User {
     total_points: number;
 }
 
-export interface Suggestion {
+export interface Submission {
     id: number;
     user_id: number;
     username: string;
@@ -94,20 +94,20 @@ export function verify(
     );
 }
 
-export function getSuggestions() {
-    return apiCall<Suggestion[]>('GET', '/api/suggestions');
+export function getSubmissions() {
+    return apiCall<Submission[]>('GET', '/api/submissions');
 }
 
-export function createSuggestion(data: {
+export function createSubmission(data: {
     source_text: string;
     translation: string;
     source_lang: string;
     target_lang: string;
     verification_content: string;
 }) {
-    return apiCall<{ ok: boolean }>('POST', '/api/suggestions', data);
+    return apiCall<{ ok: boolean }>('POST', '/api/submissions', data);
 }
 
-export function scoreSuggestion(id: number, points: number) {
-    return apiCall<{ ok: boolean }>('POST', `/api/suggestions/${id}/score`, { points });
+export function scoreSubmission(id: number, points: number) {
+    return apiCall<{ ok: boolean }>('POST', `/api/submissions/${id}/score`, { points });
 }

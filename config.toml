@@ -1,0 +1,9 @@
+# last-translation-benchmark configuration file
+
+OPENAI_API_KEY = ""
+DEEPL_API_KEY = ""
+LIBRE_API_KEY = ""
+LIBRE_URL = ""
+
+DAILY_QUOTA = 10
+DATA_PATH = "data/db.json"

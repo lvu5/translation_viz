@@ -5,14 +5,16 @@ from typing import Any
 from deep_translator import DeeplTranslator, GoogleTranslator, LibreTranslator
 import httpx
 
-CONFIG_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.toml"
-)
-config_data: dict[str, Any] = {}
+for config_file in ["config.toml", "config.template.toml"]:
+    if os.path.exists(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/" + config_file
+    ):
+        break
+else:
+    raise FileNotFoundError("No config file found.")
 
-if os.path.exists(CONFIG_FILE):
-    with open(CONFIG_FILE, "rb") as f:
-        config_data = tomllib.load(f)
+with open(config_file, "rb") as f:
+    config_data: dict[str, Any] = tomllib.load(f)
 
 
 def get_config(key: str, default: Any = "") -> Any:

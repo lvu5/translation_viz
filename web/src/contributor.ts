@@ -201,7 +201,11 @@ $(async () => {
 
     // Test verification (on all translations)
     $('#verify-btn').on('click', async () => {
-        const translations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
+        const mtTranslations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
+        const ownTranslation = String($('#own-translation').val() ?? '').trim();
+        const translations = [...mtTranslations];
+        if (ownTranslation) translations.push(ownTranslation);
+
         const vcontent = String($('#vc-content').val() ?? '').trim();
         if (translations.length === 0) { $('#verify-result').html('<span class="msg-err">No translations available</span>'); return; }
         if (!vcontent) { $('#verify-result').html('<span class="msg-err">No verification content</span>'); return; }
@@ -222,6 +226,16 @@ $(async () => {
                     $(`[data-idx="${i}"]`).html('');
                 }
             });
+
+            if (ownTranslation) {
+                const verified = data.results[resultIdx++];
+                const badge = verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                $('#own-verify-badge').html(badge);
+                if (verified) pass++;
+            } else {
+                $('#own-verify-badge').html('');
+            }
+
             const cls = pass === 0 ? 'count-fail' : (pass === translations.length ? 'count-pass' : 'count-partial');
             $('#verify-result').html("");
             $('#pass-count').html(`<span class="${cls}">${pass}/${translations.length} pass verification</span>`);
@@ -233,13 +247,19 @@ $(async () => {
     // Submit submission
     $('#submit-btn').on('click', async () => {
         const source_text = String($('#src-text').val() ?? '').trim();
-        const translations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
+        const mtTranslations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
+        const ownTranslation = String($('#own-translation').val() ?? '').trim();
+        const translations = [...mtTranslations];
+        if (ownTranslation && !translations.includes(ownTranslation)) {
+            translations.push(ownTranslation);
+        }
+
         const source_lang = String($('#src-lang').val());
         const target_lang = String($('#tgt-lang').val());
         const verification_rule = String($('#vc-content').val() ?? '').trim();
 
         if (!source_text || translations.length === 0 || !verification_rule) {
-            $('#submit-status').html('<span class="msg-err">Please fill all required fields and translate first</span>');
+            $('#submit-status').html('<span class="msg-err">Please fill all required fields and translate (or add own) first</span>');
             return;
         }
         try {
@@ -248,10 +268,10 @@ $(async () => {
                 verification_rule,
             })));
             $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
-            $('#src-text, #vc-content').val('');
-            $('#verify-result').html('');
+            $('#src-text, #vc-content, #own-translation').val('');
+            $('#verify-result, #own-verify-badge').html('');
             lastResults = [];
-            $('#api-results').hide();
+            $('#api-results-body').hide();
             loadMySubmissions();
             setTimeout(() => $('#submit-status').html(''), 3000);
         } catch (err) {
@@ -287,7 +307,7 @@ function renderApiResults(): void {
           <span class="verify-pill" data-idx="${i}">${verifyBadge}</span>
         </div>`;
     }).join(''));
-    $('#api-results').show();
+    $body.show();
 }
 
 // ---- Sidebar: my submissions ----

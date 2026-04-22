@@ -9,8 +9,9 @@ import {
 let currentUser: User | null = null;
 
 // Last set of API translation results
-type ApiResult = { api: string; translation: string | null; error: string | null };
+type ApiResult = { api: string; translation: string | null; error: string | null; verified?: boolean | null };
 let lastResults: ApiResult[] = [];
+let ownVerified: boolean | null = null;
 
 const LANGUAGES = [
     { name: 'Afrikaans', code: 'af' },
@@ -188,6 +189,8 @@ $(async () => {
             currentUser!.quota_remaining = data.quota_remaining;
             renderStats(data.quota_remaining, currentUser!.daily_quota, currentUser!.total_points);
             renderApiResults();
+            lastResults.forEach(r => r.verified = null);
+            ownVerified = null;
             $('#pass-count').text('');
             $('#verify-result').text('');
             $('#tr-status').text('✓ Done');
@@ -219,6 +222,7 @@ $(async () => {
             lastResults.forEach((r, i) => {
                 if (r.translation !== null) {
                     const verified = data.results[resultIdx++];
+                    r.verified = verified;
                     const badge = verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
                     $(`[data-idx="${i}"]`).html(badge);
                     if (verified) pass++;
@@ -229,10 +233,12 @@ $(async () => {
 
             if (ownTranslation) {
                 const verified = data.results[resultIdx++];
+                ownVerified = verified;
                 const badge = verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
                 $('#own-verify-badge').html(badge);
                 if (verified) pass++;
             } else {
+                ownVerified = null;
                 $('#own-verify-badge').html('');
             }
 
@@ -247,11 +253,16 @@ $(async () => {
     // Submit submission
     $('#submit-btn').on('click', async () => {
         const source_text = String($('#src-text').val() ?? '').trim();
-        const mtTranslations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
         const ownTranslation = String($('#own-translation').val() ?? '').trim();
-        const translations = [...mtTranslations];
-        if (ownTranslation && !translations.includes(ownTranslation)) {
-            translations.push(ownTranslation);
+
+        const translations: Array<{ api: string; translation: string; verified: boolean | null }> = [];
+        lastResults.forEach(r => {
+            if (r.translation !== null) {
+                translations.push({ api: r.api, translation: r.translation, verified: r.verified ?? null });
+            }
+        });
+        if (ownTranslation && !translations.some(t => t.translation === ownTranslation)) {
+            translations.push({ api: 'perfect', translation: ownTranslation, verified: ownVerified ?? null });
         }
 
         const source_lang = String($('#src-lang').val());
@@ -259,18 +270,16 @@ $(async () => {
         const verification_rule = String($('#vc-content').val() ?? '').trim();
 
         if (!source_text || translations.length === 0 || !verification_rule) {
-            $('#submit-status').html('<span class="msg-err">Please fill all required fields and translate (or add own) first</span>');
+            $('#submit-status').html('<span class="msg-err">Please fill all required fields, translate and verify translations first</span>');
             return;
         }
         try {
-            await Promise.all(translations.map(translation => createSubmission({
-                source_text, translation, source_lang, target_lang,
-                verification_rule,
-            })));
+            await createSubmission({ source_text, source_lang, target_lang, verification_rule, translations });
             $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
             $('#src-text, #vc-content, #own-translation').val('');
             $('#verify-result, #own-verify-badge').html('');
             lastResults = [];
+            ownVerified = null;
             $('#api-results-body').hide();
             loadMySubmissions();
             setTimeout(() => $('#submit-status').html(''), 3000);
@@ -315,18 +324,24 @@ function renderApiResults(): void {
 async function loadMySubmissions(): Promise<void> {
     try {
         const sugs = await getSubmissions();
-        const $el = $('#my-list');
-        if (!sugs.length) { $el.html('<div class="empty">No submissions yet</div>'); return; }
+        const $el = $('#my-submissions');
+        if (sugs.length == 0) {
+            $el.html('<div class="empty">No submissions yet</div>');
+            return;
+        }
+        console.log("X", sugs.map(renderMySug));
         $el.html(sugs.map(renderMySug).join(''));
     } catch { /* ignore */ }
 }
 
 function renderMySug(s: Submission): string {
     const srcPreview = s.source_text.length > 60 ? s.source_text.slice(0, 60) + '…' : s.source_text;
+    const firstTr = s.translations[0]?.translation ?? '';
+    const trPreview = firstTr.length > 60 ? firstTr.slice(0, 60) + '…' : firstTr;
     return `<div class="sug-mini">
         <div class="sug-mini-meta">#${s.id} &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)}</div>
         <div class="sug-mini-text">${escHtml(srcPreview)}</div>
-        <div class="sug-mini-tr">${escHtml(s.translation)}</div>
+        <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
         <div class="sug-mini-footer">
           <code class="sug-mini-vc">${escHtml(s.verification_rule)}</code>
           ${scoreBadge(s.points)}

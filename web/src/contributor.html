@@ -93,71 +93,6 @@
       display: inline-block;
     }
 
-    /* ---------- API results table ---------- */
-    .count-pass {
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .count-fail {
-      color: #dc2626;
-      font-weight: 600;
-    }
-
-    .count-partial {
-      color: #d97706;
-      font-weight: 600;
-    }
-
-    .api-result-row {
-      display: grid;
-      grid-template-columns: 140px 1fr 36px;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #e5e7eb;
-      border-radius: 5px;
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      background: #f8fafc;
-    }
-
-    .api-name {
-      white-space: nowrap;
-      font-size: 0.85em;
-      font-weight: 600;
-      color: #1e293b;
-    }
-
-    .tr-display {
-      font-size: 0.9em;
-      color: #374151;
-      word-break: break-word;
-    }
-
-    .tr-error {
-      color: #dc2626;
-      font-style: italic;
-      font-size: 0.85em;
-    }
-
-    .vpill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.8em;
-      font-weight: 700;
-    }
-
-    .vpill-pass {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .vpill-fail {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
     /* ---------- misc contributor items ---------- */
     #lang-row {
       display: flex;
@@ -178,10 +113,6 @@
       font-size: 0.92em;
       background: #fff;
       width: 100%;
-    }
-
-    textarea {
-      width: calc(100% - 20px);
     }
   </style>
 </head>
@@ -234,7 +165,7 @@
           </div>
 
           <label for="src-text">Input <span class="hint">(the difficult-to-translate text)</span></label>
-          <textarea id="src-text" placeholder="Enter the source text…"></textarea>
+          <textarea style="width: calc(100% - 20px);" id="src-text" placeholder="Enter the source text…"></textarea>
 
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
             <button class="btn btn-secondary" id="tr-btn">⟳ Translate by all models</button>
@@ -267,7 +198,7 @@
           </label>
           <textarea id="vc-content"
             placeholder="e.g. Does the translation preserve the pun from the source text? (To use regex, start with #!regex)"
-            style="min-height:56px"></textarea>
+            style="width: calc(100% - 20px); min-height:56px"></textarea>
 
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
             <button class="btn btn-secondary" id="verify-btn">✓ Verify translations</button>
@@ -283,7 +214,7 @@
       <div>
         <div id="sidebar-card" class="card">
           <h2>My Submissions</h2>
-          <div id="my-list">
+          <div id="my-submissions">
             <div class="empty">No submissions yet</div>
           </div>
         </div>

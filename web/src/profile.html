@@ -32,10 +32,10 @@
       margin-bottom: 14px;
     }
 
-    .check-row input[type=checkbox] {
+    input[type=checkbox] {
       width: auto;
       margin: 0;
-      margin-top: 2px;
+      margin-top: 5px;
       flex-shrink: 0;
     }
 
@@ -58,10 +58,6 @@
       margin-bottom: 10px;
       padding: 8px;
     }
-
-    label {
-      margin-top: 10px;
-    }
   </style>
 </head>
 
@@ -80,25 +76,34 @@
 
       <label for="name">Name</label>
       <input type="text" id="name" placeholder="First name then last name">
+      <br>
+      <br>
 
       <label for="affiliation">Affiliation</label>
       <input type="text" id="affiliation" placeholder="University / Company">
+      <br>
+      <br>
 
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="jane@example.com">
+      <br>
 
+      <br>
       <div class="check-row">
         <input type="checkbox" id="credit-consent">
         <label for="credit-consent">I wish to be credited non-anonymously in any resulting publication under the above
           name &amp; affiliation.</label>
       </div>
 
+      <br>
       <div class="check-row">
-        <input type="checkbox" id="terms">
-        <label for="terms">By continuing I consent to the terms of use and agree that the contributed data may be used
-          in research under the MIT license.</label>
+        <label style="margin-left: 25px;">
+          By continuing I agree to the intended use and that the contributed anonymized data may be used in
+          research under the MIT license.
+        </label>
       </div>
 
+      <br>
       <button class="btn btn-success btn-full" id="save-btn">Save &amp; Continue</button>
       <div id="status-msg"></div>
     </div>

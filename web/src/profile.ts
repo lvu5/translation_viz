@@ -22,14 +22,9 @@ $(async () => {
         const affiliation = String($('#affiliation').val()).trim();
         const email = String($('#email').val()).trim();
         const credit_consent = Boolean($('#credit-consent').prop('checked'));
-        const terms = Boolean($('#terms').prop('checked'));
 
         if (!name || !email) {
             $('#status-msg').removeClass('msg-ok').addClass('msg-err').text('Name and email are required.');
-            return;
-        }
-        if (!terms) {
-            $('#status-msg').removeClass('msg-ok').addClass('msg-err').text('You must accept the terms of use to continue.');
             return;
         }
 

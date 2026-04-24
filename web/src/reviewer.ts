@@ -46,12 +46,13 @@ $(async () => {
     $('#sen-list').on('click', '.score-btn', async function () {
         const id = parseInt(String($(this).data('id')));
         const action = String($(this).data('action')) as 'reject' | 'accept' | 'comment';
-
+        if (!['reject', 'accept', 'comment'].includes(action)) return;
         if (action === 'comment') {
             // Toggle inline comment box instead of using prompt()
             const $box = $(`#comment-box-${id}`);
-            $box.toggle();
-            if ($box.is(':visible')) {
+            const visible = $box.css('display') !== 'none';
+            $box.css('display', visible ? 'none' : 'flex');
+            if (!visible) {
                 $box.find('.comment-input').trigger('focus');
             }
             return;
@@ -164,7 +165,7 @@ function renderSug(s: Submission): string {
         const act = (action === 'accept' && s.points === 1) || (action === 'reject' && s.points === 0) ? ' active' : '';
         return `<button class="score-btn${act}" style="background:${color};color:#fff" data-id="${s.id}" data-action="${action}">${label}</button>`;
     }).join('');
-    const commentBtn = `<button class="btn btn-secondary" data-id="${s.id}" data-action="comment">Comment</button>`;
+    const commentBtn = `<button class="score-btn" style="background:#64748b;color:#fff" data-id="${s.id}" data-action="comment">Comment</button>`;
     const btns = scoreBtns + commentBtn;
 
     const trRows = s.translations.map(t => {
@@ -188,11 +189,9 @@ function renderSug(s: Submission): string {
         <div style="margin-bottom:8px">${trRows}</div>
         <div class="sug-box" style="margin-bottom:8px"><div class="lbl">VERIFICATION RULE</div>${escHtml(s.verification_rule)}</div>
         <div id="comment-thread-${s.id}">${threadHtml}</div>
-        <div id="comment-box-${s.id}" class="comment-box" style="display:none">
-            <textarea class="comment-input" placeholder="Write a comment for the contributor…" rows="2"></textarea>
-            <div style="text-align:right;margin-top:4px">
-                <button class="comment-send-btn btn btn-secondary" data-id="${s.id}">Send</button>
-            </div>
+        <div id="comment-box-${s.id}" style="display:none;margin-top:8px;flex-direction:row;align-items:flex-start;gap:6px">
+            <textarea class="comment-input" placeholder="Write a comment for the contributor…" rows="2" style="flex:1;margin-bottom:0"></textarea>
+            <button class="comment-send-btn score-btn" style="background:#64748b;color:#fff;align-self:stretch" data-id="${s.id}">Send</button>
         </div>
         <div class="sug-scoring">${btns}</div>
     </div>`;

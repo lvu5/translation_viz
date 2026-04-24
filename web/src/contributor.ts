@@ -291,9 +291,7 @@ $(async () => {
 // ---- Stats bar ----
 
 function renderStats(remaining: number, total: number, points: number): void {
-    const pct = total > 0 ? (remaining / total * 100) : 0;
-    $('#quota-fill').css('width', `${pct}%`);
-    $('#quota-text').text(`${remaining} / ${total} remaining`);
+    $('#quota-text').text(`${remaining} / ${total} quota remaining`);
     $('#total-points').text(String(points));
 }
 

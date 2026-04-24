@@ -7,18 +7,6 @@
   <title>Last Translation Benchmark</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
-    /* ---------- stats bar ---------- */
-    /* ---------- stats bar ---------- */
-    #stats-bar {
-      background: #fff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 8px 24px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
     /* ---------- two-column contributor layout ---------- */
     #contributor-layout {
       display: grid;
@@ -119,26 +107,19 @@
 
 <body>
   <header>
-    <a href="/" style="text-decoration:none;color:inherit;"><h1>🪨 Last Translation Benchmark</h1></a>
-    <div>
+    <a href="/" style="text-decoration:none;color:inherit;">
+      <h1>🪨 Last Translation Benchmark</h1>
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span class="info">
+        🔋 <span id="quota-text"></span>
+      </span>
+      <span class="info">
+        ⭐ <span id="total-points">0</span> points
+      </span>
       <span id="ann-info" class="info"></span>
     </div>
   </header>
-
-  <!-- stats bar -->
-  <div id="stats-bar">
-    <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 220px;">
-      <span style="font-size: 0.82em; color: #475569; white-space: nowrap;">Quota:</span>
-      <div style="flex: 1; height: 6px; background: #e5e7eb; border-radius: 4px; overflow: hidden; min-width: 80px;">
-        <div id="quota-fill"
-          style="height: 100%; background: #3b82f6; border-radius: 4px; transition: width .3s; width: 100%;"></div>
-      </div>
-      <span id="quota-text" style="font-size: 0.82em; color: #475569; white-space: nowrap;"></span>
-    </div>
-    <div style="font-size: 0.85em; color: #475569; white-space: nowrap; font-weight: 500;">
-      ⭐ <span id="total-points">0</span> points earned
-    </div>
-  </div>
 
   <div class="container">
     <div id="contributor-layout">
@@ -219,8 +200,8 @@
         </div>
       </div>
 
-    </div><!-- /.contributor-layout -->
-  </div><!-- /.container -->
+    </div>
+  </div>
 </body>
 
 </html>

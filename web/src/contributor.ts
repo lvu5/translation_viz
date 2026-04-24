@@ -367,7 +367,7 @@ function renderMySug(s: Submission): string {
         ? `<div class="comment-reply-row">
             <textarea id="contrib-reply-${s.id}" class="comment-input" placeholder="Reply…" rows="2"></textarea>
             <div style="text-align:right;margin-top:4px">
-                <button class="contrib-send-btn btn btn-secondary" style="font-size:0.78em;padding:3px 10px" data-id="${s.id}">Reply</button>
+                <button class="contrib-send-btn btn btn-secondary" data-id="${s.id}">Reply</button>
             </div>
            </div>`
         : '';

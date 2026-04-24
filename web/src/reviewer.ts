@@ -144,8 +144,11 @@ function renderList(): void {
 
 function renderCommentThread(comments: Submission['comments']): string {
     if (!comments || !comments.length) return '';
+    // On the reviewer screen, reviewer = "own" → right; contributor = "foreign" → left
+    const classFor = (role: string) =>
+        role === 'reviewer' ? 'comment-msg-contributor' : 'comment-msg-reviewer';
     return `<div class="comment-thread">${comments.map(c => `
-        <div class="comment-msg comment-msg-${c.role}">
+        <div class="comment-msg ${classFor(c.role)}">
             <span class="comment-author">${escHtml(c.author)}</span>
             <span class="comment-ts">${escHtml(c.timestamp)}</span>
             <div class="comment-body">${escHtml(c.text)}</div>
@@ -153,18 +156,16 @@ function renderCommentThread(comments: Submission['comments']): string {
 }
 
 function renderSug(s: Submission): string {
-    const actions: Array<['reject' | 'accept' | 'comment', string, string]> = [
+    const scoreActions: Array<['reject' | 'accept', string, string]> = [
         ['reject', '#ef4444', 'Reject'],
         ['accept', '#22c55e', 'Accept'],
-        ['comment', '#f59e0b', 'Comment'],
     ];
-    const btns = actions.map(([action, color, label]) => {
+    const scoreBtns = scoreActions.map(([action, color, label]) => {
         const act = (action === 'accept' && s.points === 1) || (action === 'reject' && s.points === 0) ? ' active' : '';
-        if (action === 'comment') {
-            return `<button class="score-btn${act}" data-id="${s.id}" data-action="${action}">${label}</button>`;
-        }
         return `<button class="score-btn${act}" style="background:${color};color:#fff" data-id="${s.id}" data-action="${action}">${label}</button>`;
     }).join('');
+    const commentBtn = `<button class="btn btn-secondary" data-id="${s.id}" data-action="comment">Comment</button>`;
+    const btns = scoreBtns + commentBtn;
 
     const trRows = s.translations.map(t => {
         const badge = t.verified === true

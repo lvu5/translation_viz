@@ -6,7 +6,7 @@ Python-based annotation platform for translation evaluation with web UI.
 
 - `server/` - Python backend (FastAPI)
   - `__init__.py` - FastAPI server
-  - `__main__.py` - Entry point
+  - `__main__.py` - CLI entry point
   - `services.py` - Translation & LLM API logic
   - `utils.py` - Config parsing and helpers
   - `tests/` - Python tests

@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .utils import (
-    DAILY_QUOTA,
+    CONTRIBUTOR_QUOTA,
     DATA_PATH,
 )
 from .services import (
@@ -194,8 +194,8 @@ def me(user=Depends(_auth)):
         "username": user["username"],
         "role": user["role"],
         "quota_used": quota_used,
-        "quota_remaining": max(0, DAILY_QUOTA - quota_used),
-        "daily_quota": DAILY_QUOTA,
+        "quota_remaining": max(0, CONTRIBUTOR_QUOTA - quota_used),
+        "contributor_quota": CONTRIBUTOR_QUOTA,
         "total_points": total_points,
     }
 
@@ -214,7 +214,7 @@ def translate_submission(req: TranslateReq, user=Depends(_auth)):
 
     today = date.today().isoformat()
     quota_used = user["quota_used"] if user["quota_date"] == today else 0
-    if quota_used >= DAILY_QUOTA:
+    if quota_used >= CONTRIBUTOR_QUOTA:
         raise HTTPException(status_code=429, detail="Daily quota exceeded")
 
     async def _run_translate(name: str, func, *args):
@@ -271,7 +271,7 @@ def translate_submission(req: TranslateReq, user=Depends(_auth)):
     user["quota_used"] = quota_used + 1
     user["quota_date"] = today
     _save_data()
-    return {"results": results, "quota_remaining": DAILY_QUOTA - quota_used - 1}
+    return {"results": results, "quota_remaining": CONTRIBUTOR_QUOTA - quota_used - 1}
 
 
 @app.post("/api/verify-submission")
@@ -369,7 +369,9 @@ def score_submission(sid: int, req: ScoreReq, user=Depends(_auth)):
             status_code=403, detail="Only reviewer users can score submissions"
         )
     if req.action not in ("reject", "accept", "comment"):
-        raise HTTPException(status_code=400, detail="Action must be reject, accept, or comment")
+        raise HTTPException(
+            status_code=400, detail="Action must be reject, accept, or comment"
+        )
     submission = next((s for s in _db["submissions"] if s["id"] == sid), None)
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")

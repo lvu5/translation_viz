@@ -2,7 +2,7 @@ import './style.css';
 import $ from 'jquery';
 import {
     getToken, getMe,
-    translate, verify, createSubmission, getSubmissions, addComment, renderRoleSwitcher,
+    translate, verify, createSubmission, updateSubmission, getSubmissions, addComment, renderRoleSwitcher,
     User, Submission,
 } from './api';
 
@@ -12,6 +12,8 @@ let currentUser: User | null = null;
 type ApiResult = { api: string; translation: string | null; error: string | null; verified?: boolean | null };
 let lastResults: ApiResult[] = [];
 let ownVerified: boolean | null = null;
+let editingSubmissionId: number | null = null;
+let allMySubmissions: Submission[] = [];
 
 const LANGUAGES = [
     { name: 'Afrikaans', code: 'af' },
@@ -253,7 +255,7 @@ $(async () => {
         }
     });
 
-    // Submit submission
+    // Submit or Update submission
     $('#submit-btn').on('click', async () => {
         const source_text = String($('#src-text').val() ?? '').trim();
         const ownTranslation = String($('#own-translation').val() ?? '').trim();
@@ -277,15 +279,14 @@ $(async () => {
             return;
         }
         try {
-            await createSubmission({ source_text, source_lang, target_lang, verification_rule, translations });
-            $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
-            $('#src-text, #vc-content, #own-translation').val('');
-            $('#verify-result, #own-verify-badge').html('');
-            lastResults = [];
-            ownVerified = null;
-            $('#api-results-body').hide();
-            loadMySubmissions();
-            setTimeout(() => $('#submit-status').html(''), 3000);
+            if (editingSubmissionId !== null) {
+                await updateSubmission(editingSubmissionId, { source_text, source_lang, target_lang, verification_rule, translations });
+                $('#submit-status').html('<span class="msg-ok">✓ Updated!</span>');
+            } else {
+                await createSubmission({ source_text, source_lang, target_lang, verification_rule, translations });
+                $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
+            }
+            clearForm();
         } catch (err) {
             $('#submit-status').html(`<span class="msg-err">${escHtml(String(err))}</span>`);
         }
@@ -308,6 +309,79 @@ $(async () => {
         }
         $(this).prop('disabled', false).text('Reply');
     });
+
+    // Edit a submission from the sidebar
+    $('#my-submissions').on('click', '.edit-btn', function () {
+        const id = parseInt(String($(this).data('id')));
+        const sub = allMySubmissions.find(s => s.id === id);
+        if (!sub) return;
+
+        editingSubmissionId = id;
+        $('#src-text').val(sub.source_text);
+        $('#src-lang').val(sub.source_lang);
+        $('#tgt-lang').val(sub.target_lang);
+        $('#vc-content').val(sub.verification_rule);
+
+        // Clear previous MT results and own translation
+        lastResults = [];
+        ownVerified = null;
+        $('#api-results-body').hide();
+        $('#own-verify-badge').html('');
+        $('#own-translation').val('');
+        $('#pass-count').text('');
+        $('#verify-result').text('');
+
+        // Find own translation if any
+        const ownTr = sub.translations.find(t => t.api === 'perfect');
+        if (ownTr) {
+            $('#own-translation').val(ownTr.translation);
+            ownVerified = ownTr.verified;
+            if (ownVerified !== null) {
+                const badge = ownVerified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                $('#own-verify-badge').html(badge);
+            }
+        }
+
+        // Fill MT results
+        lastResults = sub.translations.filter(t => t.api !== 'perfect').map(t => ({
+            api: t.api,
+            translation: t.translation,
+            error: null,
+            verified: t.verified
+        }));
+        if (lastResults.length > 0) {
+            renderApiResults();
+            // Show verification badges
+            lastResults.forEach((r, i) => {
+                if (r.verified !== null) {
+                    const badge = r.verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                    $(`[data-idx="${i}"]`).html(badge);
+                }
+            });
+        }
+
+        $('#submit-btn').text('Update Submission');
+        $('#cancel-edit-btn').show();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    $('#cancel-edit-btn').on('click', () => {
+        clearForm();
+    });
+
+    function clearForm() {
+        editingSubmissionId = null;
+        $('#src-text, #vc-content, #own-translation').val('');
+        $('#verify-result, #own-verify-badge').html('');
+        lastResults = [];
+        ownVerified = null;
+        $('#api-results-body').hide();
+        $('#submit-btn').text('Submit Input, Translations & Rule');
+        $('#cancel-edit-btn').hide();
+        $('#pass-count').text('');
+        loadMySubmissions();
+        setTimeout(() => $('#submit-status').html(''), 3000);
+    }
 });
 
 // ---- Stats bar ----
@@ -338,12 +412,12 @@ function renderApiResults(): void {
 async function loadMySubmissions(): Promise<void> {
     try {
         const sugs = await getSubmissions();
+        allMySubmissions = sugs;
         const $el = $('#my-submissions');
         if (sugs.length == 0) {
             $el.html('<div class="empty">No submissions yet</div>');
             return;
         }
-        console.log("X", sugs.map(renderMySug));
         $el.html(sugs.map(renderMySug).join(''));
     } catch { /* ignore */ }
 }
@@ -378,7 +452,10 @@ function renderMySug(s: Submission): string {
         <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
         <div class="sug-mini-footer">
           <code class="sug-mini-vc">${escHtml(s.verification_rule)}</code>
-          ${scoreBadge(s.points)}
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn btn-secondary edit-btn" style="padding: 2px 6px; font-size: 0.75em;" data-id="${s.id}">Edit</button>
+            ${scoreBadge(s.points)}
+          </div>
         </div>
         ${threadHtml}
         ${replyHtml}

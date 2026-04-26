@@ -108,6 +108,16 @@ export function createSubmission(data: {
     return apiCall<{ ok: boolean }>('POST', '/api/submissions', data);
 }
 
+export function updateSubmission(id: number, data: {
+    source_text: string;
+    source_lang: string;
+    target_lang: string;
+    verification_rule: string;
+    translations: Array<{ api: string; translation: string; verified: boolean | null }>;
+}) {
+    return apiCall<{ ok: boolean }>('PUT', `/api/submissions/${id}`, data);
+}
+
 export function scoreSubmission(id: number, action: 'reject' | 'accept' | 'comment', comment?: string) {
     return apiCall<{ ok: boolean }>('POST', `/api/submissions/${id}/score`, { action, comment });
 }

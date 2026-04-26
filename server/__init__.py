@@ -448,6 +448,32 @@ def create_submission(req: SubmissionReq, user=Depends(_auth)):
     return {"ok": True}
 
 
+@app.put("/api/submissions/{sid}")
+def update_submission(sid: int, req: SubmissionReq, user=Depends(_auth)):
+    submission = next((s for s in _db["submissions"] if s["id"] == sid), None)
+    if submission is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+
+    if submission["user_id"] != user["id"]:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this submission"
+        )
+
+    submission.update(
+        {
+            "source_text": req.source_text,
+            "source_lang": req.source_lang,
+            "target_lang": req.target_lang,
+            "verification_rule": req.verification_rule,
+            "translations": [t.model_dump() for t in req.translations],
+            "points": -1,  # Reset to pending
+            "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        }
+    )
+    _save_data()
+    return {"ok": True}
+
+
 @app.get("/api/submissions")
 def get_submissions(user=Depends(_auth)):
     if "reviewer" in user.get("roles", []):

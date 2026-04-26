@@ -125,14 +125,28 @@ export interface AdminUser {
     id: number;
     username: string;
     roles: string[];
+    magic_token: string;
     name: string;
     affiliation: string;
     email: string;
     credit_consent: boolean;
+    quota_used: number;
 }
 
 export function getAdminUsers() {
     return apiCall<AdminUser[]>('GET', '/api/admin/users');
+}
+
+export function createAdminUser(username: string, roles: string[]) {
+    return apiCall<AdminUser>('POST', '/api/admin/users', { username, roles });
+}
+
+export function deleteAdminUser(uid: number) {
+    return apiCall<{ ok: boolean }>('DELETE', `/api/admin/users/${uid}`);
+}
+
+export function rotateAdminToken(uid: number) {
+    return apiCall<{ magic_token: string }>('POST', `/api/admin/users/${uid}/rotate-token`);
 }
 
 export function addComment(id: number, comment: string) {
@@ -149,15 +163,6 @@ export function renderRoleSwitcher(roles: string[]): void {
 
     const search = window.location.search;
 
-    if (roles.includes('admin')) {
-        const btn = document.createElement('button');
-        btn.textContent = 'Admin';
-        btn.className = 'btn btn-secondary';
-        btn.style.padding = '3px 8px';
-        btn.style.fontSize = '0.8em';
-        btn.onclick = () => window.location.href = '/admin.html' + search;
-        container.appendChild(btn);
-    }
     if (roles.includes('contributor')) {
         const btn = document.createElement('button');
         btn.textContent = 'Contribute';
@@ -176,7 +181,15 @@ export function renderRoleSwitcher(roles: string[]): void {
         btn.onclick = () => window.location.href = '/reviewer.html' + search;
         container.appendChild(btn);
     }
-
+    if (roles.includes('admin')) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Admin';
+        btn.className = 'btn btn-secondary';
+        btn.style.padding = '3px 8px';
+        btn.style.fontSize = '0.8em';
+        btn.onclick = () => window.location.href = '/admin.html' + search;
+        container.appendChild(btn);
+    }
     const profileBtn = document.createElement('button');
     profileBtn.textContent = 'Profile';
     profileBtn.className = 'btn btn-secondary';

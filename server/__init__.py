@@ -48,20 +48,35 @@ def _load_data() -> None:
     # Seed default users on first run
     if not _db["users"]:
         default_users = [
-            ("r1", "reviewer"),
-            ("c1", "contributor"),
-            ("c2", "contributor"),
+            ("admin", ["admin", "reviewer"]),
+            ("r1", ["reviewer"]),
+            ("c1", ["contributor"]),
+            ("c2", ["contributor"]),
         ]
-        for uid, (username, role) in enumerate(default_users, start=1):
+        for uid, (username, roles) in enumerate(default_users, start=1):
             _db["users"].append(
                 {
                     "id": uid,
                     "username": username,
                     "magic_token": secrets.token_urlsafe(24),
-                    "roles": [role],
+                    "roles": roles,
                     "quota_used": 0,
                 }
             )
+        _save_data()
+
+    # Ensure at least one admin user exists
+    if not any("admin" in u.get("roles", []) for u in _db["users"]):
+        _db["users"].insert(
+            0,
+            {
+                "id": _next_id(_db["users"]),
+                "username": "admin",
+                "magic_token": secrets.token_urlsafe(24),
+                "roles": ["admin", "reviewer"],
+                "quota_used": 0,
+            },
+        )
         _save_data()
 
     changed = False
@@ -212,22 +227,81 @@ def update_profile(req: ProfileReq, user=Depends(_auth)):
     return {"ok": True}
 
 
-@app.get("/api/admin/users")
-def admin_users(user=Depends(_auth)):
+def _require_admin(user: dict) -> None:
     if "admin" not in user.get("roles", []):
         raise HTTPException(status_code=403, detail="Admin access required")
-    return [
-        {
-            "id": u["id"],
-            "username": u["username"],
-            "roles": u.get("roles", []),
-            "name": u.get("name", ""),
-            "affiliation": u.get("affiliation", ""),
-            "email": u.get("email", ""),
-            "credit_consent": u.get("credit_consent", False),
-        }
-        for u in _db["users"]
-    ]
+
+
+def _admin_user_view(u: dict) -> dict:
+    return {
+        "id": u["id"],
+        "username": u["username"],
+        "roles": u.get("roles", []),
+        "magic_token": u.get("magic_token", ""),
+        "name": u.get("name", ""),
+        "affiliation": u.get("affiliation", ""),
+        "email": u.get("email", ""),
+        "credit_consent": u.get("credit_consent", False),
+        "quota_used": u.get("quota_used", 0),
+    }
+
+
+@app.get("/api/admin/users")
+def admin_users(user=Depends(_auth)):
+    _require_admin(user)
+    return [_admin_user_view(u) for u in _db["users"]]
+
+
+class CreateUserReq(BaseModel):
+    username: str
+    roles: list[str]
+
+
+@app.post("/api/admin/users", status_code=201)
+def admin_create_user(req: CreateUserReq, user=Depends(_auth)):
+    _require_admin(user)
+    if not req.username.strip():
+        raise HTTPException(status_code=400, detail="Username cannot be empty")
+    if any(u["username"] == req.username for u in _db["users"]):
+        raise HTTPException(status_code=409, detail="Username already exists")
+    valid_roles = {"admin", "contributor", "reviewer"}
+    bad = [r for r in req.roles if r not in valid_roles]
+    if bad:
+        raise HTTPException(status_code=400, detail=f"Invalid roles: {bad}")
+    new_user = {
+        "id": _next_id(_db["users"]),
+        "username": req.username.strip(),
+        "magic_token": secrets.token_urlsafe(24),
+        "roles": req.roles,
+        "quota_used": 0,
+    }
+    _db["users"].append(new_user)
+    _save_data()
+    return _admin_user_view(new_user)
+
+
+@app.delete("/api/admin/users/{uid}", status_code=200)
+def admin_delete_user(uid: int, user=Depends(_auth)):
+    _require_admin(user)
+    if user["id"] == uid:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    target = next((u for u in _db["users"] if u["id"] == uid), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    _db["users"] = [u for u in _db["users"] if u["id"] != uid]
+    _save_data()
+    return {"ok": True}
+
+
+@app.post("/api/admin/users/{uid}/rotate-token")
+def admin_rotate_token(uid: int, user=Depends(_auth)):
+    _require_admin(user)
+    target = next((u for u in _db["users"] if u["id"] == uid), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    target["magic_token"] = secrets.token_urlsafe(24)
+    _save_data()
+    return {"magic_token": target["magic_token"]}
 
 
 # ---------------------------------------------------------------------------

@@ -1,35 +1,18 @@
 import './style.css';
 import $ from 'jquery';
-import { getToken, getMe, getAdminUsers, renderRoleSwitcher, AdminUser } from './api';
+import {
+    getToken, getMe, getAdminUsers, createAdminUser, deleteAdminUser,
+    rotateAdminToken, renderRoleSwitcher, AdminUser,
+} from './api';
 
-$(async () => {
-    if (!getToken()) { window.location.href = '/'; return; }
+function esc(str: string): string { return $('<div>').text(str).html(); }
 
-    try {
-        const user = await getMe();
-        renderRoleSwitcher(user.roles);
-        if (!user.roles.includes('admin')) {
-            document.body.innerHTML = `<div style="padding: 2rem; text-align: center; font-family: sans-serif;">
-                <h2>Access Denied</h2>
-                <p>You need admin access to view this page.</p>
-            </div>`;
-            return;
-        }
-        $('#admin-info').text(`${user.username} · Admin`);
-    } catch {
-        window.location.href = '/';
-        return;
-    }
+let allUsers: AdminUser[] = [];
 
-    try {
-        const users = await getAdminUsers();
-        renderTable(users);
-    } catch {
-        $('#user-table').html('<div class="empty">Failed to load users</div>');
-    }
-});
-
-function escHtml(str: string): string { return $('<div>').text(str).html(); }
+function showToast(msg: string): void {
+    const t = $('#toast').text(msg).addClass('show');
+    setTimeout(() => t.removeClass('show'), 2000);
+}
 
 function renderTable(users: AdminUser[]): void {
     if (!users.length) {
@@ -37,39 +20,97 @@ function renderTable(users: AdminUser[]): void {
         return;
     }
     const rows = users.map(u => {
-        const roles = u.roles.map(r => `<span class="role-tag">${escHtml(r)}</span>`).join('');
-        const hasProfile = u.name || u.email;
-        const name = hasProfile
-            ? escHtml(u.name)
-            : '<span class="no-profile">—</span>';
-        const affiliation = u.affiliation
-            ? escHtml(u.affiliation)
-            : '<span class="no-profile">—</span>';
-        const email = u.email
-            ? `<a href="mailto:${escHtml(u.email)}">${escHtml(u.email)}</a>`
-            : '<span class="no-profile">—</span>';
-        const credit = u.credit_consent
-            ? '<span class="credit-yes">Yes</span>'
-            : '<span class="credit-no">No</span>';
-        return `<tr>
-            <td>${escHtml(u.username)}</td>
+        const roles = u.roles.map(r => `<span class="role-tag role-${r}">${esc(r)}</span>`).join('');
+        return `<tr data-uid="${u.id}">
+            <td><span class="uname">${esc(u.username)}</span></td>
             <td>${roles}</td>
-            <td>${name}</td>
-            <td>${affiliation}</td>
-            <td>${email}</td>
-            <td>${credit}</td>
+            <td>${u.name ? esc(u.name) : '<span class="muted">—</span>'}</td>
+            <td>${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
+            <td>${u.email ? `<a href="mailto:${esc(u.email)}">${esc(u.email)}</a>` : '<span class="muted">—</span>'}</td>
+            <td style="text-align:center;color:#64748b">${u.quota_used}</td>
+            <td>
+              <div class="action-btns">
+                <button class="act-btn act-copy" data-uid="${u.id}" title="Copy login link">🔗</button>
+                <button class="act-btn act-rotate" data-uid="${u.id}" title="Rotate magic token">🔄</button>
+                <button class="act-btn act-delete" data-uid="${u.id}" title="Remove user">✕</button>
+              </div>
+            </td>
         </tr>`;
     }).join('');
 
     $('#user-table').html(`<table>
-        <thead><tr>
-            <th>Username</th>
-            <th>Roles</th>
-            <th>Name</th>
-            <th>Affiliation</th>
-            <th>Email</th>
-            <th>Credit consent</th>
-        </tr></thead>
+        <thead><tr><th>Username</th><th>Roles</th><th>Name</th><th>Affiliation</th><th>Email</th><th>Quota</th><th>Actions</th></tr></thead>
         <tbody>${rows}</tbody>
     </table>`);
+
+    $('.act-copy').on('click', function () {
+        const u = allUsers.find(x => x.id === $(this).data('uid'))!;
+        const link = `${location.origin}/?user=${encodeURIComponent(u.username)}&token=${encodeURIComponent(u.magic_token)}`;
+        navigator.clipboard.writeText(link).then(() => showToast('Link copied'));
+    });
+
+    $('.act-rotate').on('click', async function () {
+        const uid = $(this).data('uid');
+        if (!confirm('Rotate magic token?')) return;
+        try {
+            const res = await rotateAdminToken(uid);
+            allUsers.find(u => u.id === uid)!.magic_token = res.magic_token;
+            showToast('Token rotated');
+        } catch (e) { alert(e); }
+    });
+
+    $('.act-delete').on('click', async function () {
+        const uid = $(this).data('uid');
+        if (!confirm('Delete user?')) return;
+        try {
+            await deleteAdminUser(uid);
+            allUsers = allUsers.filter(u => u.id !== uid);
+            applyFilter();
+            showToast('User deleted');
+        } catch (e) { alert(e); }
+    });
 }
+
+function applyFilter(): void {
+    const q = ($('#filter-input').val() as string).toLowerCase().trim();
+    const role = $('#role-filter').val() as string;
+    const filtered = allUsers.filter(u => {
+        const matchesRole = !role || u.roles.includes(role);
+        const matchesQuery = !q || u.username.toLowerCase().includes(q) || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+        return matchesRole && matchesQuery;
+    });
+    $('#filtered-count').text(`Total: ${filtered.length} users`);
+    renderTable(filtered);
+}
+
+async function handleAddUser(): Promise<void> {
+    const username = ($('#new-username').val() as string).trim();
+    const roles = ['contributor', 'reviewer', 'admin'].filter(r => $(`#role-${r}`).prop('checked'));
+    if (!username || !roles.length) { $('#add-status').text('Username and roles required').css('color', 'red'); return; }
+
+    try {
+        const newUser = await createAdminUser(username, roles);
+        allUsers.push(newUser);
+        applyFilter();
+        $('#new-username').val('');
+        $('input[type="checkbox"]').prop('checked', false);
+        $('#add-status').text('User created').css('color', 'green');
+    } catch (e) { $('#add-status').text(String(e)).css('color', 'red'); }
+}
+
+$(async () => {
+    const token = getToken();
+    if (!token) { window.location.href = '/'; return; }
+    try {
+        const user = await getMe();
+        renderRoleSwitcher(user.roles);
+        if (!user.roles.includes('admin')) { $('body').html('Access Denied'); return; }
+        $('#admin-info').text(`${user.username} (Admin)`);
+        allUsers = await getAdminUsers();
+        applyFilter();
+    } catch { window.location.href = '/'; }
+
+    $('#filter-input').on('input', applyFilter);
+    $('#role-filter').on('change', applyFilter);
+    $('#add-user-btn').on('click', handleAddUser);
+});

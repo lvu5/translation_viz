@@ -115,6 +115,15 @@ textarea {
   background: #475569;
 }
 
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
 .btn-success {
   background: #16a34a;
   color: #fff;
@@ -127,6 +136,19 @@ textarea {
 .btn:disabled {
   opacity: .5;
   cursor: not-allowed;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-link:hover {
+  text-decoration: none;
 }
 
 /* ---------- score buttons (reject / accept / comment) ---------- */

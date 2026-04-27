@@ -152,9 +152,9 @@
           <label for="src-text">Input <span class="hint">(the difficult-to-translate text)</span></label>
           <textarea style="width: calc(100% - 20px);" id="src-text" placeholder="Enter the source text…"></textarea>
 
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-            <button class="btn btn-secondary" id="tr-btn">⟳ Translate by all models</button>
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
             <span id="tr-status" style="font-size:0.85em;color:#64748b"></span>
+            <button class="btn btn-secondary" id="tr-btn">⟳ Translate by all models</button>
           </div>
 
 
@@ -177,22 +177,24 @@
             <div id="api-results-body"></div>
           </div>
 
-          <label id="vc-label" for="vc-content">
-            Verification rule
-            <span class="hint">(used to verify the translation)</span>
+          <label id="vc-label">
+            Verification rules
+            <span class="hint">(all rules must pass)</span>
           </label>
-          <textarea id="vc-content"
-            placeholder="e.g. Does the translation preserve the pun from the source text? (To use regex, start with #!regex)"
-            style="width: calc(100% - 20px); min-height:56px"></textarea>
+          <div id="rules-container" style="margin-bottom: 8px;"></div>
+          <button class="btn btn-secondary" id="add-rule-btn" style="margin-bottom: 12px; padding: 4px 10px; font-size: 0.85em;">+ Add Rule</button>
 
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-            <button class="btn btn-secondary" id="verify-btn">✓ Verify translations</button>
+
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
             <span id="verify-result"></span>
+            <button class="btn btn-secondary" id="verify-btn">✓ Verify translations</button>
           </div>
 
-          <button class="btn btn-success" id="submit-btn">Submit Input, Translations & Rule</button>
-          <button class="btn btn-secondary" id="cancel-edit-btn" style="display:none; margin-left:10px;">Cancel Edit</button>
-          <span id="submit-status" style="margin-left:10px;font-size:0.85em"></span>
+          <div style="display: flex; justify-content: flex-end; align-items: center;">
+            <span id="submit-status" style="margin-right:10px;font-size:0.85em"></span>
+            <button class="btn btn-secondary" id="cancel-edit-btn" style="display:none; margin-right:10px;">Cancel Edit</button>
+            <button class="btn btn-success" id="submit-btn">Submit Input, Translations & Rule</button>
+          </div>
         </div>
       </div>
 

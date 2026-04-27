@@ -28,6 +28,11 @@ export interface Comment {
     timestamp: string;
 }
 
+export interface Rule {
+    type: 'llm' | 'contains' | 'not_contains';
+    value: string;
+}
+
 export interface Submission {
     id: number;
     user_id: number;
@@ -35,7 +40,7 @@ export interface Submission {
     source_text: string;
     source_lang: string;
     target_lang: string;
-    verification_rule: string;
+    verification_rules: Rule[];
     translations: TranslationEntry[];
     points: number;
     reviewer_comment: string;
@@ -87,10 +92,10 @@ export function translate(text: string, source_lang: string, target_lang: string
 
 export function verify(
     translations: string[],
-    verification_rule: string,
+    verification_rules: Rule[],
 ) {
     return apiCall<{ results: boolean[]; detail: string }>(
-        'POST', 'api/verify-submission', { translations, verification_rule }
+        'POST', 'api/verify-submission', { translations, verification_rules }
     );
 }
 
@@ -102,7 +107,7 @@ export function createSubmission(data: {
     source_text: string;
     source_lang: string;
     target_lang: string;
-    verification_rule: string;
+    verification_rules: Rule[];
     translations: Array<{ api: string; translation: string; verified: boolean | null }>;
 }) {
     return apiCall<{ ok: boolean }>('POST', 'api/submissions', data);
@@ -112,7 +117,7 @@ export function updateSubmission(id: number, data: {
     source_text: string;
     source_lang: string;
     target_lang: string;
-    verification_rule: string;
+    verification_rules: Rule[];
     translations: Array<{ api: string; translation: string; verified: boolean | null }>;
 }) {
     return apiCall<{ ok: boolean }>('PUT', `api/submissions/${id}`, data);

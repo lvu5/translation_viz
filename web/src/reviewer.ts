@@ -181,13 +181,25 @@ function renderSug(s: Submission): string {
         </div>`;
     }).join('');
 
+    const ruleRows = s.verification_rules.map(r => {
+        let label = r.type.toUpperCase();
+        if (r.type === 'contains') label = "HAS TO CONTAIN";
+        else if (r.type === 'not_contains') label = "CAN'T CONTAIN";
+        else if (r.type === 'llm') label = "LLM-VERIFICATION";
+
+        return `<div class="sug-box" style="margin-bottom:4px; font-size: 0.9em;">
+            <div class="lbl" style="font-size: 0.7em;">RULE: ${label}</div>
+            ${escHtml(r.value)}
+        </div>`;
+    }).join('');
+
     const threadHtml = renderCommentThread(s.comments);
 
     return `<div class="sug-item" id="sug-${s.id}">
         <div class="sug-meta">#${s.id} &middot; <b>${escHtml(s.username)}</b> &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.points, s.reviewer_comment)}</div>
         <div class="sug-box" style="margin-bottom:8px"><div class="lbl">SOURCE</div>${escHtml(s.source_text)}</div>
         <div style="margin-bottom:8px">${trRows}</div>
-        <div class="sug-box" style="margin-bottom:8px"><div class="lbl">VERIFICATION RULE</div>${escHtml(s.verification_rule)}</div>
+        <div style="margin-bottom:8px">${ruleRows}</div>
         <div id="comment-thread-${s.id}">${threadHtml}</div>
         <div id="comment-box-${s.id}" style="display:none;margin-top:8px;flex-direction:row;align-items:flex-start;gap:6px">
             <textarea class="comment-input" placeholder="Write a comment for the contributor…" rows="2" style="flex:1;margin-bottom:0"></textarea>

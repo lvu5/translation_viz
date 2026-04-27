@@ -3,7 +3,7 @@ import $ from 'jquery';
 import {
     getToken, getMe,
     translate, verify, createSubmission, updateSubmission, getSubmissions, addComment, renderRoleSwitcher,
-    User, Submission,
+    User, Submission, Rule,
 } from './api';
 
 let currentUser: User | null = null;
@@ -14,6 +14,7 @@ let lastResults: ApiResult[] = [];
 let ownVerified: boolean | null = null;
 let editingSubmissionId: number | null = null;
 let allMySubmissions: Submission[] = [];
+let rules: Rule[] = [{ type: 'llm', value: '' }];
 
 const LANGUAGES = [
     { name: 'Afrikaans', code: 'af' },
@@ -176,6 +177,37 @@ $(async () => {
     $('#ann-info').text(`${currentUser.username} · Contributor`);
     renderStats(currentUser.quota_remaining, currentUser.contributor_quota, currentUser.total_points);
     loadMySubmissions();
+    renderRules();
+
+    $('#add-rule-btn').on('click', () => {
+        if (rules.length >= 10) return;
+        const type = rules.some(r => r.type === 'llm') ? 'contains' : 'llm';
+        rules.push({ type, value: '' });
+        renderRules();
+    });
+
+    $('#rules-container').on('change', '.rule-type', function () {
+        const index = $(this).closest('.rule-row').data('index');
+        const newType = $(this).val() as any;
+        if (newType === 'llm' && rules.some((r, i) => r.type === 'llm' && i !== index)) {
+            alert('At most one LLM-verification rule is allowed.');
+            renderRules();
+            return;
+        }
+        rules[index].type = newType;
+        renderRules();
+    });
+
+    $('#rules-container').on('input', '.rule-value', function () {
+        const index = $(this).closest('.rule-row').data('index');
+        rules[index].value = $(this).val() as string;
+    });
+
+    $('#rules-container').on('click', '.rule-remove', function () {
+        const index = $(this).closest('.rule-row').data('index');
+        rules.splice(index, 1);
+        renderRules();
+    });
 
 
     // Auto-translate
@@ -214,13 +246,13 @@ $(async () => {
         const translations = [...mtTranslations];
         if (ownTranslation) translations.push(ownTranslation);
 
-        const vcontent = String($('#vc-content').val() ?? '').trim();
         if (translations.length === 0) { $('#verify-result').html('<span class="msg-err">No translations available</span>'); return; }
-        if (!vcontent) { $('#verify-result').html('<span class="msg-err">No verification content</span>'); return; }
+        if (rules.length === 0) { $('#verify-result').html('<span class="msg-err">No verification rules</span>'); return; }
+        if (rules.some(r => !r.value.trim())) { $('#verify-result').html('<span class="msg-err">All rules must have content</span>'); return; }
 
         $('#verify-result').html('<span style="color:#64748b;font-size:0.9em">Verifying...</span>');
         try {
-            const data = await verify(translations, vcontent);
+            const data = await verify(translations, rules);
 
             let resultIdx = 0;
             let pass = 0;
@@ -272,18 +304,22 @@ $(async () => {
 
         const source_lang = String($('#src-lang').val());
         const target_lang = String($('#tgt-lang').val());
-        const verification_rule = String($('#vc-content').val() ?? '').trim();
 
-        if (!source_text || translations.length === 0 || !verification_rule) {
+        if (!source_text || translations.length === 0 || rules.length === 0) {
             $('#submit-status').html('<span class="msg-err">Please fill all required fields, translate and verify translations first</span>');
             return;
         }
+        if (rules.some(r => !r.value.trim())) {
+            $('#submit-status').html('<span class="msg-err">All rules must have content</span>');
+            return;
+        }
+
         try {
             if (editingSubmissionId !== null) {
-                await updateSubmission(editingSubmissionId, { source_text, source_lang, target_lang, verification_rule, translations });
+                await updateSubmission(editingSubmissionId, { source_text, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Updated!</span>');
             } else {
-                await createSubmission({ source_text, source_lang, target_lang, verification_rule, translations });
+                await createSubmission({ source_text, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
             }
             clearForm();
@@ -320,7 +356,8 @@ $(async () => {
         $('#src-text').val(sub.source_text);
         $('#src-lang').val(sub.source_lang);
         $('#tgt-lang').val(sub.target_lang);
-        $('#vc-content').val(sub.verification_rule);
+        rules = sub.verification_rules.length > 0 ? JSON.parse(JSON.stringify(sub.verification_rules)) : [{ type: 'llm', value: '' }];
+        renderRules();
 
         // Clear previous MT results and own translation
         lastResults = [];
@@ -371,10 +408,12 @@ $(async () => {
 
     function clearForm() {
         editingSubmissionId = null;
-        $('#src-text, #vc-content, #own-translation').val('');
+        $('#src-text, #own-translation').val('');
         $('#verify-result, #own-verify-badge').html('');
         lastResults = [];
         ownVerified = null;
+        rules = [{ type: 'llm', value: '' }];
+        renderRules();
         $('#api-results-body').hide();
         $('#submit-btn').text('Submit Input, Translations & Rule');
         $('#cancel-edit-btn').hide();
@@ -389,6 +428,36 @@ $(async () => {
 function renderStats(remaining: number, total: number, points: number): void {
     $('#quota-text').text(`${remaining} / ${total} quota remaining`);
     $('#total-points').text(String(points));
+}
+
+function renderRules() {
+    const $container = $('#rules-container');
+    $container.empty();
+    const hasLlm = rules.some(r => r.type === 'llm');
+
+    rules.forEach((rule, index) => {
+        let placeholder = "Enter rule content...";
+        if (rule.type === 'llm') placeholder = "Describe what the LLM should check (e.g. 'Should be sarcastic.')";
+        else if (rule.type === 'contains') placeholder = "Enter the text that MUST be present in the translation (case-sensitive)";
+        else if (rule.type === 'not_contains') placeholder = "Enter the text that MUST NOT be present in the translation (case-sensitive)";
+
+        const $row = $(`
+            <div class="rule-row" data-index="${index}" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
+                <div style="display: flex; flex-direction: column; gap: 4px; width: 140px;">
+                    <select class="rule-type" style="width: 100%; height: 32px; padding: 0 5px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 0.85em; margin-bottom: 0px;">
+                        <option value="llm" ${rule.type === 'llm' ? 'selected' : ''} ${hasLlm && rule.type !== 'llm' ? 'disabled' : ''}>LLM-verification</option>
+                        <option value="contains" ${rule.type === 'contains' ? 'selected' : ''}>Has to contain</option>
+                        <option value="not_contains" ${rule.type === 'not_contains' ? 'selected' : ''}>Can't contain</option>
+                    </select>
+                    <button class="rule-remove btn btn-secondary" style="padding: 4px 10px; font-size: 0.85em; width: fit-content;">- Remove Rule</button>
+                </div>
+                <textarea class="rule-value" placeholder="${escHtml(placeholder)}" style="flex: 1; height: 40px; padding: 7px 10px; border: 1px solid #d1d5db; min-height: 30px; border-radius: 5px; font-size: 0.85em; resize: vertical;">${escHtml(rule.value)}</textarea>
+            </div>
+        `);
+        $container.append($row);
+    });
+
+    $('#add-rule-btn').prop('disabled', rules.length >= 10);
 }
 
 // ---- API results table ----
@@ -451,7 +520,9 @@ function renderMySug(s: Submission): string {
         <div class="sug-mini-text">${escHtml(srcPreview)}</div>
         <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
         <div class="sug-mini-footer">
-          <code class="sug-mini-vc">${escHtml(s.verification_rule)}</code>
+          <div class="sug-mini-rules">
+            ${s.verification_rules.map(r => `<code class="sug-mini-vc" title="${escHtml(r.type)}: ${escHtml(r.value)}">${escHtml(r.value)}</code>`).join('')}
+          </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button class="btn btn-secondary edit-btn" style="padding: 2px 6px; font-size: 0.75em;" data-id="${s.id}">Edit</button>
             ${scoreBadge(s.points)}

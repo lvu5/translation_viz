@@ -88,6 +88,7 @@ def _load_data() -> None:
             user["roles"] = [user["role"]]
             del user["role"]
             changed = True
+
     if changed:
         _save_data()
 
@@ -135,7 +136,14 @@ def _auth(authorization: Optional[str] = Header(None)) -> dict:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
     token = authorization[7:]
-    user = next((u for u in _db["users"] if secrets.compare_digest(u.get("magic_token", ""), token)), None)
+    user = next(
+        (
+            u
+            for u in _db["users"]
+            if secrets.compare_digest(u.get("magic_token", ""), token)
+        ),
+        None,
+    )
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid token")
     return user
@@ -152,9 +160,14 @@ class TranslateReq(BaseModel):
     target_lang: str = "de"
 
 
+class Rule(BaseModel):
+    type: str  # "llm", "contains", "not_contains"
+    value: str
+
+
 class VerifyReq(BaseModel):
     translations: list[str]
-    verification_rule: str
+    verification_rules: list[Rule]
 
 
 class TranslationEntry(BaseModel):
@@ -167,7 +180,7 @@ class SubmissionReq(BaseModel):
     source_text: str
     source_lang: str = "en"
     target_lang: str = "de"
-    verification_rule: str
+    verification_rules: list[Rule]
     translations: list[TranslationEntry]
 
 
@@ -175,11 +188,13 @@ class ScoreReq(BaseModel):
     action: str  # "reject" | "accept" | "comment"
     comment: Optional[str] = None
 
+
 class ProfileReq(BaseModel):
     name: str
     affiliation: str
     email: str
     credit_consent: bool
+
 
 class CommentReq(BaseModel):
     comment: str
@@ -217,12 +232,14 @@ def me(user=Depends(_auth)):
 
 @app.put("/api/profile")
 def update_profile(req: ProfileReq, user=Depends(_auth)):
-    user.update({
-        "name": req.name,
-        "affiliation": req.affiliation,
-        "email": req.email,
-        "credit_consent": req.credit_consent,
-    })
+    user.update(
+        {
+            "name": req.name,
+            "affiliation": req.affiliation,
+            "email": req.email,
+            "credit_consent": req.credit_consent,
+        }
+    )
     _save_data()
     return {"ok": True}
 
@@ -378,43 +395,32 @@ def translate_submission(req: TranslateReq, user=Depends(_auth)):
 
 @app.post("/api/verify-submission")
 def verify_submission(req: VerifyReq, user=Depends(_auth)):
-    content_stripped = req.verification_rule.strip()
+    if not req.verification_rules:
+        return {"results": [True] * len(req.translations)}
 
-    # TODO: verify quota here as well
+    async def _verify_single(translation: str) -> bool:
+        for rule in req.verification_rules:
+            print(rule)
+            if rule.type == "contains":
+                if rule.value not in translation:
+                    return False
+            elif rule.type == "not_contains":
+                if rule.value in translation:
+                    return False
+            elif rule.type == "llm":
+                try:
+                    res = await asyncio.to_thread(verify_llm, translation, rule.value)
+                    if not res:
+                        return False
+                except Exception as exc:
+                    raise HTTPException(status_code=502, detail=f"LLM API error: {exc}")
+        return True
 
-    if content_stripped.startswith("#!regex"):
-        lines = content_stripped.split("\n", 1)
-        req.verification_rule = lines[1].strip() if len(lines) > 1 else ""
-        results = []
-        try:
-            pattern = re.compile(req.verification_rule, re.IGNORECASE)
-            for t in req.translations:
-                results.append(bool(pattern.search(t)))
-        except re.error as exc:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid regex: {exc}"
-            ) from exc
-        return {
-            "results": results,
-        }
+    async def _run_verify():
+        return await asyncio.gather(*[_verify_single(t) for t in req.translations])
 
-    try:
-
-        async def _run_verify():
-            async def _verify_llm(translation: str) -> bool:
-                return await asyncio.to_thread(
-                    verify_llm, translation, req.verification_rule
-                )
-
-            return await asyncio.gather(*[_verify_llm(t) for t in req.translations])
-
-        results = asyncio.run(_run_verify())
-    except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"LLM API error: {exc}") from exc
-
-    return {
-        "results": results,
-    }
+    results = asyncio.run(_run_verify())
+    return {"results": results}
 
 
 # ---------------------------------------------------------------------------
@@ -438,7 +444,7 @@ def create_submission(req: SubmissionReq, user=Depends(_auth)):
             "source_text": req.source_text,
             "source_lang": req.source_lang,
             "target_lang": req.target_lang,
-            "verification_rule": req.verification_rule,
+            "verification_rules": [r.model_dump() for r in req.verification_rules],
             "translations": [t.model_dump() for t in req.translations],
             "points": -1,
             "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
@@ -464,7 +470,7 @@ def update_submission(sid: int, req: SubmissionReq, user=Depends(_auth)):
             "source_text": req.source_text,
             "source_lang": req.source_lang,
             "target_lang": req.target_lang,
-            "verification_rule": req.verification_rule,
+            "verification_rules": [r.model_dump() for r in req.verification_rules],
             "translations": [t.model_dump() for t in req.translations],
             "points": -1,  # Reset to pending
             "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
@@ -510,16 +516,18 @@ def score_submission(sid: int, req: ScoreReq, user=Depends(_auth)):
     else:  # comment — stays pending, stores comment for contributor
         submission["points"] = -1
     submission["reviewer_comment"] = req.comment or ""
-    
+
     if req.comment:
         if "comments" not in submission:
             submission["comments"] = []
-        submission["comments"].append({
-            "author": user["username"],
-            "role": "reviewer",
-            "text": req.comment,
-            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-        })
+        submission["comments"].append(
+            {
+                "author": user["username"],
+                "role": "reviewer",
+                "text": req.comment,
+                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        )
 
     _save_data()
     return {"ok": True}
@@ -540,22 +548,26 @@ def add_comment(sid: int, req: CommentReq, user=Depends(_auth)):
     if "comments" not in submission:
         submission["comments"] = []
         if submission.get("reviewer_comment"):
-            submission["comments"].append({
-                "author": "Reviewer",
-                "role": "reviewer",
-                "text": submission["reviewer_comment"],
-                "timestamp": submission["created_at"]
-            })
+            submission["comments"].append(
+                {
+                    "author": "Reviewer",
+                    "role": "reviewer",
+                    "text": submission["reviewer_comment"],
+                    "timestamp": submission["created_at"],
+                }
+            )
 
     if not is_reviewer and not submission["comments"]:
         raise HTTPException(status_code=403, detail="Reviewer must comment first")
 
-    submission["comments"].append({
-        "author": user["username"],
-        "role": "reviewer" if is_reviewer else "contributor",
-        "text": req.comment,
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-    })
+    submission["comments"].append(
+        {
+            "author": user["username"],
+            "role": "reviewer" if is_reviewer else "contributor",
+            "text": req.comment,
+            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        }
+    )
 
     if is_reviewer:
         submission["points"] = -1

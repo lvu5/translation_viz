@@ -5,7 +5,6 @@ Last Translation Benchmark — FastAPI backend
 import asyncio
 import json
 import os
-import re
 import secrets
 from datetime import datetime, timezone
 from typing import Optional

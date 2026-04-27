@@ -41,6 +41,7 @@ def call_llm(prompt: str, model: str = "google/gemini-2.5-flash-lite") -> str:
                 "content": prompt,
             }
         ],
+        seed=0,
     )
     return response.choices[0].message.content
 

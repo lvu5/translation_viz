@@ -131,20 +131,15 @@ def _print_magic_links() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _auth(authorization: Optional[str] = Header(None)) -> dict:
-    if not authorization or not authorization.startswith("Bearer "):
+def _auth(
+    authorization: Optional[str] = Header(None), x_user_id: Optional[str] = Header(None)
+) -> dict:
+    if not authorization or not authorization.startswith("Bearer ") or not x_user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
     token = authorization[7:]
-    user = next(
-        (
-            u
-            for u in _db["users"]
-            if secrets.compare_digest(u.get("magic_token", ""), token)
-        ),
-        None,
-    )
-    if user is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    user = next((u for u in _db["users"] if u["username"] == x_user_id), None)
+    if user is None or not secrets.compare_digest(user.get("magic_token", ""), token):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     return user
 
 
@@ -278,7 +273,7 @@ def admin_create_user(req: CreateUserReq, user=Depends(_auth)):
     _require_admin(user)
     if not req.username.strip():
         raise HTTPException(status_code=400, detail="Username cannot be empty")
-    if any(u["username"] == req.username for u in _db["users"]):
+    if any(u["username"].lower() == req.username.strip().lower() for u in _db["users"]):
         raise HTTPException(status_code=409, detail="Username already exists")
     valid_roles = {"admin", "contributor", "reviewer"}
     bad = [r for r in req.roles if r not in valid_roles]

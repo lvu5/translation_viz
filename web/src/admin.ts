@@ -1,7 +1,7 @@
 import './style.css';
 import $ from 'jquery';
 import {
-    getToken, getMe, getAdminUsers, createAdminUser, deleteAdminUser,
+    getToken, getUsername, getMe, getAdminUsers, createAdminUser, deleteAdminUser,
     rotateAdminToken, renderRoleSwitcher, AdminUser,
 } from './api';
 
@@ -89,7 +89,8 @@ async function handleAddUser(): Promise<void> {
 
 $(async () => {
     const token = getToken();
-    if (!token) { window.location.href = 'index.html'; return; }
+    const username = getUsername();
+    if (!token || !username) { window.location.href = 'index.html'; return; }
     try {
         const user = await getMe();
         renderRoleSwitcher(user.roles);

@@ -1,7 +1,7 @@
 import './style.css';
 import $ from 'jquery';
 import {
-    getToken, getMe,
+    getToken, getUsername, getMe,
     getSubmissions, scoreSubmission, addComment, renderRoleSwitcher,
     Submission,
 } from './api';
@@ -13,7 +13,7 @@ let curFilter = 'pending';
 
 $(async () => {
     setupInstructions('reviewer');
-    if (!getToken()) { window.location.href = 'index.html'; return; }
+    if (!getToken() || !getUsername()) { window.location.href = 'index.html'; return; }
 
     try {
         const user = await getMe();

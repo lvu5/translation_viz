@@ -1,13 +1,14 @@
 import './style.css';
 import $ from 'jquery';
 
-import { getToken, getMe } from './api';
+import { getToken, getUsername, getMe } from './api';
 import { setupInstructions } from './utils';
 
 $(async () => {
     setupInstructions('all');
     const token = getToken();
-    if (token) {
+    const username = getUsername();
+    if (token && username) {
         try {
             const user = await getMe();
             if (!user.name || !user.email) {

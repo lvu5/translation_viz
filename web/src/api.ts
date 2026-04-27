@@ -55,10 +55,16 @@ export function getToken(): string | null {
     return params.get('token');
 }
 
+export function getUsername(): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('user');
+}
+
 // ---------- Generic fetch ----------
 
 function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
     const token = getToken();
+    const username = getUsername();
     return new Promise<T>((resolve, reject) => {
         const settings: JQuery.AjaxSettings = {
             url,
@@ -71,7 +77,12 @@ function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
                 reject(detail);
             },
         };
-        if (token) settings.headers = { Authorization: `Bearer ${token}` };
+        if (token && username) {
+            settings.headers = {
+                'Authorization': `Bearer ${token}`,
+                'X-User-ID': username
+            };
+        }
         if (data !== undefined) settings.data = JSON.stringify(data);
         $.ajax(settings);
     });

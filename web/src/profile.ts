@@ -1,12 +1,12 @@
 import './style.css';
 import $ from 'jquery';
 
-import { getToken, getMe, updateProfile } from './api';
+import { getToken, getUsername, getMe, updateProfile } from './api';
 import { setupInstructions } from './utils';
 
 $(async () => {
     setupInstructions('all');
-    if (!getToken()) { window.location.href = 'index.html'; return; }
+    if (!getToken() || !getUsername()) { window.location.href = 'index.html'; return; }
 
     try {
         const user = await getMe();

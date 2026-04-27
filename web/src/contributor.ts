@@ -1,7 +1,7 @@
 import './style.css';
 import $ from 'jquery';
 import {
-    getToken, getMe,
+    getToken, getUsername, getMe,
     translate, verify, createSubmission, updateSubmission, getSubmissions, addComment, renderRoleSwitcher,
     User, Submission, Rule,
 } from './api';
@@ -23,7 +23,7 @@ let rules: Rule[] = [{ type: 'llm', value: '' }];
 
 $(async () => {
     setupInstructions('contributor');
-    if (!getToken()) { window.location.href = 'index.html'; return; }
+    if (!getToken() || !getUsername()) { window.location.href = 'index.html'; return; }
 
     let LANGUAGES: string[] = [];
     try {

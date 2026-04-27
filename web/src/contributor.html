@@ -93,20 +93,7 @@
       flex: 1;
     }
 
-    .lang-input {
-      box-sizing: border-box;
-      height: 35px;
-      padding: 7px 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 5px;
-      background: #fff;
-      width: 100%;
-    }
-
-    textarea,
-    input {
-      font-size: 10pt;
-    }
+    /* .lang-input is now handled by global styles */
   </style>
 </head>
 
@@ -137,20 +124,18 @@
           <div id="lang-row">
             <div>
               <label for="src-lang">Source Language</label>
-              <input type="text" id="src-lang" list="src-langs" value="en" placeholder="e.g. English, custom..."
-                class="lang-input">
+              <input type="text" id="src-lang" list="src-langs" value="English" placeholder="e.g. English, custom...">
               <datalist id="src-langs"></datalist>
             </div>
             <div>
               <label for="tgt-lang">Target Language</label>
-              <input type="text" id="tgt-lang" list="tgt-langs" value="de" placeholder="e.g. German, custom..."
-                class="lang-input">
+              <input type="text" id="tgt-lang" list="tgt-langs" value="German" placeholder="e.g. German, custom...">
               <datalist id="tgt-langs"></datalist>
             </div>
           </div>
 
           <label for="src-text">Input <span class="hint">(the difficult-to-translate text)</span></label>
-          <textarea style="width: calc(100% - 20px);" id="src-text" placeholder="Enter the source text…"></textarea>
+          <textarea id="src-text" placeholder="Enter the source text…"></textarea>
 
           <div
             style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">

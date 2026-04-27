@@ -15,7 +15,9 @@ module.exports = (env, argv) => ({
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../server/static'),
-    clean: true,
+    clean: {
+      keep: /languages\.json/,
+    },
   },
   optimization: {
     minimize: true,

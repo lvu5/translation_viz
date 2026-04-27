@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from .languages import LANGUAGES
 from .services import (
     translate_gemini2_5flash,
     translate_gemma4,
@@ -24,6 +25,8 @@ from .services import (
     verify_llm,
 )
 from .utils import CONTRIBUTOR_QUOTA, DATA_PATH
+
+NAME_TO_CODE = {x["name"].lower(): x["code"] for x in LANGUAGES}
 
 # ---------------------------------------------------------------------------
 # JSON data store
@@ -329,6 +332,11 @@ def translate_submission(req: TranslateReq, user=Depends(_auth)):
             status_code=403, detail="Only contributors can use translation quota"
         )
 
+    source_name = req.source_lang
+    target_name = req.target_lang
+    source_code = NAME_TO_CODE.get(source_name.lower())
+    target_code = NAME_TO_CODE.get(target_name.lower())
+
     quota_used = user["quota_used"]
     if quota_used >= CONTRIBUTOR_QUOTA:
         raise HTTPException(status_code=429, detail="Quota exceeded")
@@ -341,46 +349,57 @@ def translate_submission(req: TranslateReq, user=Depends(_auth)):
             return {"api": name, "translation": None, "error": str(exc)}
 
     async def _run_all():
-        return await asyncio.gather(
-            _run_translate(
-                "MyMemory",
-                translate_mymemory,
-                req.text,
-                req.source_lang,
-                req.target_lang,
-            ),
-            _run_translate(
-                "Google", translate_google, req.text, req.source_lang, req.target_lang
-            ),
+        tasks = []
+        # Standard services (only if codes exist)
+        if source_code and target_code:
+            tasks.append(
+                _run_translate(
+                    "MyMemory",
+                    translate_mymemory,
+                    req.text,
+                    source_code,
+                    target_code,
+                )
+            )
+            tasks.append(
+                _run_translate(
+                    "Google", translate_google, req.text, source_code, target_code
+                )
+            )
+
+        # LLM services (always use names)
+        llm_tasks = [
             _run_translate(
                 "Gemini 2.5 Flash Lite",
                 translate_gemini2_5flash,
                 req.text,
-                req.source_lang,
-                req.target_lang,
+                source_name,
+                target_name,
             ),
             _run_translate(
                 "Gemma 4",
                 translate_gemma4,
                 req.text,
-                req.source_lang,
-                req.target_lang,
+                source_name,
+                target_name,
             ),
             _run_translate(
                 "Qwen 3.6 Plus",
                 translate_qwen3p6,
                 req.text,
-                req.source_lang,
-                req.target_lang,
+                source_name,
+                target_name,
             ),
             _run_translate(
                 "GPT-4.1 Nano",
                 translate_gpt4p1nano,
                 req.text,
-                req.source_lang,
-                req.target_lang,
+                source_name,
+                target_name,
             ),
-        )
+        ]
+        tasks.extend(llm_tasks)
+        return await asyncio.gather(*tasks)
 
     results = asyncio.run(_run_all())
 
@@ -489,6 +508,7 @@ def get_submissions(user=Depends(_auth)):
             key=lambda s: s["created_at"],
             reverse=True,
         )
+
     return rows
 
 

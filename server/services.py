@@ -5,23 +5,23 @@ from openrouter import OpenRouter
 from .utils import get_config
 
 
-def translate_google(text: str, src: str, tgt: str) -> str:
-    return GoogleTranslator(source=src, target=tgt).translate(text)
+def translate_google(text: str, src_lang: str, tgt_lang: str) -> str:
+    return GoogleTranslator(source=src_lang, target=tgt_lang).translate(text)
 
 
-def translate_deepl(text: str, src: str, tgt: str) -> str:
+def translate_deepl(text: str, src_lang: str, tgt_lang: str) -> str:
     DEEPL_API_KEY = get_config("DEEPL_API_KEY", "")
     if not DEEPL_API_KEY:
         raise ValueError("No DeepL API key configured")
     return DeeplTranslator(
-        api_key=DEEPL_API_KEY, source=src, target=tgt, use_free_api=True
+        api_key=DEEPL_API_KEY, source=src_lang, target=tgt_lang, use_free_api=True
     ).translate(text)
 
 
-def translate_mymemory(text: str, src: str, tgt: str) -> str:
+def translate_mymemory(text: str, src_lang: str, tgt_lang: str) -> str:
     resp = httpx.get(
         "https://api.mymemory.translated.net/get",
-        params={"q": text, "langpair": f"{src}|{tgt}"},
+        params={"q": text, "langpair": f"{src_lang}|{tgt_lang}"},
         timeout=10,
     )
     data = resp.json()
@@ -57,21 +57,21 @@ def verify_llm(translation: str, rule: str) -> bool:
         return "pass" in text
 
 
-def translate_gemini2_5flash(text: str, src: str, tgt: str) -> str:
-    prompt = f"Translate the following text from {src} to {tgt}. Output only the translation and nothing else:\n{text}"
+def translate_gemini2_5flash(text: str, src_lang: str, tgt_lang: str) -> str:
+    prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
     return call_llm(prompt, model="google/gemini-2.5-flash-lite")
 
 
-def translate_gemma4(text: str, src: str, tgt: str) -> str:
-    prompt = f"Translate the following text from {src} to {tgt}. Output only the translation and nothing else:\n{text}"
+def translate_gemma4(text: str, src_lang: str, tgt_lang: str) -> str:
+    prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
     return call_llm(prompt, model="google/gemma-4-31b-it")
 
 
-def translate_qwen3p6(text: str, src: str, tgt: str) -> str:
-    prompt = f"Translate the following text from {src} to {tgt}. Output only the translation and nothing else:\n{text}"
+def translate_qwen3p6(text: str, src_lang: str, tgt_lang: str) -> str:
+    prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
     return call_llm(prompt, model="qwen/qwen3.6-plus")
 
 
-def translate_gpt4p1nano(text: str, src: str, tgt: str) -> str:
-    prompt = f"Translate the following text from {src} to {tgt}. Output only the translation and nothing else:\n{text}"
+def translate_gpt4p1nano(text: str, src_lang: str, tgt_lang: str) -> str:
+    prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
     return call_llm(prompt, model="openai/gpt-4.1-nano")

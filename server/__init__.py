@@ -24,10 +24,7 @@ from .services import (
     translate_qwen3p6,
     verify_llm,
 )
-from .utils import (
-    CONTRIBUTOR_QUOTA,
-    DATA_PATH,
-)
+from .utils import CONTRIBUTOR_QUOTA, DATA_PATH
 
 # ---------------------------------------------------------------------------
 # JSON data store

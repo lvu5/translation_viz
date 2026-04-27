@@ -8,18 +8,19 @@ There are three user roles:
 - **Reviewer** browses pending submissions and rejects, accepts, or comments.
 - **Admin** with the ability to create and modify users.
 
-## Quick start
+## Development
 
 ```bash
 # requires python >=3.12, node >= 20
 npm install --prefix web
 npm run build --prefix web/
 pip install -e .
+# prints login URLs
 python3 server
 ```
 
-<!-- TODO: print this link instead -->
-Then open <http://localhost:8000>.
+The `server/` contains source code for the server.
+The `web/` is the frontend code (TypeScript) which, when built, goes to `server/static/` to be served by the server.
 
 ### Default accounts
 

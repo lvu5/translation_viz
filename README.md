@@ -25,6 +25,10 @@ python3 server
 The `server/` contains source code for the server.
 The `web/` is the frontend code (TypeScript) which, when built, goes to `server/static/` to be served by the server.
 
+
+You can specify the `--host`, `--port` and `--host-public` arguments when starting the server. 
+The last is used to show the login URLs.
+
 ### Default accounts
 
 Each account is associated with a magic link that can be used to login from anywhere.

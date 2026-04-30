@@ -35,8 +35,8 @@ from .services import (
     translate_gemma4,
     translate_google,
     translate_gpt4p1nano,
+    translate_llama4,
     translate_mymemory,
-    translate_qwen3p6,
     verify_llm,
 )
 from .utils import CONTRIBUTOR_QUOTA_DEFAULT
@@ -83,15 +83,15 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
 async def register_user(req: ProfileReq):
     if not req.name.strip() or not req.email.strip():
         raise HTTPException(status_code=400, detail="Name and email are required")
-        
+
     users = await get_users()
-    
+
     # Generate unique username from email prefix
     base_username = req.email.split("@")[0].lower()
     base_username = "".join(c for c in base_username if c.isalnum() or c in "._-")
     if not base_username:
         base_username = "user"
-        
+
     username = base_username
     counter = 1
     existing_usernames = {u["username"].lower() for u in users}
@@ -256,13 +256,31 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
 
     tasks = []
     if source_code and target_code:
-        tasks.append(_run_translate("MyMemory", translate_mymemory, req.text, source_code, target_code))
-        tasks.append(_run_translate("Google", translate_google, req.text, source_code, target_code))
+        tasks.append(
+            _run_translate(
+                "MyMemory", translate_mymemory, req.text, source_code, target_code
+            )
+        )
+        tasks.append(
+            _run_translate(
+                "Google", translate_google, req.text, source_code, target_code
+            )
+        )
     tasks += [
-        _run_translate("Gemini 2.5 Flash Lite", translate_gemini2_5flash, req.text, source_name, target_name),
+        _run_translate(
+            "Gemini 2.5 Flash",
+            translate_gemini2_5flash,
+            req.text,
+            source_name,
+            target_name,
+        ),
         _run_translate("Gemma 4", translate_gemma4, req.text, source_name, target_name),
-        _run_translate("Qwen 3.6 Plus", translate_qwen3p6, req.text, source_name, target_name),
-        _run_translate("GPT-4.1 Nano", translate_gpt4p1nano, req.text, source_name, target_name),
+        _run_translate(
+            "Llama 4 Scout", translate_llama4, req.text, source_name, target_name
+        ),
+        _run_translate(
+            "GPT-4.1 Nano", translate_gpt4p1nano, req.text, source_name, target_name
+        ),
     ]
     results = await asyncio.gather(*tasks)
 
@@ -293,7 +311,9 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
                     raise HTTPException(status_code=502, detail=f"LLM API error: {exc}")
         return True
 
-    results = await asyncio.gather(*[_verify_single(req.source_text, t) for t in req.translations])
+    results = await asyncio.gather(
+        *[_verify_single(req.source_text, t) for t in req.translations]
+    )
     return {"results": results}
 
 
@@ -336,7 +356,9 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
 
 
 @router.put("/api/submissions/{sid}")
-async def update_submission(sid: int, req: SubmissionReq, user=Depends(get_current_user)):
+async def update_submission(
+    sid: int, req: SubmissionReq, user=Depends(get_current_user)
+):
     submission = await get_submission_by_id(sid)
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")

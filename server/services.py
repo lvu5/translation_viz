@@ -69,9 +69,9 @@ async def translate_gemma4(text: str, src_lang: str, tgt_lang: str) -> str:
     return await call_llm(prompt, model="google/gemma-4-31b-it")
 
 
-async def translate_qwen3p6(text: str, src_lang: str, tgt_lang: str) -> str:
+async def translate_llama4(text: str, src_lang: str, tgt_lang: str) -> str:
     prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
-    return await call_llm(prompt, model="qwen/qwen3.6-plus")
+    return await call_llm(prompt, model="meta-llama/llama-4-scout:nitro")
 
 
 async def translate_gpt4p1nano(text: str, src_lang: str, tgt_lang: str) -> str:

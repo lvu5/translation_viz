@@ -29,6 +29,8 @@ from .services import (
 )
 from .utils import CONTRIBUTOR_QUOTA_DEFAULT
 
+NAME_TO_CODE = {x["name"].lower(): x["code"] for x in LANGUAGES}
+
 router = APIRouter()
 
 # --- Users ---
@@ -167,8 +169,6 @@ def admin_update_roles(uid: int, req: RolesReq, user=Depends(get_current_user)):
 
 # --- Translate ---
 
-NAME_TO_CODE = {x["name"].lower(): x["code"] for x in LANGUAGES}
-
 
 @router.post("/api/translate-submission")
 def translate_submission(req: TranslateReq, user=Depends(get_current_user)):
@@ -284,7 +284,9 @@ def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
                     return False
             elif rule.type == "llm":
                 try:
-                    res = await asyncio.to_thread(verify_llm, source_text, translation, rule.value)
+                    res = await asyncio.to_thread(
+                        verify_llm, source_text, translation, rule.value
+                    )
                     if not res:
                         return False
                 except Exception as exc:
@@ -292,7 +294,9 @@ def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
         return True
 
     async def _run_verify():
-        return await asyncio.gather(*[_verify_single(req.source_text, t) for t in req.translations])
+        return await asyncio.gather(
+            *[_verify_single(req.source_text, t) for t in req.translations]
+        )
 
     results = asyncio.run(_run_verify())
     return {"results": results}

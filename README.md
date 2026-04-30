@@ -1,10 +1,10 @@
-# Last Translation Benchmark (WIP 🚧)
+# Last Translation Benchmark
 
-Effort to collecting verifiable difficult-to-translate texts.
+Effort to collecting verifiable difficult-to-translate inputs.
 Heavily work in progress, do not use.
 
 There are three user roles:
-- **Contributor** suggests source texts (planned video, images, and speech), auto-translate them, defines a verification method (an LLM prompt), and submits.
+- **Contributor** suggests inputs (text,s video, images, and speech), auto-translate them, defines a verification method (e.g. an LLM prompt), and submits.
 - **Reviewer** browses pending submissions and rejects, accepts, or comments.
 - **Admin** with the ability to create and modify users.
 

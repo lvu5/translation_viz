@@ -55,19 +55,13 @@ $(async () => {
 
     $('#add-rule-btn').on('click', () => {
         if (rules.length >= 10) return;
-        const type = rules.some(r => r.type === 'llm') ? '' : 'llm';
-        rules.push({ type, value: '' });
+        rules.push({ type: 'llm', value: '' });
         renderRules();
     });
 
     $('#rules-container').on('change', '.rule-type', function () {
         const index = $(this).closest('.rule-row').data('index');
         const newType = $(this).val() as any;
-        if (newType === 'llm' && rules.some((r, i) => r.type === 'llm' && i !== index)) {
-            alert('At most one LLM-verification rule is allowed.');
-            renderRules();
-            return;
-        }
         rules[index].type = newType;
         renderRules();
     });
@@ -122,7 +116,6 @@ $(async () => {
 
         if (translations.length === 0) { $('#verify-result').html('<span class="msg-err">No translations available</span>'); return; }
         if (rules.length === 0) { $('#verify-result').html('<span class="msg-err">No verification rules</span>'); return; }
-        if (rules.some(r => !r.type)) { $('#verify-result').html('<span class="msg-err">All rules must have a type selected</span>'); return; }
         if (rules.some(r => !r.value.trim())) { $('#verify-result').html('<span class="msg-err">All rules must have content</span>'); return; }
 
         $('#verify-result').html('<span style="color:#64748b;font-size:0.9em">Verifying...</span>');
@@ -183,10 +176,6 @@ $(async () => {
 
         if (translations.length === 0 || rules.length === 0) {
             $('#submit-status').html('<span class="msg-err">Please fill all required fields, translate and verify translations first</span>');
-            return;
-        }
-        if (rules.some(r => !r.type)) {
-            $('#submit-status').html('<span class="msg-err">All rules must have a type selected</span>');
             return;
         }
         if (rules.some(r => !r.value.trim())) {
@@ -320,8 +309,6 @@ function renderStats(used: number, quota: number, points: number): void {
 function renderRules() {
     const $container = $('#rules-container');
     $container.empty();
-    const hasLlm = rules.some(r => r.type === 'llm');
-
     rules.forEach((rule, index) => {
         let placeholder = "Enter rule content...";
         if (rule.type === 'llm') placeholder = "Describe what the LLM should check (e.g. 'Should be sarcastic.')";
@@ -332,8 +319,7 @@ function renderRules() {
             <div class="rule-row" data-index="${index}" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
                 <div style="display: flex; flex-direction: column; gap: 4px; width: 140px;">
                     <select class="rule-type" style="width: 100%; height: 32px; padding: 0 5px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 0.85em; margin-bottom: 0px;">
-                        <option value="" ${rule.type === '' ? 'selected' : ''} disabled>Select type...</option>
-                        <option value="llm" ${rule.type === 'llm' ? 'selected' : ''} ${hasLlm && rule.type !== 'llm' ? 'disabled' : ''}>LLM-verification</option>
+                        <option value="llm" ${rule.type === 'llm' || rule.type === '' ? 'selected' : ''}>LLM-verification</option>
                         <option value="contains" ${rule.type === 'contains' ? 'selected' : ''}>Has to contain</option>
                         <option value="not_contains" ${rule.type === 'not_contains' ? 'selected' : ''}>Can't contain</option>
                     </select>

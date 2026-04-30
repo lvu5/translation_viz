@@ -6,6 +6,11 @@ import { setupInstructions } from './utils';
 
 $(async () => {
     setupInstructions('all');
+    
+    $('#register-btn').on('click', () => {
+        window.location.href = 'profile.html';
+    });
+    
     const token = getToken();
     const username = getUsername();
     if (token && username) {

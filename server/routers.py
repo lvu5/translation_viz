@@ -79,6 +79,42 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
     return {"ok": True}
 
 
+@router.post("/api/register", status_code=201)
+async def register_user(req: ProfileReq):
+    if not req.name.strip() or not req.email.strip():
+        raise HTTPException(status_code=400, detail="Name and email are required")
+        
+    users = await get_users()
+    
+    # Generate unique username from email prefix
+    base_username = req.email.split("@")[0].lower()
+    base_username = "".join(c for c in base_username if c.isalnum() or c in "._-")
+    if not base_username:
+        base_username = "user"
+        
+    username = base_username
+    counter = 1
+    existing_usernames = {u["username"].lower() for u in users}
+    while username.lower() in existing_usernames:
+        username = f"{base_username}{counter}"
+        counter += 1
+
+    new_user = {
+        "id": await next_user_id(),
+        "username": username,
+        "magic_token": secrets.token_urlsafe(24),
+        "roles": ["contributor"],
+        "quota": CONTRIBUTOR_QUOTA_DEFAULT,
+        "quota_used": 0,
+        "name": req.name,
+        "affiliation": req.affiliation,
+        "email": req.email,
+        "credit_consent": req.credit_consent,
+    }
+    await save_user(new_user)
+    return {"ok": True}
+
+
 def _admin_user_view(u: dict) -> dict:
     return {
         "id": u["id"],

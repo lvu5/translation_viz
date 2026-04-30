@@ -1,4 +1,16 @@
+DirectoryIndex proxy.php
+
 RewriteEngine On
+RewriteBase /
+
+# 1. Prevent infinite internal redirect loops
+RewriteCond %{ENV:REDIRECT_STATUS} 200
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_URI} ^/proxy\.php$ [NC]
+RewriteRule ^ - [L]
+
+# 2. Forward everything else to the proxy
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+RewriteRule ^(.*)$ proxy.php [QSA,L]

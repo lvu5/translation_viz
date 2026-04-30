@@ -2,10 +2,12 @@
 Last Translation Benchmark — FastAPI backend
 """
 
+import logging
 import os
+import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -15,6 +17,8 @@ from .routers import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logging.getLogger("uvicorn.access").addFilter(lambda record: False)
+    logging.getLogger("gunicorn.access").addFilter(lambda record: False)
     await init_db()
     print("\n=== Magic login links ===")
     host_public = os.getenv("HOST_PUBLIC")
@@ -31,6 +35,34 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(title="Last Translation Benchmark", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def custom_logging(request: Request, call_next):
+    body_bytes = await request.body()
+
+    async def receive():
+        return {"type": "http.request", "body": body_bytes}
+
+    request._receive = receive
+    response = await call_next(request)
+
+    # if .css or .js, don't print
+    if request.url.path.endswith(".css") or request.url.path.endswith(".js"):
+        return response
+
+    print(
+        time.strftime("[%Y-%m-%d %H:%M]"),
+        response.status_code,
+        request.headers.get("x-user-id") or request.query_params.get("user"),
+        request.method,
+        request.url.path,
+        flush=True,
+    )
+
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

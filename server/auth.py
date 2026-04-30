@@ -11,6 +11,7 @@ async def get_current_user(
 ) -> dict:
     if not authorization or not authorization.startswith("Bearer ") or not x_user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    # Strip `Bearer `
     token = authorization[7:]
     user = await get_user_by_username(x_user_id)
     if user is None or not secrets.compare_digest(user.get("magic_token", ""), token):

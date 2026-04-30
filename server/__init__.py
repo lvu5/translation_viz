@@ -47,8 +47,8 @@ async def custom_logging(request: Request, call_next):
     request._receive = receive
     response = await call_next(request)
 
-    # if .css or .js, don't print
-    if request.url.path.endswith(".css") or request.url.path.endswith(".js"):
+    # mask all common file requests
+    if request.url.path.endswith((".css", ".js", ".svg", ".png", ".json")):
         return response
 
     print(

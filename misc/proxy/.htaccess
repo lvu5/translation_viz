@@ -4,6 +4,11 @@ DirectoryIndex proxy.php
 RewriteEngine On
 RewriteBase /
 
+# Force HTTPS for the specific subdomain
+RewriteCond %{HTTP_HOST} ^last-translation-benchmark\.vilda\.net$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # 1. Prevent infinite internal redirect loops
 RewriteCond %{ENV:REDIRECT_STATUS} 200
 RewriteRule ^ - [L]

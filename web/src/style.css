@@ -557,7 +557,7 @@ textarea {
   line-height: 1.6;
   max-height: 60vh;
   overflow-y: auto;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 #instructions-box h2 {
@@ -573,7 +573,8 @@ textarea {
   margin-top: 0;
 }
 
-#instructions-box ul, #instructions-box ol {
+#instructions-box ul,
+#instructions-box ol {
   padding-left: 20px;
 }
 
@@ -596,4 +597,10 @@ textarea {
 .btn-instructions:hover {
   background: #475569;
   color: #fff;
+}
+
+#instructions-box>div:has(> strong:first-child) {
+  background-color: #eee;
+  padding: 3px;
+  padding-left: 6px;
 }

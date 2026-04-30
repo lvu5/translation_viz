@@ -1,4 +1,5 @@
 config.toml
+scripts/data/
 
 data/
 static/

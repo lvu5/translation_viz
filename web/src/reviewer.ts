@@ -109,7 +109,7 @@ $(async () => {
 async function loadSubmissions(): Promise<void> {
     $('#sen-list').html('<div class="empty">Loading…</div>');
     try {
-        allSugs = await getSubmissions();
+        allSugs = await getSubmissions('reviewer');
         populateFilters();
         renderList();
     } catch {

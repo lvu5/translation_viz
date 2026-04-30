@@ -111,8 +111,8 @@ export function verify(
     );
 }
 
-export function getSubmissions() {
-    return apiCall<Submission[]>('GET', 'api/submissions');
+export function getSubmissions(mode: 'contributor' | 'reviewer' = 'contributor') {
+    return apiCall<Submission[]>('GET', `api/submissions?mode=${mode}`);
 }
 
 export function createSubmission(data: {

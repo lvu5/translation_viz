@@ -384,8 +384,8 @@ async def update_submission(
 
 
 @router.get("/api/submissions")
-async def list_submissions(user=Depends(get_current_user)):
-    if "reviewer" in user.get("roles", []):
+async def list_submissions(user=Depends(get_current_user), mode: str = "contributor"):
+    if mode == "reviewer" and "reviewer" in user.get("roles", []):
         rows = sorted(
             await db_get_submissions(),
             key=lambda s: (s["points"], s["created_at"]),

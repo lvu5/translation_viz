@@ -354,7 +354,7 @@ function renderApiResults(): void {
 
 async function loadMySubmissions(): Promise<void> {
     try {
-        const sugs = await getSubmissions();
+        const sugs = await getSubmissions('contributor');
         allMySubmissions = sugs;
         const $el = $('#my-submissions');
         if (sugs.length == 0) {

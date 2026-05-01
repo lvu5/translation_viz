@@ -49,7 +49,7 @@ function renderTable(users: AdminUser[]): void {
     }).join('');
 
     $('#user-table').html(`<table>
-        <thead><tr><th>Username</th><th>Roles</th><th>Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used / Quota</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Username</th><th>Roles</th><th class="scope-cell">Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used / Quota</th><th>Actions</th></tr></thead>
         <tbody>${rows}</tbody>
     </table>`);
 
@@ -119,7 +119,7 @@ function renderTable(users: AdminUser[]): void {
         const u = allUsers.find(u => u.id === uid);
         if (!u) return;
         const current = (u.review_langs && u.review_langs.length) ? u.review_langs.join(',') : '';
-        const input = prompt('Language scope (comma-separated, empty = all, e.g. English,Czech,German).\nTo prevent someone from reviewing entirely, remove the reviewer role instead.', current);
+        const input = prompt('Language scope (comma-separated, empty = all, e.g. English,Czech,German).\nIf you wish to prevent someone from reviewing, then remove the review role.', current);
         if (input === null) return;
         if (input.includes(', ')) { alert('Use commas without spaces (e.g. English,Czech,German).'); return; }
         const langs = input.trim() ? input.split(',').filter(Boolean) : [];

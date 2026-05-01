@@ -184,18 +184,22 @@
     }
 
     .scope-cell {
-      font-family: monospace;
-      font-size: 0.85em;
-      cursor: pointer;
-      color: #475569;
-      width: 140px;
-      max-width: 140px;
+      width: 100px;
+      max-width: 100px;
+      min-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .scope-cell:hover {
+    td.scope-cell {
+      font-family: monospace;
+      font-size: 0.85em;
+      cursor: pointer;
+      color: #475569;
+    }
+
+    td.scope-cell:hover {
       background: #f1f5f9;
     }
   </style>

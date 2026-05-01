@@ -152,7 +152,7 @@ $(async () => {
         adminName = user.name || user.username;
         renderRoleSwitcher(user.roles);
         if (!user.roles.includes('admin')) { accessDenied(user.roles, 'admin'); return; }
-        $('#admin-info').text(`${user.username} (Admin)`);
+        $('#admin-info').text(user.username);
         allUsers = await getAdminUsers();
         applyFilter();
     } catch { window.location.href = 'index.html'; }

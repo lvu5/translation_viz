@@ -118,14 +118,14 @@ function renderTable(users: AdminUser[]): void {
         const uid = $(this).data('uid');
         const u = allUsers.find(u => u.id === uid);
         if (!u) return;
-        let raw = prompt('Review scope (regex, * = all, e.g. Czech->* or (Czech|German)->(Czech|German)):', u.review_scope || '*');
-        if (raw === null) return;
-        raw = raw.trim() || '*';
-        if (!raw.includes('->') && raw !== '*') {
-            raw = `${raw}->${raw}`;
+        let newScope = prompt('Review scope (regex, * = all, e.g. Czech->* or (Czech|German)->(Czech|German)):', u.review_scope || '*');
+        if (newScope === null) return;
+        newScope = newScope.trim() || '*';
+        if (!newScope.includes('->') && newScope !== '*') {
+            newScope = `${newScope}->${newScope}`;
         }
         try {
-            const res = await updateAdminReviewScope(uid, raw);
+            const res = await updateAdminReviewScope(uid, newScope);
             u.review_scope = res.review_scope;
             applyFilter();
             showToast('Review scope updated');

@@ -189,6 +189,10 @@ async def admin_update_roles(uid: int, req: RolesReq, user=Depends(get_current_u
 @router.post("/api/admin/users/{uid}/review-scope")
 async def admin_update_review_scope(uid: int, req: ReviewScopeReq, user=Depends(get_current_user)):
     require_admin(user)
+    try:
+        re.compile(_scope_pattern(req.review_scope))
+    except re.error as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid review scope pattern: {exc}")
     target = await get_user_by_id(uid)
     if target is None:
         raise HTTPException(status_code=404, detail="User not found")

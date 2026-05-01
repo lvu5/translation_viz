@@ -32,6 +32,7 @@ function renderTable(users: AdminUser[]): void {
             <td>${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
             <td class="email-cell">${u.email ? `<a href="mailto:${esc(u.email)}">${esc(u.email)}</a>` : '<span class="muted">—</span>'}</td>
             <td style="text-align:right;color:#64748b;white-space:nowrap">${u.quota_used} / ${u.quota}</td>
+            <td style="text-align:right;font-weight:700">${u.total_points}</td>
             <td>
               <div class="action-btns">
                 <a class="act-btn act-copy" data-uid="${u.id}" title="Login link" href="${link}">🔗</a>
@@ -49,7 +50,7 @@ function renderTable(users: AdminUser[]): void {
     }).join('');
 
     $('#user-table').html(`<table>
-        <thead><tr><th>Username</th><th>Roles</th><th class="scope-cell">Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used / Quota</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Username</th><th>Roles</th><th class="scope-cell">Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used / Quota</th><th style="text-align:right">Points</th><th>Actions</th></tr></thead>
         <tbody>${rows}</tbody>
     </table>`);
 

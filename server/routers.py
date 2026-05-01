@@ -115,7 +115,9 @@ async def register_user(req: ProfileReq):
     return {"ok": True}
 
 
-def _admin_user_view(u: dict) -> dict:
+async def _admin_user_view(u: dict) -> dict:
+    submissions = await db_get_submissions(user_id=u["id"])
+    total_points = sum(s.get("points", 0) for s in submissions if s.get("points", 0) >= 0)
     return {
         "id": u["id"],
         "username": u["username"],
@@ -128,13 +130,15 @@ def _admin_user_view(u: dict) -> dict:
         "quota": u.get("quota", CONTRIBUTOR_QUOTA_DEFAULT),
         "quota_used": u.get("quota_used", 0),
         "review_langs": u.get("review_langs", []),
+        "total_points": total_points,
     }
 
 
 @router.get("/api/admin/users")
 async def admin_users(user=Depends(get_current_user)):
     require_admin(user)
-    return [_admin_user_view(u) for u in await get_users()]
+    users = await get_users()
+    return await asyncio.gather(*[_admin_user_view(u) for u in users])
 
 @router.delete("/api/admin/users/{uid}", status_code=200)
 async def admin_delete_user(uid: int, user=Depends(get_current_user)):
@@ -182,7 +186,7 @@ async def admin_update_roles(uid: int, req: RolesReq, user=Depends(get_current_u
         raise HTTPException(status_code=400, detail=f"Invalid roles: {bad}")
     target["roles"] = req.roles
     await save_user(target)
-    return _admin_user_view(target)
+    return await _admin_user_view(target)
 
 
 @router.post("/api/admin/users/{uid}/review-scope")
@@ -193,7 +197,7 @@ async def admin_update_review_scope(uid: int, req: ReviewScopeReq, user=Depends(
         raise HTTPException(status_code=404, detail="User not found")
     target["review_langs"] = req.review_langs
     await save_user(target)
-    return _admin_user_view(target)
+    return await _admin_user_view(target)
 
 
 def _submission_matches_scope(submission: dict, review_langs: list[str]) -> bool:

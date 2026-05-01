@@ -168,6 +168,7 @@ export interface AdminUser {
     credit_consent: boolean;
     quota: number;
     quota_used: number;
+    total_points: number;
     review_langs: string[];
 }
 

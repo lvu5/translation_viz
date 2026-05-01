@@ -26,13 +26,13 @@ function renderTable(users: AdminUser[]): void {
         }).join('');
         return `<tr data-uid="${u.id}">
             <td><span class="uname">${esc(u.username)}</span></td>
-            <td>${rolesHtml}</td>
+            <td style="width:1%;white-space:nowrap">${rolesHtml}</td>
             <td class="scope-cell" data-uid="${u.id}" title="Click to edit language scope">${u.review_langs && u.review_langs.length ? esc(u.review_langs.join(',')) : '<span class="muted">all</span>'}</td>
             <td>${u.name ? esc(u.name) : '<span class="muted">—</span>'}</td>
             <td>${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
             <td class="email-cell">${u.email ? `<a href="mailto:${esc(u.email)}">${esc(u.email)}</a>` : '<span class="muted">—</span>'}</td>
-            <td style="text-align:right;color:#64748b;white-space:nowrap">${u.quota_used} / ${u.quota}</td>
-            <td style="text-align:right;font-weight:700">${u.total_points}</td>
+            <td style="text-align:right">${u.quota_used} / ${u.quota}</td>
+            <td style="text-align:right">${u.total_accepted} / ${u.total_submitted}</td>
             <td>
               <div class="action-btns">
                 <a class="act-btn act-copy" data-uid="${u.id}" title="Login link" href="${link}">🔗</a>
@@ -50,7 +50,7 @@ function renderTable(users: AdminUser[]): void {
     }).join('');
 
     $('#user-table').html(`<table>
-        <thead><tr><th>Username</th><th>Roles</th><th class="scope-cell">Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used / Quota</th><th style="text-align:right">Points</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Username</th><th style="width:1%;white-space:nowrap">Roles</th><th class="scope-cell">Scope</th><th>Name</th><th>Affiliation</th><th>Email</th><th style="text-align:right">Used&nbsp;/<br>Quota</th><th style="text-align:right">Accepted&nbsp;/<br>Submitted</th><th>Actions</th></tr></thead>
         <tbody>${rows}</tbody>
     </table>`);
 

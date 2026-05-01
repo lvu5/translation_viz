@@ -49,7 +49,7 @@ $(async () => {
     }
 
     $('#ann-info').text(currentUser.username);
-    renderStats(currentUser.quota_used, currentUser.quota, currentUser.total_points);
+    renderStats(currentUser.quota_used, currentUser.quota, currentUser.total_accepted);
     loadMySubmissions();
     renderRules();
 
@@ -92,7 +92,7 @@ $(async () => {
             lastResults = data.results;
             currentUser!.quota_used = data.quota_used;
             currentUser!.quota = data.quota;
-            renderStats(data.quota_used, data.quota, currentUser!.total_points);
+            renderStats(data.quota_used, data.quota, currentUser!.total_accepted);
             renderApiResults();
             lastResults.forEach(r => r.verified = null);
             ownVerified = null;
@@ -313,9 +313,9 @@ $(async () => {
 
 // ---- Stats bar ----
 
-function renderStats(used: number, quota: number, points: number): void {
+function renderStats(used: number, quota: number, accepted: number): void {
     $('#quota-text').text(`Used: ${used}, Quota: ${quota}`);
-    $('#total-points').text(String(points));
+    $('#total-points').text(accepted);
 }
 
 function renderRules() {

@@ -51,13 +51,14 @@ router = APIRouter()
 @router.get("/api/me")
 async def me(user=Depends(get_current_user)):
     submissions = await db_get_submissions(user_id=user["id"])
-    total_points = sum(s["points"] for s in submissions if s["points"] >= 0)
+    total_accepted = sum(1 for s in submissions if s.get("points") == 1)
     return {
         "username": user["username"],
         "roles": user["roles"],
         "quota": user["quota"],
         "quota_used": user["quota_used"],
-        "total_points": total_points,
+        "total_accepted": total_accepted,
+        "total_submitted": len(submissions),
         "name": user.get("name", ""),
         "affiliation": user.get("affiliation", ""),
         "email": user.get("email", ""),
@@ -117,7 +118,7 @@ async def register_user(req: ProfileReq):
 
 async def _admin_user_view(u: dict) -> dict:
     submissions = await db_get_submissions(user_id=u["id"])
-    total_points = sum(s.get("points", 0) for s in submissions if s.get("points", 0) >= 0)
+    total_accepted = sum(1 for s in submissions if s.get("points") == 1)
     return {
         "id": u["id"],
         "username": u["username"],
@@ -130,7 +131,8 @@ async def _admin_user_view(u: dict) -> dict:
         "quota": u.get("quota", CONTRIBUTOR_QUOTA_DEFAULT),
         "quota_used": u.get("quota_used", 0),
         "review_langs": u.get("review_langs", []),
-        "total_points": total_points,
+        "total_accepted": total_accepted,
+        "total_submitted": len(submissions),
     }
 
 

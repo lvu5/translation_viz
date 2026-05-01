@@ -7,7 +7,8 @@ export interface User {
     roles: string[];
     quota_used: number;
     quota: number;
-    total_points: number;
+    total_accepted: number;
+    total_submitted: number;
     name: string;
     affiliation: string;
     email: string;
@@ -168,7 +169,8 @@ export interface AdminUser {
     credit_consent: boolean;
     quota: number;
     quota_used: number;
-    total_points: number;
+    total_accepted: number;
+    total_submitted: number;
     review_langs: string[];
 }
 

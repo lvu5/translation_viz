@@ -106,8 +106,15 @@ function renderTable(users: AdminUser[]): void {
     });
 
 
-    $('.act-email-link').on('click', async function () {
+    $('.act-email-link').on('click', async function (e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
         const uid = $(this).data('uid');
+
+        if (href) {
+            window.open(href, '_blank');
+        }
+
         try {
             const res = await markInviteSent(uid);
             const u = allUsers.find(u => u.id === uid);

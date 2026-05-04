@@ -26,7 +26,7 @@ function showRoleButtons(user: User): void {
     const search = window.location.search;
     const container = $('#role-buttons');
 
-    container.append(`<span>Hello ${user.name}!</span><br><br>`);
+    container.append(`<span>Hello ${user.name} (${user.username}) from ${user.affiliation}!</span><br><br>`);
 
     if (user.roles.includes('contributor')) {
         container.append(`<a href="contribute${search}" class="btn btn-secondary">✍️ Contribute</a>`);

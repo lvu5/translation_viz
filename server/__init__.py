@@ -55,7 +55,7 @@ async def custom_logging(request: Request, call_next):
     print(
         time.strftime("[%Y-%m-%d %H:%M]"),
         response.status_code,
-        request.headers.get("x-user-id") or request.query_params.get("user"),
+        request.query_params.get("user") or request.cookies.get("ltb_user"),
         request.method,
         request.url.path,
         flush=True,

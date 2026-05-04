@@ -16,20 +16,29 @@ $(async () => {
     if (token && username) {
         try {
             const user = await getMe();
-            redirectByRoles(user.roles);
+            showRoleButtons(user.roles);
         } catch {
             $('#auth-error').show();
         }
     }
 });
 
-function redirectByRoles(roles: string[]): void {
+function showRoleButtons(roles: string[]): void {
+    $('#register-btn').hide();
+    $('#cta-info-unauth').hide();
+
     const search = window.location.search;
-    if (roles.includes('admin')) {
-        window.location.href = 'admin' + search;
-    } else if (roles.includes('reviewer')) {
-        window.location.href = 'review' + search;
-    } else if (roles.includes('contributor')) {
-        window.location.href = 'contribute' + search;
+    const container = $('#role-buttons');
+
+    if (roles.includes('contributor')) {
+        container.append(`<a href="contribute${search}" class="btn btn-success">✍️ Contribute</a>`);
     }
+    if (roles.includes('reviewer')) {
+        container.append(`<a href="review${search}" class="btn btn-success">🔍 Review</a>`);
+    }
+    if (roles.includes('admin')) {
+        container.append(`<a href="admin${search}" class="btn btn-success">⚙️ Admin</a>`);
+    }
+
+    container.css('display', 'flex');
 }

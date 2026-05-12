@@ -109,6 +109,8 @@ $(async () => {
 
     // Test verification (on all translations)
     $('#verify-btn').on('click', async () => {
+        // clear previous status
+        $('#submit-status').text('');
         const mtTranslations = lastResults.map(r => r.translation).filter(t => t !== null) as string[];
         const ownTranslation = String($('#own-translation').val() ?? '').trim();
         const translations = [...mtTranslations];

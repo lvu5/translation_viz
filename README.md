@@ -10,6 +10,15 @@ There are three user roles:
 - **Admin** with the ability to create and modify users.
 Each account is associated with a magic link that can be used to login from anywhere.
 
+If you're interested in contributing, register at [last-translation-benchmark.vilda.net](https://last-translation-benchmark.vilda.net).
+Make sure you read the instructions beforehand.
+
+> Example from English to Czech translation: \
+> **Source**: "_what's the difference between jail and prison?_" \
+> **Translation (Google Translate)**: "_jaký je rozdíl mezi vězením a vězením?_" \
+> **Translation (Human)**: "_jaký je rozdíl mezi vazební věznicí a vězením?_" \
+> **Verification rule**: "_The words for the "jail" and "prison" shouldn't be identical."_
+
 ## Development
 
 ```bash
@@ -36,8 +45,12 @@ Create `config.toml` based on `config.template.toml`
 - `OPENROUTER_API_KEY`: enables real LLM translation and verification
 - `LARA_API_ID` and `LARA_API_SECRET`: enables Lara API-based translation
 
+### Instructions
+
+The instructions in [web/src/instructions.html](web/src/instructions.html) are based on upstream document written in Typst and should not be change locally.
+
 ## Contributing
 
-We welcome bugreports and hands-on contributions.
+We welcome bugreports, hands-on, and research contributions.
 AI-generated PRs are fine as long as you verify everything and take ownership of the changes.
 Reach out to [vzouhar+ltb@ethz.ch](mailto:vzouhar+ltb@ethz.ch) with inquiries.

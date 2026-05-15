@@ -16,7 +16,7 @@ let lastResults: ApiResult[] = [];
 let ownVerified: boolean | null = null;
 let editingSubmissionId: number | null = null;
 let allMySubmissions: Submission[] = [];
-let rules: Rule[] = [{ type: 'llm', value: '' }];
+let rules: Rule[] = [{ value: '' }];
 
 
 
@@ -55,16 +55,10 @@ $(async () => {
 
     $('#add-rule-btn').on('click', () => {
         if (rules.length >= 10) return;
-        rules.push({ type: 'llm', value: '' });
+        rules.push({ value: '' });
         renderRules();
     });
 
-    $('#rules-container').on('change', '.rule-type', function () {
-        const index = $(this).closest('.rule-row').data('index');
-        const newType = $(this).val() as any;
-        rules[index].type = newType;
-        renderRules();
-    });
 
     $('#rules-container').on('input', '.rule-value', function () {
         const index = $(this).closest('.rule-row').data('index');
@@ -246,7 +240,7 @@ $(async () => {
         $('#src-text').val(sub.source_text);
         $('#src-lang').val(sub.source_lang);
         $('#tgt-lang').val(sub.target_lang);
-        rules = sub.verification_rules.length > 0 ? JSON.parse(JSON.stringify(sub.verification_rules)) : [{ type: 'llm', value: '' }];
+        rules = sub.verification_rules.length > 0 ? JSON.parse(JSON.stringify(sub.verification_rules)) : [{ value: '' }];
         renderRules();
 
         // Clear previous MT results and own translation
@@ -302,7 +296,7 @@ $(async () => {
         $('#verify-result, #own-verify-badge').html('');
         lastResults = [];
         ownVerified = null;
-        rules = [{ type: 'llm', value: '' }];
+        rules = [{ value: '' }];
         renderRules();
         $('#api-results-body').hide();
         $('#submit-btn').text('Submit Input, Translations & Rule');
@@ -323,22 +317,13 @@ function renderStats(used: number, quota: number, accepted: number): void {
 function renderRules() {
     const $container = $('#rules-container');
     $container.empty();
+    const disabled = rules.length == 1 ? 'disabled' : '';
     rules.forEach((rule, index) => {
-        let placeholder = "Enter rule content...";
-        if (rule.type === 'llm') placeholder = "Describe what the LLM should check (e.g. 'Should be sarcastic.')";
-        else if (rule.type === 'contains') placeholder = "Enter the exact text that MUST be present in the translation (case-sensitive)";
-        else if (rule.type === 'not_contains') placeholder = "Enter the exact text that MUST NOT be present in the translation (case-sensitive)";
+        const placeholder = "Describe what the LLM should check (e.g. 'Should be sarcastic.')";
 
         const $row = $(`
             <div class="rule-row" data-index="${index}" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
-                <div style="display: flex; flex-direction: column; gap: 4px; width: 140px;">
-                    <select class="rule-type" style="width: 100%; height: 32px; padding: 0 5px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 0.85em; margin-bottom: 0px;">
-                        <option value="llm" ${rule.type === 'llm' || rule.type === '' ? 'selected' : ''}>LLM-verification</option>
-                        <option value="contains" ${rule.type === 'contains' ? 'selected' : ''}>Has to contain</option>
-                        <option value="not_contains" ${rule.type === 'not_contains' ? 'selected' : ''}>Can't contain</option>
-                    </select>
-                    <button class="rule-remove btn btn-secondary" style="padding: 4px 10px; font-size: 0.85em; width: fit-content;">- Remove Rule</button>
-                </div>
+                <button class="rule-remove btn btn-secondary" style="padding: 4px 10px; font-size: 0.85em; width: fit-content; align-self: center;" ${disabled}>- Remove</button>
                 <textarea class="rule-value" placeholder="${escHtml(placeholder)}" style="flex: 1; height: 40px; padding: 7px 10px; border: 1px solid #d1d5db; min-height: 60px; border-radius: 5px; font-size: 0.85em; resize: vertical;">${escHtml(rule.value)}</textarea>
             </div>
         `);
@@ -402,7 +387,7 @@ function renderMySug(s: Submission): string {
         <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
         <div class="sug-mini-footer">
           <div class="sug-mini-rules">
-            ${s.verification_rules.map(r => `<code class="sug-mini-vc" title="${escHtml(r.type)}: ${escHtml(r.value)}">${escHtml(r.value)}</code>`).join('')}
+            ${s.verification_rules.map(r => `<code class="sug-mini-vc" title="LLM Verification: ${escHtml(r.value)}">${escHtml(r.value)}</code>`).join('')}
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button class="btn btn-secondary edit-btn" style="padding: 2px 6px; font-size: 0.75em;" data-id="${s.id}">Edit</button>

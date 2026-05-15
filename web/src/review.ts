@@ -173,10 +173,7 @@ function renderSug(s: Submission): string {
     }).join('');
 
     const ruleRows = s.verification_rules.map(r => {
-        let label = r.type.toUpperCase();
-        if (r.type === 'contains') label = "HAS TO CONTAIN";
-        else if (r.type === 'not_contains') label = "CAN'T CONTAIN";
-        else if (r.type === 'llm') label = "LLM-VERIFICATION";
+        let label = "LLM-VERIFICATION";
 
         return `<div class="sug-box" style="margin-bottom:4px; font-size: 0.9em;">
             <div class="lbl" style="font-size: 0.7em;">RULE: ${label}</div>

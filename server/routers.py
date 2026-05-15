@@ -316,19 +316,12 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
 
     async def _verify_single(source_text: str, translation: str) -> bool:
         for rule in req.verification_rules:
-            if rule.type == "contains":
-                if rule.value not in translation:
+            try:
+                res = await verify_llm(req.source_text, translation, rule.value)
+                if not res:
                     return False
-            elif rule.type == "not_contains":
-                if rule.value in translation:
-                    return False
-            elif rule.type == "llm":
-                try:
-                    res = await verify_llm(req.source_text, translation, rule.value)
-                    if not res:
-                        return False
-                except Exception as exc:
-                    raise HTTPException(status_code=502, detail=f"LLM API error: {exc}")
+            except Exception as exc:
+                raise HTTPException(status_code=502, detail=f"LLM API error: {exc}")
         return True
 
     results = await asyncio.gather(

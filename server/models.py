@@ -9,7 +9,6 @@ class TranslateReq(BaseModel):
     target_lang: str = "de"
 
 class Rule(BaseModel):
-    type: str  # "llm", "contains", "not_contains"
     value: str
 
 class VerifyReq(BaseModel):

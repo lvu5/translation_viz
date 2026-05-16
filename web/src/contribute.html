@@ -92,8 +92,6 @@
     #lang-row>* {
       flex: 1;
     }
-
-    /* .lang-input is now handled by global styles */
   </style>
 </head>
 
@@ -142,13 +140,20 @@
             </div>
           </div>
 
-          <label for="src-text">Input</label>
+          <label for="src-text" id="input-label">Input</label>
           <textarea id="src-text" placeholder="Enter the source text…" style="min-height: 200px;"></textarea>
 
+          <input type="file" id="src-file" style="display: none;" accept=".mp3,.wav,.png,.jpg,.jpeg">
+          <div id="media-preview"></div>
+
           <div
-            style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+            style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+            <button id="add-media-btn" class="btn btn-secondary" style="padding: 3px 10px; font-size: 0.85em;">
+              Add image/audio context</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button class="btn btn-secondary" id="tr-btn">⟳ Translate by all models</button>
+            </div>
             <span id="tr-status" style="font-size:0.85em;color:#64748b"></span>
-            <button class="btn btn-secondary" id="tr-btn">⟳ Translate by all models</button>
           </div>
 
 

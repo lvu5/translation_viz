@@ -37,6 +37,7 @@ export interface Submission {
     user_id: number;
     username: string;
     source_text: string;
+    source_media?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
@@ -112,21 +113,24 @@ export function getMe() {
     return apiCall<User>('GET', 'api/me');
 }
 
-export function translate(text: string, source_lang: string, target_lang: string) {
+export function translate(text: string, source_lang: string, target_lang: string, source_media?: string) {
     return apiCall<{
         results: Array<{ api: string; translation: string | null; error: string | null }>;
         quota_used: number;
         quota: number;
-    }>('POST', 'api/translate-submission', { text, source_lang, target_lang });
+    }>('POST', 'api/translate-submission', { text, source_lang, target_lang, source_media });
 }
+
+
 
 export function verify(
     source_text: string,
     translations: string[],
     verification_rules: Rule[],
+    source_media?: string,
 ) {
     return apiCall<{ results: boolean[]; detail: string }>(
-        'POST', 'api/verify-submission', { source_text, translations, verification_rules }
+        'POST', 'api/verify-submission', { source_text, translations, verification_rules, source_media }
     );
 }
 
@@ -136,6 +140,7 @@ export function getSubmissions(mode: 'contributor' | 'reviewer' = 'contributor')
 
 export function createSubmission(data: {
     source_text: string;
+    source_media?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
@@ -146,6 +151,7 @@ export function createSubmission(data: {
 
 export function updateSubmission(id: number, data: {
     source_text: string;
+    source_media?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];

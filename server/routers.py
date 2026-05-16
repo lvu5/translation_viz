@@ -246,8 +246,10 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             status_code=403, detail="Only contributors can use translation quota"
         )
 
-    if not req.text or not req.text.strip():
-        raise HTTPException(status_code=400, detail="Enter source text first")
+    if not req.text and not req.source_media:
+        raise HTTPException(
+            status_code=400, detail="Enter source text or add media context first"
+        )
 
     if (
         not req.source_lang
@@ -277,6 +279,9 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
                 res = await asyncio.to_thread(func, *args)
             return {"api": name, "translation": res, "error": None}
         except Exception as exc:
+            # skip unsupported models
+            if str(exc).startswith("No endpoint found that support input"):
+                return {"api": name, "translation": None, "error": None}
             return {"api": name, "translation": None, "error": str(exc)}
 
     tasks = [
@@ -288,13 +293,31 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             req.text,
             source_name,
             target_name,
-        ),
-        _run_translate("Gemma 4", translate_gemma4, req.text, source_name, target_name),
-        _run_translate(
-            "Llama 4 Scout", translate_llama4, req.text, source_name, target_name
+            req.source_media,
         ),
         _run_translate(
-            "GPT-4.1 Nano", translate_gpt4p1nano, req.text, source_name, target_name
+            "Gemma 4",
+            translate_gemma4,
+            req.text,
+            source_name,
+            target_name,
+            req.source_media,
+        ),
+        _run_translate(
+            "Llama 4 Scout",
+            translate_llama4,
+            req.text,
+            source_name,
+            target_name,
+            req.source_media,
+        ),
+        _run_translate(
+            "GPT-4.1 Nano",
+            translate_gpt4p1nano,
+            req.text,
+            source_name,
+            target_name,
+            req.source_media,
         ),
     ]
     results = await asyncio.gather(*tasks)
@@ -314,7 +337,9 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
     if not req.verification_rules:
         return {"results": [True] * len(req.translations)}
 
-    async def _verify_single(source_text: str, translation: str) -> bool:
+    async def _verify_single(
+        source_text: str, translation: str, source_media: str = None
+    ) -> bool:
         for rule in req.verification_rules:
             try:
                 res = await verify_llm(req.source_text, translation, rule.value)
@@ -325,7 +350,10 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
         return True
 
     results = await asyncio.gather(
-        *[_verify_single(req.source_text, t) for t in req.translations]
+        *[
+            _verify_single(req.source_text, t, req.source_media)
+            for t in req.translations
+        ]
     )
     return {"results": results}
 
@@ -345,7 +373,7 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
         or not req.source_lang.strip()
         or not req.target_lang
         or not req.target_lang.strip()
-        or not req.source_text
+        or not (req.source_text or req.source_media)
         or not req.translations
         or not req.verification_rules
     ):
@@ -357,6 +385,7 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
         "user_id": user["id"],
         "username": user["username"],
         "source_text": req.source_text,
+        "source_media": req.source_media,
         "source_lang": req.source_lang,
         "target_lang": req.target_lang,
         "verification_rules": [r.model_dump() for r in req.verification_rules],
@@ -381,17 +410,18 @@ async def update_submission(
             status_code=403, detail="Not authorized to update this submission"
         )
 
-    submission.update(
-        {
-            "source_text": req.source_text,
-            "source_lang": req.source_lang,
-            "target_lang": req.target_lang,
-            "verification_rules": [r.model_dump() for r in req.verification_rules],
-            "translations": [t.model_dump() for t in req.translations],
-            "points": -1,
-            "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
-        }
-    )
+    update: dict = {
+        "source_text": req.source_text,
+        "source_lang": req.source_lang,
+        "target_lang": req.target_lang,
+        "verification_rules": [r.model_dump() for r in req.verification_rules],
+        "translations": [t.model_dump() for t in req.translations],
+        "points": -1,
+        "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    if req.source_media is not None:
+        update["source_media"] = req.source_media
+    submission.update(update)
     await save_submission(submission)
     return {"ok": True}
 

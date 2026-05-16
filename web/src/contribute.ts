@@ -16,6 +16,7 @@ let lastResults: ApiResult[] = [];
 let ownVerified: boolean | null = null;
 let editingSubmissionId: number | null = null;
 let allMySubmissions: Submission[] = [];
+let lastMediaData: string | null = null;
 let rules: Rule[] = [{ value: '' }];
 
 
@@ -53,6 +54,39 @@ $(async () => {
     loadMySubmissions();
     renderRules();
 
+    // Input type toggle
+    $('#add-media-btn').on('click', () => {
+        const file = ($('#src-file')[0] as HTMLInputElement).files?.[0];
+        if (file || lastMediaData) {
+            ($('#src-file')[0] as HTMLInputElement).value = '';
+            lastMediaData = null;
+            $('#media-preview').empty();
+            $('#add-media-btn').text('Add image/audio context');
+        } else {
+            $('#src-file').trigger("click");
+        }
+    });
+
+    $('#src-file').on('change', function () {
+        const file = (this as HTMLInputElement).files?.[0];
+        if (!file) return;
+        $('#media-preview').empty();
+
+        const isAudio = /\.(mp3|wav)$/i.test(file.name);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const dataUrl = String(e.target?.result ?? '');
+            lastMediaData = dataUrl;
+            const mediaTag = isAudio ? `<audio class="context_audio" controls src="${dataUrl}"></audio>` : `<img class="context_image" src="${dataUrl}">`;
+
+            $('#media-preview').html(mediaTag);
+            $('#add-media-btn').text('Remove audio/image context');
+        };
+        reader.readAsDataURL(file);
+    });
+
+
+
     $('#add-rule-btn').on('click', () => {
         if (rules.length >= 10) return;
         rules.push({ value: '' });
@@ -72,17 +106,16 @@ $(async () => {
     });
 
 
-    // Auto-translate
+    // Translate by server
     $('#tr-btn').on('click', async () => {
-        const text = String($('#src-text').val() ?? '').trim();
+        const srcLang = String($('#src-lang').val());
+        const tgtLang = String($('#tgt-lang').val());
         $('#tr-btn').prop('disabled', true);
         $('#tr-status').text('Translating…');
         try {
-            const data = await translate(
-                text,
-                String($('#src-lang').val()),
-                String($('#tgt-lang').val()),
-            );
+            const text = String($('#src-text').val() ?? '').trim();
+            const data = await translate(text, srcLang, tgtLang, lastMediaData ?? undefined);
+
             lastResults = data.results;
             currentUser!.quota_used = data.quota_used;
             currentUser!.quota = data.quota;
@@ -94,7 +127,8 @@ $(async () => {
             $('#verify-result').text('');
             $('#tr-status').text('✓ Done');
         } catch (err) {
-            $('#tr-status').text(`✗ ${err}`);
+            console.error('translate error:', err);
+            $('#tr-status').text(`✗ ${err instanceof Error ? err.message : JSON.stringify(err)}`);
         } finally {
             $('#tr-btn').prop('disabled', false);
         }
@@ -117,7 +151,7 @@ $(async () => {
         $('#verify-result').html('<span style="color:#64748b;font-size:0.9em">Verifying...</span>');
         try {
             const source_text = String($('#src-text').val() ?? '').trim();
-            const data = await verify(source_text, translations, rules);
+            const data = await verify(source_text, translations, rules, lastMediaData ?? undefined);
 
             let resultIdx = 0;
             let pass = 0;
@@ -199,13 +233,15 @@ $(async () => {
         }
 
         try {
+            const source_media = lastMediaData ?? undefined;
             if (editingSubmissionId !== null) {
-                await updateSubmission(editingSubmissionId, { source_text, source_lang, target_lang, verification_rules: rules, translations });
+                await updateSubmission(editingSubmissionId, { source_text, source_media, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Updated!</span>');
             } else {
-                await createSubmission({ source_text, source_lang, target_lang, verification_rules: rules, translations });
+                await createSubmission({ source_text, source_media, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
             }
+            lastMediaData = null;
             clearForm();
         } catch (err) {
             $('#submit-status').html(`<span class="msg-err">${escHtml(String(err))}</span>`);
@@ -237,6 +273,17 @@ $(async () => {
         if (!sub) return;
 
         editingSubmissionId = id;
+        if (sub.source_media) {
+            lastMediaData = sub.source_media;
+            const isAudio = /^data:audio/.test(sub.source_media);
+            const mediaTag = isAudio ? `<audio class="context_audio" controls src="${sub.source_media}"></audio>` : `<img class="context_image" src="${sub.source_media}">`;
+            $('#media-preview').html(mediaTag);
+            $('#add-media-btn').text('Remove image/audio');
+        } else {
+            lastMediaData = null;
+            $('#media-preview').empty();
+            $('#add-media-btn').text('Add image/audio');
+        }
         $('#src-text').val(sub.source_text);
         $('#src-lang').val(sub.source_lang);
         $('#tgt-lang').val(sub.target_lang);
@@ -292,7 +339,11 @@ $(async () => {
 
     function clearForm() {
         editingSubmissionId = null;
+        lastMediaData = null;
+        $('#media-preview').empty();
         $('#src-text, #own-translation').val('');
+        ($('#src-file')[0] as HTMLInputElement).value = '';
+        $('#media-status').text('');
         $('#verify-result, #own-verify-badge').html('');
         lastResults = [];
         ownVerified = null;
@@ -304,7 +355,12 @@ $(async () => {
         $('#pass-count').text('');
         loadMySubmissions();
         setTimeout(() => $('#submit-status').html(''), 3000);
+
+        $('#media-preview').empty();
+        $('#add-media-btn').text('Add image/audio context');
     }
+
+
 });
 
 // ---- Stats bar ----
@@ -349,6 +405,7 @@ function renderApiResults(): void {
     $body.show();
 }
 
+
 // ---- Sidebar: my submissions ----
 
 async function loadMySubmissions(): Promise<void> {
@@ -368,6 +425,12 @@ function renderMySug(s: Submission): string {
     const srcPreview = s.source_text.length > 60 ? s.source_text.slice(0, 60) + '…' : s.source_text;
     const firstTr = s.translations[0]?.translation ?? '';
     const trPreview = firstTr.length > 60 ? firstTr.slice(0, 60) + '…' : firstTr;
+    const isAudio = s.source_media && /^data:audio/.test(s.source_media);
+    const mediaHtml = s.source_media
+        ? (isAudio
+            ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
+            : `<img src="${s.source_media}" class="context_image">`)
+        : '';
 
     const comments = s.comments ?? [];
     const threadHtml = renderCommentThread(comments, 'contributor');
@@ -381,6 +444,7 @@ function renderMySug(s: Submission): string {
 
     return `<div class="sug-mini">
         <div class="sug-mini-meta">#${s.id} &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)}</div>
+        ${mediaHtml}
         <div class="sug-mini-text">${escHtml(srcPreview)}</div>
         <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
         <div class="sug-mini-footer">

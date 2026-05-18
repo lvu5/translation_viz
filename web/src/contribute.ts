@@ -357,7 +357,7 @@ $(async () => {
         setTimeout(() => $('#submit-status').html(''), 3000);
 
         $('#media-preview').empty();
-        $('#add-media-btn').text('Add image/audio context');
+        $('#add-media-btn').text('Add image/audio');
     }
 
 

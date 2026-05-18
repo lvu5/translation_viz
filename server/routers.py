@@ -302,7 +302,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
 
     tasks = [
         _run_translate("Lara", translate_lara, req.text, source_name, target_name),
-        _run_translate("Google", translate_google, req.text, source_name, target_name),
+        _run_translate("Google Translate", translate_google, req.text, source_name, target_name),
         _run_translate(
             "Gemini 2.5 Flash",
             functools.partial(translate_openrouter, model="google/gemini-2.5-flash"),

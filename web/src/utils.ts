@@ -44,17 +44,12 @@ export function accessDenied(roles: string[], target: string): void {
     </div>`;
 }
 
-export async function setupInstructions(mode: 'all' | 'contributor' | 'reviewer') {
+export async function setupInstructions(mode: 'all' | 'contributor' | 'reviewer', loadImmediately = false) {
     const btn = $('#show-instructions-btn');
     const box = $('#instructions-box');
-    if (!btn.length || !box.length) return;
+    if (!box.length) return;
 
-    btn.on('click', async () => {
-        if (box.is(':visible')) {
-            box.slideUp();
-            return;
-        }
-
+    const loadContent = async () => {
         if (!box.data('loaded')) {
             const html = await fetch('instructions.html').then(r => r.text());
             const bodyMatch = html.match(/<body>([\s\S]*?)<\/body>/);
@@ -70,6 +65,22 @@ export async function setupInstructions(mode: 'all' | 'contributor' | 'reviewer'
 
             box.html(filtered).data('loaded', true);
         }
-        box.slideDown();
-    });
+    };
+
+    if (loadImmediately) {
+        await loadContent();
+        box.show();
+    }
+
+    if (btn.length) {
+        btn.on('click', async () => {
+            if (box.is(':visible')) {
+                box.slideUp();
+                return;
+            }
+
+            await loadContent();
+            box.slideDown();
+        });
+    }
 }

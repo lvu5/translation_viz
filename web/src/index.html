@@ -8,16 +8,16 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
     .hero {
-      max-width: 600px;
+      max-width: 1100px;
       margin: 100px auto 20px auto;
       padding: 40px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: 2.2em;
+      font-size: 3.2em;
       color: #1e293b;
-      margin-bottom: 30px;
+      margin-bottom: 60px;
       letter-spacing: -0.02em;
     }
 
@@ -25,6 +25,10 @@
       color: #334155;
       line-height: 1.8;
       margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .hero li {
       text-align: left;
     }
 
@@ -79,16 +83,20 @@
 
     <div class="card">
       <p>
-        This platform gathers inputs (text, video, audio, images, documents) that are challenging for modern machine
-        translation systems.
-      </p>
-      <p>
-        Contributors submit these inputs alongside machine translation outputs and a verification rule.
-        With 10 approved submissions, contributors are eligible for inclusion in the upcoming research publication.
+        Current machine translation benchmarks are saturated, and evaluation metrics are either
+        unreliable or unscalable.
+        The Last Translation Benchmark addresses this by curating a dataset of inputs (text, image, audio) that
+        demonstrably break state-of-the-art translation models.
+
+        <br><br>
+        Contribute by submitting an input that modern machine translation models get provably wrong.
+        Provide a robust pass/fail verification rule to automatically evaluate shown and future translations.
+        Contributors with 10 approved submissions are welcome to co-authorship on the resulting publication.
       </p>
 
       <div id="cta-info-unauth" class="cta-info">
-        To access the platform, please use the <strong>magic link</strong> provided you received in your email.
+        To access the interactive platform, please use the <strong>magic link</strong> provided you received in your
+        email.
         <br>
         <br>
         <a href="profile.html" id="register-btn" class="btn btn-success" style="margin-right: 8px; margin-top: 20px;">📝
@@ -102,14 +110,10 @@
       <div id="auth-error" class="auth-error">
         Invalid or expired magic link. Please request a new one from the administrators.
       </div>
-
-      <button id="show-instructions-btn" class="btn btn-instructions" style="margin-top: 20px;">📖 Show guidelines for
-        contributing &
-        reviewing</button>
     </div>
   </div>
 
-  <div class="container" style="text-align: center; margin-top: -60px;">
+  <div class="container" style="text-align: center; margin-top: 0px;">
     <div id="instructions-box" style="text-align: left;"></div>
   </div>
   <div class="hero card" style="padding: 20px 0px;">

@@ -5,7 +5,7 @@ import { getCookie, getMe, logout, User } from './api';
 import { setupInstructions } from './utils';
 
 $(async () => {
-    setupInstructions('all');
+    setupInstructions('all', true);
 
     if (getCookie('ltb_token')) {
         try {

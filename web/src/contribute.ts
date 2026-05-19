@@ -467,7 +467,7 @@ function renderApiResults(): void {
         return `<div class="api-result-row">
           <span class="api-name">${escHtml(r.api)}</span>
           <div class="tr-display">${trText}</div>
-          <span class="verify-pill" data-idx="${i}">${verifyBadge}</span>
+          <span data-idx="${i}">${verifyBadge}</span>
         </div>`;
     }).join(''));
     $body.show();
@@ -490,40 +490,54 @@ async function loadMySubmissions(): Promise<void> {
 }
 
 function renderMySug(s: Submission): string {
-    const srcPreview = s.source_text.length > 60 ? s.source_text.slice(0, 60) + '…' : s.source_text;
-    const firstTr = s.translations[0]?.translation ?? '';
-    const trPreview = firstTr.length > 60 ? firstTr.slice(0, 60) + '…' : firstTr;
     const isAudio = s.source_media && /^data:audio/.test(s.source_media);
     const mediaHtml = s.source_media
         ? (isAudio
             ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
-            : `<img src="${s.source_media}" class="context_image">`)
+            : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`)
         : '';
+
+    let sourceHtml = `<div>${escHtml(s.source_text)}</div>`;
+    if (s.source_instructions) {
+        sourceHtml += `<div style="margin-top: 4px; font-size: 0.9em; color: #475569; border-left: 2px solid #cbd5e1; padding-left: 6px;"><i>Instructions:</i> ${escHtml(s.source_instructions)}</div>`;
+    }
+
+    const humanTr = s.translations.find(t => t.api === 'human')?.translation ?? s.translations[0]?.translation ?? '';
+
+    const rulesHtml = s.verification_rules.map((r, i) => 
+        `<div style="margin-bottom: 2px;">${i + 1}. ${escHtml(r.value)}</div>`
+    ).join('');
 
     const comments = s.comments ?? [];
     const threadHtml = renderCommentThread(comments, currentUser!.username);
 
     const replyHtml = `<div class="comment-reply-row">
             <textarea id="contrib-reply-${s.id}" class="comment-input" placeholder="Add comment…" style="height: 30px; min-height: 30px"></textarea>
-            <div style="text-align:right;margin-top:4px">
-                <button class="contrib-send-btn score-btn" style="background:#64748b;color:#fff" data-id="${s.id}">Reply</button>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn btn-secondary edit-btn" style="padding: 2px 6px; font-size: 0.75em;" data-id="${s.id}">Edit</button>
+                    ${scoreBadge(s.points, (s.comments?.length ?? 0) > 0)}
+                </div>
+                <button class="contrib-send-btn score-btn" style="background:#64748b;color:#fff;margin:0" data-id="${s.id}">Reply</button>
             </div>
            </div>`;
 
     return `<div class="sug-mini">
         <div class="sug-mini-meta">#${s.id} &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)}</div>
-        ${mediaHtml}
-        <div class="sug-mini-text">${escHtml(srcPreview)}</div>
-        <div class="sug-mini-tr">${escHtml(trPreview)}${s.translations.length > 1 ? ` <em>(+${s.translations.length - 1} more)</em>` : ''}</div>
-        <div class="sug-mini-footer">
-          <div class="sug-mini-rules">
-            ${s.verification_rules.map(r => `<code class="sug-mini-vc" title="LLM Verification: ${escHtml(r.value)}">${escHtml(r.value)}</code>`).join('')}
-          </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <button class="btn btn-secondary edit-btn" style="padding: 2px 6px; font-size: 0.75em;" data-id="${s.id}">Edit</button>
-            ${scoreBadge(s.points, (s.comments?.length ?? 0) > 0)}
-          </div>
+        
+        <div style="margin-bottom: 8px; color: #1e293b; font-weight: 500; word-break: break-word;">
+            ${mediaHtml}
+            ${sourceHtml}
         </div>
+        
+        <div style="margin-bottom: 8px; color: #475569; word-break: break-word;">
+            ${escHtml(humanTr)}
+        </div>
+        
+        <div style="margin-bottom: 8px; color: #64748b; font-size: 0.9em; word-break: break-word;">
+            ${rulesHtml || '<div style="color: #94a3b8; font-style: italic;">No rules</div>'}
+        </div>
+
         ${threadHtml}
         ${replyHtml}
     </div>`;

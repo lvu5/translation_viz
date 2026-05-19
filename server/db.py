@@ -26,6 +26,8 @@ async def _next_id(table: str) -> int:
             return (row[0] or 0) + 1
 
 
+
+
 # --- Users ---
 
 
@@ -97,6 +99,13 @@ async def save_submission(submission: dict) -> None:
             (submission["id"], json.dumps(submission)),
         )
         await db.commit()
+
+
+async def delete_submission(sid: int) -> None:
+    async with _open_db() as db:
+        await db.execute("DELETE FROM submissions WHERE id = ?", (sid,))
+        await db.commit()
+
 
 
 async def next_submission_id() -> int:

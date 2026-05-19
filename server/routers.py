@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from .auth import get_current_user, require_admin
 from .db import (
+    delete_submission,
     delete_user,
     get_submission_by_id,
     get_user_by_id,
@@ -468,6 +469,17 @@ async def update_submission(
     submission.update(update)
     await save_submission(submission)
     return {"ok": True}
+
+
+@router.delete("/api/submissions/{sid}")
+async def delete_submission_endpoint(sid: int, user=Depends(get_current_user)):
+    require_admin(user)
+    submission = await get_submission_by_id(sid)
+    if submission is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    await delete_submission(sid)
+    return {"ok": True}
+
 
 
 @router.get("/api/submissions")

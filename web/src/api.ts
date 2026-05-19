@@ -158,6 +158,11 @@ export function updateSubmission(id: number, data: {
     return apiCall<{ ok: boolean }>('PUT', `api/submissions/${id}`, data);
 }
 
+export function deleteSubmission(id: number) {
+    return apiCall<{ ok: boolean }>('DELETE', `api/submissions/${id}`);
+}
+
+
 export function scoreSubmission(id: number, action: 'reject' | 'accept' | 'comment', comment?: string) {
     return apiCall<{ ok: boolean }>('POST', `api/submissions/${id}/score`, { action, comment });
 }

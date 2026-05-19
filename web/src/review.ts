@@ -3,7 +3,7 @@ import $ from 'jquery';
 import {
     getMe, getCookie,
     getSubmissions, scoreSubmission, User, renderRoleSwitcher,
-    Submission,
+    Submission, deleteSubmission,
 } from './api';
 
 import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, setupInstructions } from './utils';
@@ -44,7 +44,7 @@ $(async () => {
     $('#refresh-btn').on('click', loadSubmissions);
 
     // Action buttons (event delegation — list re-renders on each load)
-    $('#sen-list').on('click', '.score-btn', async function () {
+    $('#sen-list').on('click', '.score-btn:not(.comment-send-btn)', async function () {
         const id = parseInt(String($(this).data('id')));
         const action = String($(this).data('action')) as 'reject' | 'accept' | 'comment';
         if (!['reject', 'accept', 'comment'].includes(action)) return;
@@ -55,6 +55,8 @@ $(async () => {
             $box.css('display', visible ? 'none' : 'flex');
             if (!visible) {
                 $box.find('.comment-input').trigger('focus');
+                $(this).hide();
+                $(`#sug-${id} .comment-send-btn`).css('display', 'inline-block');
             }
             return;
         }
@@ -98,11 +100,29 @@ $(async () => {
                 sug.comments.push({ author: currentUser!.username, text, timestamp: new Date().toISOString().slice(0, 16).replace('T', ' ') });
             }
             $input.val('');
-            $(`#comment-box-${id}`).hide();
             $(`#sug-${id} .sug-meta .badge`).replaceWith(scoreBadge(-1, true));
             $(`#comment-thread-${id}`).html(renderCommentThreadWrap(sug?.comments ?? []));
         } catch { alert('Failed to save'); }
         $(this).prop('disabled', false).text('Send');
+    });
+
+    // Delete submission (admin only)
+    $('#sen-list').on('click', '.delete-btn', async function () {
+        const id = parseInt(String($(this).data('id')));
+        if (!confirm(`Are you sure you want to delete submission #${id}? In most cases you should reject with a reason for rejection so that the contributor can fix their submission.`)) return;
+
+        try {
+            await deleteSubmission(id);
+            allSugs = allSugs.filter(s => s.id !== id);
+            $(`#sug-${id}`).fadeOut(250, function () {
+                $(this).remove();
+                if (!$('#sen-list .sug-item').length) {
+                    $('#sen-list').html('<div class="empty">No submissions here</div>');
+                }
+            });
+        } catch (err) {
+            alert('Failed to delete: ' + err);
+        }
     });
 });
 
@@ -167,15 +187,20 @@ function renderSource(s: Submission): string {
 
 function renderSug(s: Submission): string {
     const scoreActions: Array<['reject' | 'accept', string, string]> = [
-        ['reject', '#ef4444', 'Reject'],
-        ['accept', '#22c55e', 'Accept'],
+        ['reject', '#ef4444', 'Reject submission'],
+        ['accept', '#22c55e', 'Accept submission'],
     ];
     const scoreBtns = scoreActions.map(([action, color, label]) => {
         const act = (action === 'accept' && s.points === 1) || (action === 'reject' && s.points === 0) ? ' active' : '';
         return `<button class="score-btn${act}" style="background:${color};color:#fff" data-id="${s.id}" data-action="${action}">${label}</button>`;
     }).join('');
-    const commentBtn = `<button class="score-btn" style="background:#64748b;color:#fff" data-id="${s.id}" data-action="comment">Comment</button>`;
-    const btns = scoreBtns + commentBtn;
+    const deleteBtn = currentUser?.roles.includes('admin')
+        ? `<button class="delete-btn" style="background:none;border:none;text-decoration:underline;cursor:pointer;margin-left:8px;padding:0;font-size:0.8em" data-id="${s.id}">Delete submission</button>`
+        : '';
+    const commentBtn = `<button class="score-btn comment-btn" style="background:#64748b;color:#fff;margin-left:auto" data-id="${s.id}" data-action="comment">Comment submission</button>`;
+    const sendBtn = `<button class="score-btn comment-send-btn" style="background:#64748b;color:#fff;display:none;margin-left:auto" data-id="${s.id}">Send comment</button>`;
+    const btns = scoreBtns + deleteBtn + commentBtn + sendBtn;
+
 
     const trRows = s.translations.map(t => {
         const badge = t.verified === true
@@ -207,7 +232,6 @@ function renderSug(s: Submission): string {
         <div id="comment-thread-${s.id}">${renderCommentThreadWrap(s.comments)}</div>
         <div id="comment-box-${s.id}" style="display:none;margin-top:8px;flex-direction:row;align-items:flex-start;gap:6px">
             <textarea class="comment-input" placeholder="Write a comment for the contributor…" rows="2" style="flex:1;margin-bottom:0"></textarea>
-            <button class="comment-send-btn score-btn" style="background:#64748b;color:#fff;align-self:stretch" data-id="${s.id}">Send</button>
         </div>
         <div class="sug-scoring">${btns}</div>
     </div>`;

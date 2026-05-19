@@ -97,6 +97,8 @@ async def verify_llm(
     text = await call_llm_multimodal(
         prompt, model="google/gemini-2.5-pro", source_media=source_media
     )
+    if text is None:
+        raise ValueError("No response from LLM. Try again later.")
     text = text.strip().lower()
     if "pass" in text and "fail" in text:
         raise ValueError(f"Invalid LLM response: {text}")

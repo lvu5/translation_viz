@@ -50,8 +50,8 @@ function renderTable(users: AdminUser[]): void {
             <td>${u.name ? esc(u.name) : '<span class="muted">—</span>'}</td>
             <td>${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
             <td class="email-cell"><a href="mailto:${esc(u.email)}">${esc(u.email)}</a></td>
-            <td style="text-align:right">${u.quota_used} / ${u.quota}</td>
-            <td style="text-align:right">${u.total_accepted} / ${u.total_submitted}</td>
+            <td style="text-align:right">${u.quota_used}&nbsp;/&nbsp;${u.quota}</td>
+            <td style="text-align:right">${u.total_accepted}&nbsp;/&nbsp;${u.total_submitted}</td>
             <td>${statusBadge}</td>
             <td>
               <div class="action-btns">

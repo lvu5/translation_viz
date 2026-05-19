@@ -8,6 +8,7 @@ class TranslateReq(BaseModel):
     source_lang: str = "en"
     target_lang: str = "de"
     source_media: Optional[str] = None
+    source_instructions: Optional[str] = None
 
 class Rule(BaseModel):
     value: str
@@ -30,6 +31,7 @@ class SubmissionReq(BaseModel):
     verification_rules: list[Rule]
     translations: list[TranslationEntry]
     source_media: Optional[str] = None  # base64 data URL (data:audio/wav;base64,...) for audio/image submissions
+    source_instructions: Optional[str] = None
 
 class ScoreReq(BaseModel):
     action: str  # "reject" | "accept" | "comment"

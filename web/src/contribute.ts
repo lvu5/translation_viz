@@ -72,6 +72,20 @@ $(async () => {
         }
     });
 
+    $('#add-context-btn').on('click', () => {
+        const isHidden = $('#src-instructions').is(':hidden');
+        if (isHidden) {
+            $('#src-instructions').show().trigger('focus');
+            $('#add-context-btn').text('Remove instructions');
+        } else {
+            $('#src-instructions').hide().val('');
+            $('#add-context-btn').text('Add instructions');
+            inputCorrespondsToTranslations = false;
+            invalidateVerification();
+            updateButtonStates();
+        }
+    });
+
     $('#src-file').on('change', function () {
         const file = (this as HTMLInputElement).files?.[0];
         if (!file) return;
@@ -126,7 +140,7 @@ $(async () => {
         updateButtonStates();
     });
 
-    $('#src-text, #src-lang, #tgt-lang').on('input change', () => {
+    $('#src-text, #src-instructions, #src-lang, #tgt-lang').on('input change', () => {
         inputCorrespondsToTranslations = false;
         invalidateVerification();
         updateButtonStates();
@@ -141,7 +155,8 @@ $(async () => {
         $('#tr-status').text('Translating…');
         try {
             const text = String($('#src-text').val() ?? '').trim();
-            const data = await translate(text, srcLang, tgtLang, lastMediaData ?? undefined);
+            const instVal = $('#src-instructions').is(':visible') ? String($('#src-instructions').val() ?? '').trim() : '';
+            const data = await translate(text, srcLang, tgtLang, lastMediaData ?? undefined, instVal || undefined);
 
             lastResults = data.results;
             currentUser!.quota_used = data.quota_used;
@@ -269,11 +284,12 @@ $(async () => {
         $('#submit-btn').prop('disabled', true);
         try {
             const source_media = lastMediaData ?? undefined;
+            const source_instructions = $('#src-instructions').is(':visible') ? String($('#src-instructions').val() ?? '').trim() : undefined;
             if (editingSubmissionId !== null) {
-                await updateSubmission(editingSubmissionId, { source_text, source_media, source_lang, target_lang, verification_rules: rules, translations });
+                await updateSubmission(editingSubmissionId, { source_text, source_media, source_instructions, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Updated!</span>');
             } else {
-                await createSubmission({ source_text, source_media, source_lang, target_lang, verification_rules: rules, translations });
+                await createSubmission({ source_text, source_media, source_instructions, source_lang, target_lang, verification_rules: rules, translations });
                 $('#submit-status').html('<span class="msg-ok">✓ Submitted!</span>');
             }
             lastMediaData = null;
@@ -321,6 +337,15 @@ $(async () => {
             $('#media-preview').empty();
             $('#add-media-btn').text('Add image/audio');
         }
+
+        if (sub.source_instructions) {
+            $('#src-instructions').val(sub.source_instructions).show();
+            $('#add-context-btn').text('Remove instructions');
+        } else {
+            $('#src-instructions').val('').hide();
+            $('#add-context-btn').text('Add instructions');
+        }
+
         $('#src-text').val(sub.source_text);
         $('#src-lang').val(sub.source_lang);
         $('#tgt-lang').val(sub.target_lang);
@@ -398,6 +423,8 @@ $(async () => {
 
         $('#media-preview').empty();
         $('#add-media-btn').text('Add image/audio');
+        $('#src-instructions').val('').hide();
+        $('#add-context-btn').text('Add instructions');
         updateButtonStates();
     }
 
@@ -420,7 +447,7 @@ function renderRules() {
 
         const $row = $(`
             <div class="rule-row" data-index="${index}" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
-                <button class="rule-remove btn btn-secondary" style="padding: 4px 10px; font-size: 0.85em; width: fit-content; align-self: center;" ${disabled}>- Remove</button>
+                <button class="rule-remove btn-underlined" style="font-size: 0.85em; align-self: center;" ${disabled}>- Remove</button>
                 <textarea class="rule-value" placeholder="${escHtml(placeholder)}" style="flex: 1; height: 40px; padding: 7px 10px; border: 1px solid #d1d5db; min-height: 60px; border-radius: 5px; font-size: 0.85em; resize: vertical;">${escHtml(rule.value)}</textarea>
             </div>
         `);

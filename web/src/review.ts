@@ -195,7 +195,7 @@ function renderSug(s: Submission): string {
         return `<button class="score-btn${act}" style="background:${color};color:#fff" data-id="${s.id}" data-action="${action}">${label}</button>`;
     }).join('');
     const deleteBtn = currentUser?.roles.includes('admin')
-        ? `<button class="delete-btn" style="background:none;border:none;text-decoration:underline;cursor:pointer;margin-left:8px;padding:0;font-size:0.8em" data-id="${s.id}">Delete submission</button>`
+        ? `<button class="delete-btn btn-underlined" style="margin-left:8px;font-size:0.8em" data-id="${s.id}">Delete submission</button>`
         : '';
     const commentBtn = `<button class="score-btn comment-btn" style="background:#64748b;color:#fff;margin-left:auto" data-id="${s.id}" data-action="comment">Comment submission</button>`;
     const sendBtn = `<button class="score-btn comment-send-btn" style="background:#64748b;color:#fff;display:none;margin-left:auto" data-id="${s.id}">Send comment</button>`;

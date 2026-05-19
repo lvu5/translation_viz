@@ -37,6 +37,7 @@ export interface Submission {
     username: string;
     source_text: string;
     source_media?: string;
+    source_instructions?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
@@ -111,12 +112,12 @@ export function getMe() {
     return apiCall<User>('GET', 'api/me');
 }
 
-export function translate(text: string, source_lang: string, target_lang: string, source_media?: string) {
+export function translate(text: string, source_lang: string, target_lang: string, source_media?: string, source_instructions?: string) {
     return apiCall<{
         results: Array<{ api: string; translation: string | null; error: string | null }>;
         quota_used: number;
         quota: number;
-    }>('POST', 'api/translate-submission', { text, source_lang, target_lang, source_media });
+    }>('POST', 'api/translate-submission', { text, source_lang, target_lang, source_media, source_instructions });
 }
 
 
@@ -139,6 +140,7 @@ export function getSubmissions(mode: 'contributor' | 'reviewer' = 'contributor')
 export function createSubmission(data: {
     source_text: string;
     source_media?: string;
+    source_instructions?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
@@ -150,6 +152,7 @@ export function createSubmission(data: {
 export function updateSubmission(id: number, data: {
     source_text: string;
     source_media?: string;
+    source_instructions?: string;
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
@@ -246,47 +249,38 @@ export function renderRoleSwitcher(roles: string[]): void {
     if (roles.includes('contributor')) {
         const btn = document.createElement('a');
         btn.textContent = 'Contribute';
-        btn.className = 'btn btn-secondary';
-        btn.style.padding = '3px 8px';
-        btn.style.fontSize = '0.8em';
-        btn.style.textDecoration = 'none';
+        btn.className = 'btn-underlined';
+        btn.style.fontSize = '0.85em';
         btn.href = 'contribute';
         container.appendChild(btn);
     }
     if (roles.includes('reviewer')) {
         const btn = document.createElement('a');
         btn.textContent = 'Review';
-        btn.className = 'btn btn-secondary';
-        btn.style.padding = '3px 8px';
-        btn.style.fontSize = '0.8em';
-        btn.style.textDecoration = 'none';
+        btn.className = 'btn-underlined';
+        btn.style.fontSize = '0.85em';
         btn.href = 'review';
         container.appendChild(btn);
     }
     if (roles.includes('admin')) {
         const btn = document.createElement('a');
         btn.textContent = 'Admin';
-        btn.className = 'btn btn-secondary';
-        btn.style.padding = '3px 8px';
-        btn.style.fontSize = '0.8em';
-        btn.style.textDecoration = 'none';
+        btn.className = 'btn-underlined';
+        btn.style.fontSize = '0.85em';
         btn.href = 'admin';
         container.appendChild(btn);
     }
     const profileBtn = document.createElement('a');
     profileBtn.textContent = 'Profile';
-    profileBtn.className = 'btn btn-secondary';
-    profileBtn.style.padding = '3px 8px';
-    profileBtn.style.fontSize = '0.8em';
-    profileBtn.style.textDecoration = 'none';
+    profileBtn.className = 'btn-underlined';
+    profileBtn.style.fontSize = '0.85em';
     profileBtn.href = 'profile';
     container.appendChild(profileBtn);
 
     const logoutBtn = document.createElement('button');
     logoutBtn.textContent = 'Logout';
-    logoutBtn.className = 'btn btn-secondary';
-    logoutBtn.style.padding = '3px 8px';
-    logoutBtn.style.fontSize = '0.8em';
+    logoutBtn.className = 'btn-underlined';
+    logoutBtn.style.fontSize = '0.85em';
     logoutBtn.addEventListener('click', logout);
     container.appendChild(logoutBtn);
 

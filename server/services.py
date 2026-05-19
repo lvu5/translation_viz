@@ -29,11 +29,11 @@ NAME_TO_CODE_LARA = {
 
 
 def translate_google(
-    text: str, src_lang: str, tgt_lang: str, source_media: str = None
+    text: str, src_lang: str, tgt_lang: str, source_media: str = None, source_instructions: str = None
 ) -> str:
     source_code = NAME_TO_CODE_GOOGLE.get(src_lang.lower(), None)
     target_code = NAME_TO_CODE_GOOGLE.get(tgt_lang.lower(), None)
-    if source_code is None or target_code is None or not text or source_media:
+    if source_code is None or target_code is None or not text or source_media or source_instructions:
         return None
 
     return GoogleTranslator(source=source_code, target=target_code).translate(text)
@@ -53,11 +53,11 @@ def translate_deepl(
 
 
 async def translate_lara(
-    text: str, src_lang: str, tgt_lang: str, source_media: str = None
+    text: str, src_lang: str, tgt_lang: str, source_media: str = None, source_instructions: str = None
 ) -> str:
     source_code = NAME_TO_CODE_LARA.get(src_lang.lower(), None)
     target_code = NAME_TO_CODE_LARA.get(tgt_lang.lower(), None)
-    if source_code is None or target_code is None or not text or source_media:
+    if source_code is None or target_code is None or not text or source_media or source_instructions:
         return None
 
     resp = await asyncio.to_thread(
@@ -149,9 +149,12 @@ async def translate_openrouter(
     tgt_lang: str,
     model: str,
     source_media: str = None,
+    source_instructions: str = None,
 ) -> str:
     if not source_media:
         prompt = f"Translate the following text from {src_lang} to {tgt_lang}. Output only the translation and nothing else:\n{text}"
+        if source_instructions:
+            prompt += f"\nAdditioanl instructions for this translation are: \"{source_instructions}\""
         return await call_llm(prompt, model=model)
 
     # Detect media type for prompt
@@ -166,5 +169,8 @@ async def translate_openrouter(
         )
     else:
         prompt = f"Translate the provide {context_type} from {src_lang} to {tgt_lang}. Output only the textual translation and nothing else."
+
+    if source_instructions:
+        prompt += f"\nAdditioanl instructions for this translation are: \"{source_instructions}\""
 
     return await call_llm_multimodal(prompt, model, source_media)

@@ -142,17 +142,23 @@
 
           <label for="src-text" id="input-label">Input</label>
           <textarea id="src-text" placeholder="Enter the source text…" style="min-height: 200px;"></textarea>
+          <textarea id="src-instructions" placeholder="Enter additional instructions for this translation…"
+            style="min-height: 80px; margin-top: 10px; display: none;"></textarea>
 
           <input type="file" id="src-file" style="display: none;" accept=".mp3,.wav,.png,.jpg,.jpeg">
           <div id="media-preview"></div>
 
           <div style="margin-bottom: 20px;">
-            <button id="add-media-btn" class="btn btn-secondary"
-              style="padding: 3px 10px; font-size: 0.85em; vertical-align: top;">
-              Add image/audio
-            </button>
+            <div style="display: inline-block; width: 150px; vertical-align: top; font-size: 0.85em;">
+              <button id="add-media-btn" class="btn-underlined">
+                Add image/audio
+              </button>
+              <button id="add-context-btn" class="btn-underlined">
+                Add instructions
+              </button>
+            </div>
             <span id="tr-status"
-              style="font-size:0.85em;color:#64748b; display: inline-block; width: 230px; text-align: right;"></span>
+              style="font-size:0.85em;color:#64748b; display: inline-block; width: 210px; text-align: right;"></span>
             <button class="btn btn-secondary" id="tr-btn" style="float: right;">⟳ Translate by all models</button>
             <br>
           </div>
@@ -182,8 +188,8 @@
             <span class="hint">(all rules must pass)</span>
           </label>
           <div id="rules-container" style="margin-bottom: 8px;"></div>
-          <button class="btn btn-secondary" id="add-rule-btn"
-            style="margin-bottom: 12px; padding: 4px 10px; font-size: 0.85em;">+ Add Rule</button>
+          <button class="btn-underlined" id="add-rule-btn" style="margin-bottom: 12px; font-size: 0.85em;">+ Add
+            Rule</button>
 
 
           <div

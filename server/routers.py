@@ -277,6 +277,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
         src_lang: str,
         tgt_lang: str,
         source_media: str = None,
+        source_instructions: str = None,
     ):
         try:
             if asyncio.iscoroutinefunction(func):
@@ -285,6 +286,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
                     src_lang=src_lang,
                     tgt_lang=tgt_lang,
                     source_media=source_media,
+                    source_instructions=source_instructions,
                 )
             else:
                 res = await asyncio.to_thread(
@@ -293,6 +295,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
                     src_lang=src_lang,
                     tgt_lang=tgt_lang,
                     source_media=source_media,
+                    source_instructions=source_instructions,
                 )
             return {"api": name, "translation": res, "error": None}
         except Exception as exc:
@@ -302,8 +305,8 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             return {"api": name, "translation": None, "error": str(exc)}
 
     tasks = [
-        _run_translate("Lara", translate_lara, req.text, source_name, target_name),
-        _run_translate("Google Translate", translate_google, req.text, source_name, target_name),
+        _run_translate("Lara", translate_lara, req.text, source_name, target_name, source_instructions=req.source_instructions),
+        _run_translate("Google Translate", translate_google, req.text, source_name, target_name, source_instructions=req.source_instructions),
         _run_translate(
             "Gemini 2.5 Flash",
             functools.partial(translate_openrouter, model="google/gemini-2.5-flash"),
@@ -311,6 +314,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "Gemma 4",
@@ -319,6 +323,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "Llama 4 Maverick",
@@ -329,6 +334,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "GPT-5.4 Mini",
@@ -337,6 +343,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "Deepseek V4 Pro",
@@ -345,6 +352,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "Claude Haiku 4.5",
@@ -353,6 +361,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
         _run_translate(
             "Claude Sonnet 4.5",
@@ -363,6 +372,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
             source_name,
             target_name,
             req.source_media,
+            req.source_instructions,
         ),
     ]
     results = await asyncio.gather(*tasks)
@@ -437,6 +447,7 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
         "translations": [t.model_dump() for t in req.translations],
         "points": -1,
         "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        "source_instructions": req.source_instructions,
     }
     await save_submission(submission)
     return {"ok": True}
@@ -463,6 +474,7 @@ async def update_submission(
         "translations": [t.model_dump() for t in req.translations],
         "points": -1,
         "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        "source_instructions": req.source_instructions,
     }
     if req.source_media is not None:
         update["source_media"] = req.source_media

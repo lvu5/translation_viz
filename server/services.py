@@ -57,14 +57,18 @@ async def translate_lara(
 ) -> str:
     source_code = NAME_TO_CODE_LARA.get(src_lang.lower(), None)
     target_code = NAME_TO_CODE_LARA.get(tgt_lang.lower(), None)
-    if source_code is None or target_code is None or not text or source_media or source_instructions:
+    if source_code is None or target_code is None or not text or source_media:
         return None
+
+    # TODO: Lara supports image-to-text translation too
+    # https://developers.laratranslate.com/docs/translate-image
 
     resp = await asyncio.to_thread(
         lambda: LARA_CLIENT.translate(
             text=text,
             source=source_code,
             target=target_code,
+            instructions=[source_instructions] if source_instructions else None
         )
     )
     return resp.translation

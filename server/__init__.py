@@ -2,6 +2,7 @@
 Last Translation Benchmark - FastAPI backend
 """
 
+import asyncio
 import logging
 import os
 import time
@@ -14,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .db import get_users, init_db
 from .routers import router
+from .utils import schedule_daily_backup
 
 
 @asynccontextmanager
@@ -28,7 +30,18 @@ async def lifespan(app: FastAPI):
             f"  {user['username']:>20}  {host_public}/?user={user['username']}&token={user['magic_token']}"
         )
     print("=========================\n")
-    yield
+    
+    backup_task = asyncio.create_task(schedule_daily_backup())
+    try:
+        yield
+    finally:
+        backup_task.cancel()
+        try:
+            await backup_task
+        except asyncio.CancelledError:
+            pass
+
+
 
 
 # ---------------------------------------------------------------------------

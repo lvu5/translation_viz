@@ -229,7 +229,6 @@ export interface AdminUser {
     total_accepted: number;
     total_submitted: number;
     review_langs: string[];
-    invite_sent: string;
     last_active: string;
 }
 
@@ -239,10 +238,6 @@ export function getAdminUsers() {
 
 export function deleteAdminUser(uid: number) {
     return apiCall<{ ok: boolean }>('DELETE', `api/admin/users/${uid}`);
-}
-
-export function rotateAdminToken(uid: number) {
-    return apiCall<{ magic_token: string }>('POST', `api/admin/users/${uid}/rotate-token`);
 }
 
 export function adjustAdminQuota(uid: number, delta: number) {
@@ -255,10 +250,6 @@ export function updateAdminRoles(uid: number, roles: string[]) {
 
 export function updateAdminReviewScope(uid: number, review_langs: string[]) {
     return apiCall<AdminUser>('POST', `api/admin/users/${uid}/review-scope`, { review_langs });
-}
-
-export function markInviteSent(uid: number) {
-    return apiCall<{ invite_sent: string }>('POST', `api/admin/users/${uid}/mark-invite-sent`);
 }
 
 export function addComment(id: number, comment: string) {

@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import os
 import secrets
 import time
 from datetime import datetime, timezone
@@ -38,7 +39,7 @@ from .services import (
     translate_openrouter,
     verify_llm,
 )
-from .utils import CONTRIBUTOR_QUOTA_DEFAULT
+from .utils import CONTRIBUTOR_QUOTA_DEFAULT, send_email
 
 router = APIRouter()
 
@@ -131,6 +132,25 @@ async def register_user(req: ProfileReq):
         "credit_consent": req.credit_consent,
     }
     await save_user(new_user)
+
+    # Send registration email directly
+    host_public = os.getenv("HOST_PUBLIC")
+    link = f"{host_public.rstrip('/')}/?user={username}&token={new_user['magic_token']}"
+
+    email_body = f"""Dear {req.name},<br><br>
+Thank you for registering for the Last Translation Benchmark.<br><br>
+Use this passwordless login link to access the platform and submit hard-to-translate inputs.<br>
+<a href="{link}">{link}</a><br><br>
+Please make sure that you read the instructions in detail.<br>
+Let us know if you have any questions or need to increase your submission quota.<br><br>
+Best regards, the LTB Team"""
+
+    await send_email(
+        to_email=req.email,
+        subject="Last Translation Benchmark - Login Link",
+        body=email_body
+    )
+
     return {"ok": True}
 
 
@@ -151,7 +171,6 @@ async def _admin_user_view(u: dict) -> dict:
         "review_langs": u.get("review_langs", []),
         "total_accepted": total_accepted,
         "total_submitted": len(submissions),
-        "invite_sent": u.get("invite_sent", ""),
         "last_active": u.get("last_active", ""),
     }
 
@@ -224,28 +243,6 @@ async def admin_delete_user(uid: int, user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="User not found")
     await delete_user(uid)
     return {"ok": True}
-
-
-@router.post("/api/admin/users/{uid}/rotate-token")
-async def admin_rotate_token(uid: int, user=Depends(get_current_user)):
-    require_admin(user)
-    target = await get_user_by_id(uid)
-    if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    target["magic_token"] = secrets.token_urlsafe(24)
-    await save_user(target)
-    return {"magic_token": target["magic_token"]}
-
-
-@router.post("/api/admin/users/{uid}/mark-invite-sent")
-async def admin_mark_invite_sent(uid: int, user=Depends(get_current_user)):
-    require_admin(user)
-    target = await get_user_by_id(uid)
-    if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    target["invite_sent"] = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-    await save_user(target)
-    return {"invite_sent": target["invite_sent"]}
 
 
 @router.post("/api/admin/users/{uid}/adjust-quota")

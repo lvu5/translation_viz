@@ -10,3 +10,8 @@ LARA_API_SECRET = ""
 
 CONTRIBUTOR_QUOTA_DEFAULT = 50
 DB_PATH = "data/db.sqlite"
+
+# specific to our FORPSI email
+EMAIL_SENDER = ""
+EMAIL_PASSWORD = ""
+EMAIL_SMTP_SERVER_PORT = ""

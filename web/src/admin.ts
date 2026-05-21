@@ -2,8 +2,7 @@ import './assets/style.css';
 import $ from 'jquery';
 import {
     getMe, getCookie, getAdminUsers, deleteAdminUser,
-    rotateAdminToken, adjustAdminQuota, updateAdminRoles, updateAdminReviewScope, renderRoleSwitcher, AdminUser,
-    markInviteSent,
+    adjustAdminQuota, updateAdminRoles, updateAdminReviewScope, renderRoleSwitcher, AdminUser,
 } from './api';
 
 import { esc, showToast, accessDenied } from './utils';
@@ -34,9 +33,6 @@ function renderTable(users: AdminUser[]): void {
         } else if (u.last_active) {
             statusLabel = 'logged-in';
             statusTitle = `Last active: ${u.last_active}`;
-        } else if (u.invite_sent) {
-            statusLabel = 'invite-sent';
-            statusTitle = `Invite sent: ${u.invite_sent}`;
         } else {
             statusLabel = 'registered';
             statusTitle = '';
@@ -44,25 +40,17 @@ function renderTable(users: AdminUser[]): void {
         const statusBadge = `<span style="font-size:0.8em;white-space:nowrap" title="${esc(statusTitle)}">${statusLabel}</span>`;
 
         return `<tr data-uid="${u.id}">
-            <td><span class="uname">${esc(u.username)}</span></td>
+            <td><a href="${link}" class="uname" target="_blank">${esc(u.username)}</a></td>
             <td style="width:1%;white-space:nowrap">${rolesHtml}</td>
             <td class="scope-cell" data-uid="${u.id}" title="Click to edit language scope">${u.review_langs && u.review_langs.length ? esc(u.review_langs.join(',')) : '<span class="muted">all</span>'}</td>
             <td>${u.name ? esc(u.name) : '<span class="muted">—</span>'}</td>
             <td>${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
             <td class="email-cell"><a href="mailto:${esc(u.email)}">${esc(u.email)}</a></td>
-            <td style="text-align:right">${u.quota_used}&nbsp;/&nbsp;${u.quota}</td>
+            <td style="text-align:right;white-space:nowrap">${u.quota_used}&nbsp;/&nbsp;<button class="act-btn act-quota" data-uid="${u.id}" title="Adjust quota">${u.quota}</button></td>
             <td style="text-align:right">${u.total_accepted}&nbsp;/&nbsp;${u.total_submitted}</td>
             <td>${statusBadge}</td>
             <td>
               <div class="action-btns">
-                <a class="act-btn act-copy" data-uid="${u.id}" title="Login link" href="${link}">🔗</a>
-                ${(() => {
-                const subject = 'Last Translation Benchmark - Login';
-                const body = `Dear ${u.name || u.username},\n\nThank you for your interest in Last Translation Benchmark. You can submit hard-to-translate inputs via this link:\n\n${link}\n\nPlease make sure that you read the instructions in detail.\nLet us know if you have any questions or need to increase your submission quota.\n\nOn behalf of LTB organizers,\n${adminName}`;
-                return `<a class="act-btn act-email-link" data-uid="${u.id}" title="Send magic link via email" target="_blank" href="mailto:${encodeURIComponent(u.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}" style="background:#e0e7ff;color:#4338ca;text-decoration:none;">📧</a>`;
-            })()}
-                <button class="act-btn act-rotate" data-uid="${u.id}" title="Rotate magic token">🔄</button>
-                <button class="act-btn act-quota" data-uid="${u.id}" title="Adjust quota">±</button>
                 <button class="act-btn act-delete" data-uid="${u.id}" title="Remove user">✕</button>
               </div>
             </td>
@@ -93,35 +81,6 @@ function renderTable(users: AdminUser[]): void {
             applyFilter();
             showToast('Roles updated');
         } catch (e) { alert(e); }
-    });
-
-    $('.act-rotate').on('click', async function () {
-        const uid = $(this).data('uid');
-        if (!confirm('Rotate magic token?')) return;
-        try {
-            const res = await rotateAdminToken(uid);
-            allUsers.find(u => u.id === uid)!.magic_token = res.magic_token;
-            showToast('Token rotated');
-        } catch (e) { alert(e); }
-    });
-
-
-    $('.act-email-link').on('click', async function (e) {
-        e.preventDefault();
-        const href = $(this).attr('href');
-        const uid = $(this).data('uid');
-
-        if (href) {
-            window.open(href, '_blank');
-        }
-
-        try {
-            const res = await markInviteSent(uid);
-            const u = allUsers.find(u => u.id === uid);
-            if (u) u.invite_sent = res.invite_sent;
-            applyFilter();
-            showToast('Invite marked as sent');
-        } catch { alert('Failed to mark invite as sent.'); }
     });
 
     $('.act-delete').on('click', async function () {

@@ -148,7 +148,7 @@ Use this passwordless login link to access the platform and submit hard-to-trans
 {link}
 
 Please make sure that you read the instructions in detail.
-Let us know if you have any questions or need to increase your submission quota.
+Let us know if you have any questions or need to increase your quota.
 
 Best regards, the LTB Team"""
 

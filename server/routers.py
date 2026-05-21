@@ -109,7 +109,6 @@ async def register_user(req: ProfileReq):
     
     original_username = username
     while True:
-        print(username, [u["username"] for u in users][:10])
         # Check if username already exists
         if all(u["username"] != username for u in users):
             break

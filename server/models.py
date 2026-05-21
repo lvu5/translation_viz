@@ -25,7 +25,7 @@ class VerifyReq(BaseModel):
     source_media: Optional[str] = field_source_media
 
 class TranslationEntry(BaseModel):
-    api: str
+    model: str
     translation: str
     verified: Optional[bool] = None
 
@@ -42,7 +42,7 @@ class SubmissionReq(BaseModel):
     source_instructions: Optional[str] = field_source_instructions
 
 class ScoreReq(BaseModel):
-    action: str  # "reject" | "accept" | "comment"
+    action: str  # "reject" | "accept" | "comment" | "pending"
     comment: Optional[str] = None
 
 class ProfileReq(BaseModel):

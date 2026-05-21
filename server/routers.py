@@ -140,7 +140,7 @@ async def _admin_user_view(u: dict) -> dict:
     return {
         "id": u["id"],
         "username": u["username"],
-        "roles": u.get("roles", []),
+        "roles": u["roles"],
         "magic_token": u.get("magic_token", ""),
         "name": u.get("name", ""),
         "affiliation": u.get("affiliation", ""),
@@ -326,7 +326,7 @@ def _filter_reviewer_submissions(
 
 @router.post("/api/translate-submission")
 async def translate_submission(req: TranslateReq, user=Depends(get_current_user)):
-    if "contributor" not in user.get("roles", []):
+    if "contributor" not in user["roles"]:
         raise HTTPException(
             status_code=403, detail="Only contributors can use translation quota"
         )
@@ -516,7 +516,7 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
 
 @router.post("/api/submissions")
 async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
-    if "contributor" not in user.get("roles", []):
+    if "contributor" not in user["roles"]:
         raise HTTPException(
             status_code=403, detail="Only contributors can submit submissions"
         )
@@ -609,7 +609,7 @@ async def list_submissions(
         "all",
     }:
         raise HTTPException(status_code=400, detail="Invalid status filter")
-    if mode == "reviewer" and "reviewer" in user.get("roles", []):
+    if mode == "reviewer" and "reviewer" in user["roles"]:
         rows = sorted(
             await db_get_submissions(),
             key=lambda s: (
@@ -639,17 +639,23 @@ async def list_submissions(
 
 @router.post("/api/submissions/{sid}/score")
 async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_user)):
-    if "reviewer" not in user.get("roles", []):
+    if "reviewer" not in user["roles"]:
         raise HTTPException(
             status_code=403, detail="Only reviewer users can score submissions"
         )
-    if req.action not in ("reject", "accept", "comment", "pending"):
+    if req.action not in ("reject", "accept", "pending"):
         raise HTTPException(
-            status_code=400, detail="Action must be reject, accept, comment, or pending"
+            status_code=400, detail="Action must be reject, accept, or pending"
         )
     submission = await get_submission_by_id(sid)
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")
+
+    if submission["user_id"] == user["id"] and "admin" not in user["roles"]:
+        raise HTTPException(
+            status_code=403, detail="Reviewers who are not admins cannot change the status of their own submissions"
+        )
+
     if req.action == "accept":
         submission["status"] = "accept"
     elif req.action == "reject":
@@ -658,16 +664,6 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
         submission["status"] = "pending"
     else:
         raise HTTPException(status_code=400, detail="Invalid action")
-    if req.comment:
-        if "comments" not in submission:
-            submission["comments"] = []
-        submission["comments"].append(
-            {
-                "author": user["username"],
-                "text": req.comment,
-                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
-            }
-        )
 
     await save_submission(submission)
     return {"ok": True}
@@ -679,7 +675,7 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")
 
-    is_reviewer = "reviewer" in user.get("roles", [])
+    is_reviewer = "reviewer" in user["roles"]
     is_owner = submission["user_id"] == user["id"]
 
     if not (is_reviewer or is_owner):
@@ -695,9 +691,6 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
         }
     )
-
-    if is_reviewer:
-        submission["status"] = "pending"
 
     await save_submission(submission)
     return {"ok": True}

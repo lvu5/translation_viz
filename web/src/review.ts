@@ -3,7 +3,7 @@ import $ from 'jquery';
 import {
     getMe, getCookie,
     getSubmissions, scoreSubmission, User, renderRoleSwitcher,
-    Submission, deleteSubmission,
+    Submission, deleteSubmission, addComment,
 } from './api';
 
 import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, setupInstructions } from './utils';
@@ -43,8 +43,8 @@ $(async () => {
     // Refresh
     $('#refresh-btn').on('click', loadSubmissions);
 
-    // Action buttons (event delegation — list re-renders on each load)
     $('#sen-list').on('click', '.score-btn:not(.comment-send-btn)', async function () {
+        if ($(this).prop('disabled')) return;
         const id = parseInt(String($(this).data('id')));
         const action = String($(this).data('action')) as 'reject' | 'accept' | 'comment';
         if (!['reject', 'accept', 'comment'].includes(action)) return;
@@ -109,16 +109,17 @@ $(async () => {
 
         $(this).prop('disabled', true).text('Sending…');
         try {
-            await scoreSubmission(id, 'comment', text);
+            await addComment(id, text);
             const sug = allSugs.find(s => s.id === id);
             if (sug) {
-                sug.status = 'pending';
                 if (!sug.comments) sug.comments = [];
                 sug.comments.push({ author: currentUser!.username, text, timestamp: new Date().toISOString().slice(0, 16).replace('T', ' ') });
             }
             $input.val('');
-            $(`#sug-${id} .sug-meta .badge`).replaceWith(scoreBadge('pending', true));
-            $(`#comment-thread-${id}`).html(renderCommentThreadWrap(sug?.comments ?? []));
+            if (sug) {
+                $(`#sug-${id} .sug-meta .badge`).replaceWith(scoreBadge(sug.status, true));
+                $(`#comment-thread-${id}`).html(renderCommentThreadWrap(sug.comments));
+            }
         } catch { alert('Failed to save'); }
         $(this).prop('disabled', false).text('Send');
     });
@@ -204,9 +205,17 @@ function renderSug(s: Submission): string {
         ['reject', '#ef4444', 'Reject submission'],
         ['accept', '#22c55e', 'Accept submission'],
     ];
+    const isOwner = s.username === currentUser!.username;
+    const isAdmin = currentUser!.roles.includes('admin');
+    const canScore = !(isOwner && !isAdmin);
+
     const scoreBtns = scoreActions.map(([action, color, label]) => {
         const act = (action === 'accept' && s.status === 'accept') || (action === 'reject' && s.status === 'reject') ? ' active' : '';
-        return `<button class="score-btn${act}" style="background:${color};color:#fff" data-id="${s.id}" data-action="${action}">${label}</button>`;
+        const style = canScore
+            ? `style="background:${color};color:#fff"`
+            : `style="background:${color};color:#fff;opacity:0.3;cursor:not-allowed"`;
+        const disabled = canScore ? '' : ' disabled';
+        return `<button class="score-btn${act}" ${style}${disabled} data-id="${s.id}" data-action="${action}">${label}</button>`;
     }).join('');
     const deleteBtn = currentUser?.roles.includes('admin')
         ? `<button class="delete-btn btn-underlined" style="margin-left:8px;font-size:0.8em" data-id="${s.id}">Delete submission</button>`

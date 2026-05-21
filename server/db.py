@@ -153,7 +153,7 @@ async def init_db() -> None:
         async with db.execute("SELECT data FROM users") as cur:
             users = [json.loads(r[0]) for r in await cur.fetchall()]
 
-        if not any("admin" in u.get("roles", []) for u in users):
+        if not any("admin" in u["roles"] for u in users):
             uid = max((u["id"] for u in users), default=0) + 1
             user = {
                 "id": uid,

@@ -193,8 +193,8 @@ export function deleteSubmission(id: number) {
 }
 
 
-export function scoreSubmission(id: number, action: 'reject' | 'accept' | 'comment' | 'pending', comment?: string) {
-    return apiCall<{ ok: boolean }>('POST', `api/submissions/${id}/score`, { action, comment });
+export function scoreSubmission(id: number, action: 'reject' | 'accept' | 'pending') {
+    return apiCall<{ ok: boolean }>('POST', `api/submissions/${id}/score`, { action });
 }
 
 export function updateProfile(data: {

@@ -42,7 +42,7 @@ class SubmissionReq(BaseModel):
     source_instructions: Optional[str] = field_source_instructions
 
 class ScoreReq(BaseModel):
-    action: str  # "reject" | "accept" | "comment" | "pending"
+    action: str  # "reject" | "accept" | "pending"
     comment: Optional[str] = None
 
 class ProfileReq(BaseModel):

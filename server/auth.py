@@ -19,5 +19,5 @@ async def get_current_user(
 
 
 def require_admin(user: dict) -> None:
-    if "admin" not in user.get("roles", []):
+    if "admin" not in user["roles"]:
         raise HTTPException(status_code=403, detail="Admin access required")

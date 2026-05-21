@@ -1,4 +1,7 @@
 import asyncio
+import base64
+import mimetypes
+import tempfile
 
 import httpx
 import lara_sdk
@@ -57,11 +60,34 @@ async def translate_lara(
 ) -> str:
     source_code = NAME_TO_CODE_LARA.get(src_lang.lower(), None)
     target_code = NAME_TO_CODE_LARA.get(tgt_lang.lower(), None)
-    if source_code is None or target_code is None or not text or source_media:
+    if source_code is None or target_code is None:
         return None
 
-    # TODO: Lara supports image-to-text translation too
-    # https://developers.laratranslate.com/docs/translate-image
+    if source_media:
+        if source_media.startswith("data:") and "," in source_media:
+            header, base64_data = source_media.split(",", 1)
+            mime = header[5:].split(";", 1)[0]
+            if "image" not in mime:
+                return None
+            # we dont support both image an text or instructions in Lara
+            if text or source_instructions:
+                return None
+
+            with tempfile.NamedTemporaryFile(suffix=mimetypes.guess_extension(mime) or ".png") as f:
+                f.write(base64.b64decode(base64_data))
+                temp_path = f.name
+
+                resp = await asyncio.to_thread(
+                    lambda: LARA_CLIENT.images.translate_text(
+                        image_path=temp_path,
+                        source=source_code,
+                        target=target_code,
+                    )
+                )
+                return "\n".join(p.translation for p in resp.paragraphs)
+        
+    if not text:
+        return None
 
     resp = await asyncio.to_thread(
         lambda: LARA_CLIENT.translate(

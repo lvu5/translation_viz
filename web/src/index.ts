@@ -2,10 +2,10 @@ import './assets/style.css';
 import $ from 'jquery';
 
 import { getCookie, getMe, logout, User } from './api';
-import { setupInstructions } from './utils';
+import instructionsHtml from './assets/instructions.html';
 
 $(async () => {
-    setupInstructions('all', true);
+    $('#instructions-box').html(instructionsHtml);
 
     if (getCookie('ltb_token')) {
         try {
@@ -27,19 +27,19 @@ function showRoleButtons(user: User): void {
     container.append(`<span>Hello ${user.name} (${user.username}) from ${user.affiliation}!</span><br><br>`);
 
     if (user.roles.includes('contributor')) {
-        actions.append('<a href="contribute" class="btn btn-secondary">✍️&nbsp;Contribute</a>');
+        actions.append('<a href="contribute" class="btn btn-success">✍️&nbsp;Contribute</a>');
     }
     if (user.roles.includes('reviewer')) {
-        actions.append('<a href="review" class="btn btn-secondary">🔍&nbsp;Review</a>');
+        actions.append('<a href="review" class="btn btn-success">🔍&nbsp;Review</a>');
     }
     if (user.roles.includes('admin')) {
-        actions.append('<a href="admin" class="btn btn-secondary">⚙️&nbsp;Admin</a>');
+        actions.append('<a href="admin" class="btn btn-success">⚙️&nbsp;Admin</a>');
     }
 
-    actions.append('<a href="dashboard" class="btn btn-secondary">📊&nbsp;Public Dashboard</a>');
-    actions.append('<a href="profile" class="btn btn-secondary">📇&nbsp;Profile</a>');
+    actions.append('<a href="dashboard" class="btn btn-success">📊&nbsp;Public Dashboard</a>');
+    actions.append('<a href="profile" class="btn btn-success">📇&nbsp;Profile</a>');
 
-    const logoutBtn = $('<button class="btn btn-secondary">Logout</button>');
+    const logoutBtn = $('<button class="btn btn-success">Logout</button>');
     logoutBtn.on('click', logout);
     actions.append(logoutBtn);
 

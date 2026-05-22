@@ -5,7 +5,7 @@ import {
     adjustAdminQuota, updateAdminRoles, updateAdminReviewScope, renderRoleSwitcher, AdminUser,
 } from './api';
 
-import { esc, showToast, accessDenied } from './utils';
+import { esc, showToast, accessDenied, renderHeaderStatus } from './utils';
 
 let allUsers: AdminUser[] = [];
 let adminName: string = '';
@@ -144,8 +144,8 @@ $(async () => {
         const user = await getMe();
         adminName = user.name || user.username;
         renderRoleSwitcher(user.roles);
+        renderHeaderStatus(user);
         if (!user.roles.includes('admin')) { accessDenied(user.roles, 'admin'); return; }
-        $('#admin-info').text(user.username);
         allUsers = await getAdminUsers();
         applyFilter();
     } catch { window.location.href = 'index.html'; }

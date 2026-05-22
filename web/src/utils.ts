@@ -4,6 +4,13 @@ import { Comment } from './api';
 export const esc = (s: string) => $('<div>').text(s).html();
 export const fmtDate = (d: string) => (d || '').replace('T', ' ').slice(0, 16);
 
+export function renderHeaderStatus(user: { username: string, quota_used: number, quota: number, total_accepted: number }): void {
+    $('#header-status').css('display', 'flex');
+    $('#quota-text').text(`Translation credits: ${user.quota_used ?? 0} / ${user.quota ?? 0}`);
+    $('#total-points').text(user.total_accepted ?? 0);
+    $('#username-info').text(user.username);
+}
+
 export function showToast(msg: string): void {
     const t = $('#toast').text(msg).addClass('show');
     setTimeout(() => t.removeClass('show'), 2000);
@@ -45,43 +52,4 @@ export function accessDenied(roles: string[], target: string): void {
     </div>`;
 }
 
-export async function setupInstructions(mode: 'all' | 'contributor' | 'reviewer', loadImmediately = false) {
-    const btn = $('#show-instructions-btn');
-    const box = $('#instructions-box');
-    if (!box.length) return;
 
-    const loadContent = async () => {
-        if (!box.data('loaded')) {
-            const html = await fetch('assets/instructions.html').then(r => r.text());
-            const bodyMatch = html.match(/<body>([\s\S]*?)<\/body>/);
-            const body = bodyMatch ? bodyMatch[1] : html;
-
-            let filtered = body;
-            const splitKey = '<h2>Instructions for Reviewers</h2>';
-            if (mode === 'contributor') {
-                filtered = body.split(splitKey)[0];
-            } else if (mode === 'reviewer') {
-                filtered = splitKey + body.split(splitKey)[1];
-            }
-
-            box.html(filtered).data('loaded', true);
-        }
-    };
-
-    if (loadImmediately) {
-        await loadContent();
-        box.show();
-    }
-
-    if (btn.length) {
-        btn.on('click', async () => {
-            if (box.is(':visible')) {
-                box.slideUp();
-                return;
-            }
-
-            await loadContent();
-            box.slideDown();
-        });
-    }
-}

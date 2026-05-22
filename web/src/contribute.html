@@ -27,7 +27,7 @@
     }
 
     #sidebar-card {
-      height: calc(100vh - 180px);
+      height: calc(100vh - 250px);
       overflow-y: auto;
       position: sticky;
       top: 20px;
@@ -67,21 +67,18 @@
     <a href="/" style="text-decoration:none;color:inherit;">
       <h1><img src="assets/favicon.svg" style="height: 1em;"> Last Translation Benchmark</h1>
     </a>
-    <div style="display: flex; align-items: center; gap: 16px;">
+    <div id="header-status" style="display: none; align-items: center; gap: 16px;">
       <span class="info" title="How many times you can run the translation.">
         <span id="quota-text"></span>
       </span>
       <span class="info" title="Total confirmed contributions.">
         <span id="total-points">0</span> accepted
       </span>
-      <span id="ann-info" class="info"></span>
+      <span id="username-info" class="info"></span>
     </div>
   </header>
 
   <div class="container">
-    <button id="show-instructions-btn" class="btn btn-instructions">📖 Show guidelines for contributing</button>
-    <div id="instructions-box" style="margin-bottom: 20px;"></div>
-
     <div id="contributor-layout">
 
       <!-- ===== MAIN FORM COLUMN ===== -->
@@ -126,7 +123,7 @@
             </div>
             <span id="tr-status"
               style="font-size:0.85em;color:#64748b; display: inline-block; width: 210px; text-align: right;"></span>
-            <button class="btn btn-secondary" id="tr-btn" style="float: right;">⟳ Translate by all models</button>
+            <button class="btn btn-success" id="tr-btn" style="float: right;">⟳ Translate by all models</button>
             <br>
           </div>
 
@@ -139,7 +136,7 @@
             </div>
             <!-- Own Translation -->
 
-            <div class="api-result-row" style="margin-bottom: 12px; background: #fff; border-color: #cbd5e1;">
+            <div class="translation-result-row" style="margin-bottom: 12px; background: #fff; border-color: #cbd5e1;">
               <span class="api-name">Human translation</span>
               <div class="tr-display" style="flex: 1; display: flex;">
                 <textarea id="own-translation" placeholder="Type your own translation here..."
@@ -162,7 +159,7 @@
           <div
             style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
             <span id="verify-result"></span>
-            <button class="btn btn-secondary" id="verify-btn" disabled>✓ Verify translations</button>
+            <button class="btn btn-success" id="verify-btn" disabled>✓ Verify translations</button>
           </div>
 
           <div style="display: flex; justify-content: flex-end; align-items: center;">
@@ -185,6 +182,8 @@
       </div>
 
     </div>
+
+    <div id="instructions-box" class="card card-nobackground" style="border-top: 4px solid black;"></div>
   </div>
 </body>
 

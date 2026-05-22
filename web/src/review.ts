@@ -6,19 +6,21 @@ import {
     Submission, deleteSubmission, addComment,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, setupInstructions } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus } from './utils';
+import instructionsHtml from './assets/instructions.html';
 
 let allSugs: Submission[] = [];
 let curFilter = 'pending';
 let currentUser: User | null = null;
 
 $(async () => {
-    setupInstructions('all');
+    $('#instructions-box').html(instructionsHtml);
     if (!getCookie('ltb_token')) { window.location.href = 'index.html'; return; }
 
     try {
         currentUser = await getMe();
         renderRoleSwitcher(currentUser.roles);
+        renderHeaderStatus(currentUser);
         if (!currentUser.roles.includes('reviewer')) {
             accessDenied(currentUser.roles, 'reviewer');
             return;
@@ -231,7 +233,7 @@ function renderSug(s: Submission): string {
             : t.verified === false
                 ? '<span class="vpill vpill-fail">✗</span>'
                 : '';
-        return `<div class="api-result-row">
+        return `<div class="translation-result-row">
           <span class="api-name">${escHtml(t.model)}</span>
           <div class="tr-display">${escHtml(t.translation)}</div>
           ${badge}

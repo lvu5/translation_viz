@@ -85,14 +85,20 @@
     <a href="/" style="text-decoration:none;color:inherit;">
       <h1><img src="assets/favicon.svg" style="height: 1em;"> Last Translation Benchmark</h1>
     </a>
+    <div id="header-status" style="display: none; align-items: center; gap: 16px;">
+      <span class="info" title="How many times you can run the translation.">
+        <span id="quota-text"></span>
+      </span>
+      <span class="info" title="Total confirmed contributions.">
+        <span id="total-points">0</span> accepted
+      </span>
+      <span id="username-info" class="info"></span>
+    </div>
   </header>
 
   <div class="container">
-    <button id="show-instructions-btn" class="btn btn-instructions">📖 Show guidelines for contributing &
-      reviewing</button>
-    <div id="instructions-box" style="margin-bottom: 20px;"></div>
 
-    <div class="card profile-wrap">
+    <div class="card card-nobackground profile-wrap">
       <h2>Complete your profile</h2>
       <p class="sub">This information is required before you can contribute.</p>
 

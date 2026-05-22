@@ -1,11 +1,10 @@
 import './assets/style.css';
 import $ from 'jquery';
 
-import { getCookie, getMe, updateProfile, registerUser } from './api';
-import { setupInstructions } from './utils';
+import { getCookie, getMe, updateProfile, registerUser, renderRoleSwitcher } from './api';
+import { renderHeaderStatus } from './utils';
 
 $(async () => {
-    setupInstructions('all');
     
     const isRegistrationMode = !getCookie('ltb_token');
 
@@ -17,6 +16,10 @@ $(async () => {
             if (user.affiliation) $('#affiliation').val(user.affiliation);
             if (user.email) $('#email').val(user.email);
             if (user.credit_consent) $('#credit-consent').prop('checked', true);
+
+            // Populate header status
+            renderHeaderStatus(user);
+            renderRoleSwitcher(user.roles);
         } catch {
             window.location.href = 'index.html';
             return;

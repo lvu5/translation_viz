@@ -1,10 +1,20 @@
 import './assets/style.css';
 import $ from 'jquery';
 
-import { getPublicDashboard } from './api';
-import { esc as escHtml } from './utils';
+import { getPublicDashboard, getCookie, getMe, renderRoleSwitcher } from './api';
+import { esc as escHtml, renderHeaderStatus } from './utils';
 
 $(async () => {
+    if (getCookie('ltb_token')) {
+        try {
+            const user = await getMe();
+            renderHeaderStatus(user);
+            renderRoleSwitcher(user.roles);
+        } catch {
+            // Ignore and just show dashboard for unauthenticated / bad token
+        }
+    }
+
     try {
         const rows = await getPublicDashboard();
         if (!rows.length) {

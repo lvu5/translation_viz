@@ -345,7 +345,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
 
     if not req.text and not req.source_media:
         raise HTTPException(
-            status_code=400, detail="Enter source text or add media context first"
+            status_code=400, detail="Enter source text or add media first"
         )
 
     if (

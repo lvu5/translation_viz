@@ -6,7 +6,8 @@ import {
     User, Submission, Rule,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, setupInstructions } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus } from './utils';
+import instructionsHtml from './assets/instructions.html';
 
 let currentUser: User | null = null;
 
@@ -24,7 +25,7 @@ let inputCorrespondsToTranslations = true;
 
 
 $(async () => {
-    setupInstructions('contributor');
+    $('#instructions-box').html(instructionsHtml);
     if (!getCookie('ltb_token')) { window.location.href = 'index.html'; return; }
 
     let LANGUAGES: string[] = [];
@@ -50,8 +51,7 @@ $(async () => {
         return;
     }
 
-    $('#ann-info').text(currentUser.username);
-    renderStats(currentUser.quota_used, currentUser.quota, currentUser.total_accepted);
+    renderHeaderStatus(currentUser);
     loadMySubmissions();
     renderRules();
     updateButtonStates();
@@ -161,7 +161,7 @@ $(async () => {
             lastResults = data.results;
             currentUser!.quota_used = data.quota_used;
             currentUser!.quota = data.quota;
-            renderStats(data.quota_used, data.quota, currentUser!.total_accepted);
+            renderHeaderStatus(currentUser!);
             renderApiResults();
             lastResults.forEach(r => r.verified = null);
             ownVerified = null;
@@ -433,10 +433,6 @@ $(async () => {
 
 // ---- Stats bar ----
 
-function renderStats(used: number, quota: number, accepted: number): void {
-    $('#quota-text').text(`Used: ${used} / ${quota}`);
-    $('#total-points').text(accepted);
-}
 
 function renderRules() {
     const $container = $('#rules-container');
@@ -464,7 +460,7 @@ function renderApiResults(): void {
     $body.html(lastResults.map((r, i) => {
         const trText = r.translation ?? `<em class="tr-error">${escHtml(r.error ?? 'Error')}</em>`;
         const verifyBadge = '';
-        return `<div class="api-result-row">
+        return `<div class="translation-result-row">
           <span class="api-name">${escHtml(r.model)}</span>
           <div class="tr-display">${trText}</div>
           <span data-idx="${i}">${verifyBadge}</span>

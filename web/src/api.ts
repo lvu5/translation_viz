@@ -42,7 +42,7 @@ export interface Submission {
     target_lang: string;
     verification_rules: Rule[];
     translations: TranslationEntry[];
-    status: 'pending' | 'accept' | 'reject';
+    status: 'pending' | 'accept' | 'return';
     created_at: string;
     comments?: Comment[];
 }
@@ -142,7 +142,7 @@ export function verify(
 export function getSubmissions(
     mode: 'contributor' | 'reviewer' = 'contributor',
     filters?: {
-        status?: 'pending' | 'accepted_or_rejected' | 'accepted' | 'rejected' | 'all';
+        status?: 'pending' | 'accepted_or_returned' | 'accepted' | 'returned' | 'all';
         source_lang?: string;
         target_lang?: string;
         username?: string;
@@ -193,7 +193,7 @@ export function deleteSubmission(id: number) {
 }
 
 
-export function scoreSubmission(id: number, action: 'reject' | 'accept' | 'pending') {
+export function scoreSubmission(id: number, action: 'return' | 'accept' | 'pending') {
     return apiCall<{ ok: boolean }>('POST', `api/submissions/${id}/score`, { action });
 }
 

@@ -48,8 +48,8 @@ $(async () => {
     $('#sen-list').on('click', '.score-btn:not(.comment-send-btn)', async function () {
         if ($(this).prop('disabled')) return;
         const id = parseInt(String($(this).data('id')));
-        const action = String($(this).data('action')) as 'reject' | 'accept' | 'comment';
-        if (!['reject', 'accept', 'comment'].includes(action)) return;
+        const action = String($(this).data('action')) as 'return' | 'accept' | 'comment';
+        if (!['return', 'accept', 'comment'].includes(action)) return;
         if (action === 'comment') {
             // Toggle inline comment box instead of using prompt()
             const $box = $(`#comment-box-${id}`);
@@ -68,7 +68,7 @@ $(async () => {
 
         try {
             await scoreSubmission(id, targetAction);
-            const status = targetAction === 'accept' ? 'accept' : (targetAction === 'reject' ? 'reject' : 'pending');
+            const status = targetAction === 'accept' ? 'accept' : (targetAction === 'return' ? 'return' : 'pending');
             const sug = allSugs.find(s => s.id === id);
             if (sug) { sug.status = status; }
             const $item = $(`#sug-${id}`);
@@ -81,12 +81,12 @@ $(async () => {
             let matchesFilter = true;
             if (curFilter === 'pending') {
                 matchesFilter = status === 'pending';
-            } else if (curFilter === 'accepted_or_rejected') {
-                matchesFilter = status === 'accept' || status === 'reject';
+            } else if (curFilter === 'accepted_or_returned') {
+                matchesFilter = status === 'accept' || status === 'return';
             } else if (curFilter === 'accepted') {
                 matchesFilter = status === 'accept';
-            } else if (curFilter === 'rejected') {
-                matchesFilter = status === 'reject';
+            } else if (curFilter === 'returned') {
+                matchesFilter = status === 'return';
             }
 
             if (!matchesFilter) {
@@ -129,7 +129,7 @@ $(async () => {
     // Delete submission (admin only)
     $('#sen-list').on('click', '.delete-btn', async function () {
         const id = parseInt(String($(this).data('id')));
-        if (!confirm(`Are you sure you want to delete submission #${id}? In most cases you should reject with a reason for rejection so that the contributor can fix their submission.`)) return;
+        if (!confirm(`Are you sure you want to delete submission #${id}? In most cases you should return with a reason for return so that the contributor can fix their submission.`)) return;
 
         try {
             await deleteSubmission(id);
@@ -153,7 +153,7 @@ async function loadSubmissions(): Promise<void> {
     const userFilter = String($('#filter-user').val() ?? '');
     try {
         allSugs = await getSubmissions('reviewer', {
-            status: curFilter as 'pending' | 'accepted_or_rejected' | 'accepted' | 'rejected' | 'all',
+            status: curFilter as 'pending' | 'accepted_or_returned' | 'accepted' | 'returned' | 'all',
             source_lang: sourceLangFilter,
             target_lang: targetLangFilter,
             username: userFilter,
@@ -213,8 +213,8 @@ function renderSource(s: Submission): string {
 }
 
 function renderSug(s: Submission): string {
-    const scoreActions: Array<['reject' | 'accept', string, string]> = [
-        ['reject', '#ef4444', 'Return submission'],
+    const scoreActions: Array<['return' | 'accept', string, string]> = [
+        ['return', '#ef4444', 'Return submission'],
         ['accept', '#22c55e', 'Accept submission'],
     ];
     const isOwner = s.username === currentUser!.username;
@@ -222,7 +222,7 @@ function renderSug(s: Submission): string {
     const canScore = !(isOwner && !isAdmin);
 
     const scoreBtns = scoreActions.map(([action, color, label]) => {
-        const act = (action === 'accept' && s.status === 'accept') || (action === 'reject' && s.status === 'reject') ? ' active' : '';
+        const act = (action === 'accept' && s.status === 'accept') || (action === 'return' && s.status === 'return') ? ' active' : '';
         const style = canScore
             ? `style="background:${color};color:#fff"`
             : `style="background:${color};color:#fff;opacity:0.3;cursor:not-allowed"`;

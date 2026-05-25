@@ -318,12 +318,12 @@ def _filter_reviewer_submissions(
 ) -> list[dict]:
     if status == "pending":
         rows = [s for s in rows if s.get("status", "pending") == "pending"]
-    elif status == "accepted_or_rejected":
-        rows = [s for s in rows if s.get("status", "pending") in ("accept", "reject")]
+    elif status == "accepted_or_returned":
+        rows = [s for s in rows if s.get("status", "pending") in ("accept", "return")]
     elif status == "accepted":
         rows = [s for s in rows if s.get("status", "pending") == "accept"]
-    elif status == "rejected":
-        rows = [s for s in rows if s.get("status", "pending") == "reject"]
+    elif status == "returned":
+        rows = [s for s in rows if s.get("status", "pending") == "return"]
     if source_lang:
         rows = [s for s in rows if s["source_lang"] == source_lang]
     if target_lang:
@@ -620,9 +620,9 @@ async def list_submissions(
 ):
     if status not in {
         "pending",
-        "accepted_or_rejected",
+        "accepted_or_returned",
         "accepted",
-        "rejected",
+        "returned",
         "all",
     }:
         raise HTTPException(status_code=400, detail="Invalid status filter")
@@ -631,7 +631,7 @@ async def list_submissions(
             await db_get_submissions(),
             key=lambda s: (
                 0 if s.get("status", "pending") == "pending"
-                else (1 if s.get("status") == "reject" else 2),
+                else (1 if s.get("status") == "return" else 2),
                 s["created_at"]
             ),
         )
@@ -660,9 +660,9 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
         raise HTTPException(
             status_code=403, detail="Only reviewer users can score submissions"
         )
-    if req.action not in ("reject", "accept", "pending"):
+    if req.action not in ("return", "accept", "pending"):
         raise HTTPException(
-            status_code=400, detail="Action must be reject, accept, or pending"
+            status_code=400, detail="Action must be return, accept, or pending"
         )
     submission = await get_submission_by_id(sid)
     if submission is None:
@@ -675,8 +675,8 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
 
     if req.action == "accept":
         submission["status"] = "accept"
-    elif req.action == "reject":
-        submission["status"] = "reject"
+    elif req.action == "return":
+        submission["status"] = "return"
     elif req.action == "pending":
         submission["status"] = "pending"
     else:

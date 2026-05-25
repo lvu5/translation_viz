@@ -16,10 +16,10 @@ export function showToast(msg: string): void {
     setTimeout(() => t.removeClass('show'), 2000);
 }
 
-export function scoreBadge(status: 'pending' | 'accept' | 'reject', hasComments?: boolean): string {
+export function scoreBadge(status: 'pending' | 'accept' | 'return', hasComments?: boolean): string {
     if (status === 'pending') return '<span class="badge badge-pending">Pending</span>';
     if (status === 'accept') return '<span class="badge badge-score-3">✓ Accepted</span>';
-    return '<span class="badge badge-score-0">✗ Rejected</span>';
+    return '<span class="badge badge-score-0">✗ Returned</span>';
 }
 
 function getUsernameColor(username: string): string {

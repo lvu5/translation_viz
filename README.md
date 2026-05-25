@@ -6,7 +6,7 @@ With 10 approved submissions, contributors are eligible for inclusion in the upc
 
 There are three user roles:
 - **Contributor** suggests inputs (text,s video, images, and speech), auto-translate them, defines a verification method (e.g. an LLM prompt), and submits.
-- **Reviewer** browses pending submissions and rejects, accepts, or comments.
+- **Reviewer** browses pending submissions and returns, accepts, or comments.
 - **Admin** with the ability to create and modify users.
 Each account is associated with a magic link that can be used to login from anywhere.
 

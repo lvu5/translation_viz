@@ -6,7 +6,7 @@ import {
     User, Submission, Rule,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource } from './utils';
 import instructionsHtml from './assets/instructions.html';
 
 let currentUser: User | null = null;
@@ -486,18 +486,6 @@ async function loadMySubmissions(): Promise<void> {
 }
 
 function renderMySug(s: Submission): string {
-    const isAudio = s.source_media && /^data:audio/.test(s.source_media);
-    const mediaHtml = s.source_media
-        ? (isAudio
-            ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
-            : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`)
-        : '';
-
-    let sourceHtml = `<div>${escHtml(s.source_text)}</div>`;
-    if (s.source_instructions) {
-        sourceHtml += `<div style="margin-top: 4px; font-size: 0.9em; color: #475569; border-left: 2px solid #cbd5e1; padding-left: 6px;"><i>Instructions:</i> ${escHtml(s.source_instructions)}</div>`;
-    }
-
     const humanTr = s.translations.find(t => t.model === 'human')?.translation ?? s.translations[0]?.translation ?? '';
 
     const rulesHtml = s.verification_rules.map((r, i) =>
@@ -519,8 +507,7 @@ function renderMySug(s: Submission): string {
         </div>
         
         <div style="margin-bottom: 8px; color: #1e293b; font-weight: 500; word-break: break-word;">
-            ${mediaHtml}
-            ${sourceHtml}
+            ${renderSource(s)}
         </div>
         
         <div style="margin-bottom: 8px; color: #475569; word-break: break-word;">

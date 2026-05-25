@@ -6,7 +6,7 @@ import {
     Submission, deleteSubmission, addComment,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource } from './utils';
 import instructionsHtml from './assets/instructions.html';
 
 let allSugs: Submission[] = [];
@@ -198,18 +198,6 @@ function renderList(): void {
 
 function renderCommentThreadWrap(comments: Submission['comments']): string {
     return renderCommentThread(comments, currentUser!.username);
-}
-
-function renderSource(s: Submission): string {
-    const isAudio = s.source_media && /^data:audio/.test(s.source_media);
-    let out = '';
-    if (s.source_media) {
-        out += isAudio
-            ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
-            : `<img src="${s.source_media}" class="context_image">`;
-    }
-    if (s.source_text) out += escHtml(s.source_text);
-    return out;
 }
 
 function renderSug(s: Submission): string {

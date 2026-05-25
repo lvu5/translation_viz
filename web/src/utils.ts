@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { Comment } from './api';
+import { Comment, Submission } from './api';
 
 export const esc = (s: string) => $('<div>').text(s).html();
 export const fmtDate = (d: string) => (d || '').replace('T', ' ').slice(0, 16);
@@ -52,4 +52,20 @@ export function accessDenied(roles: string[], target: string): void {
     </div>`;
 }
 
+export function renderSource(s: Submission): string {
+    const isAudio = s.source_media && /^data:audio/.test(s.source_media);
+    let out = '';
+    if (s.source_media) {
+        out += isAudio
+            ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
+            : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`;
+    }
+    if (s.source_text) {
+        out += `<div>${esc(s.source_text)}</div>`;
+    }
+    if (s.source_instructions) {
+        out += `<div style="margin-top: 4px; font-size: 0.9em; color: #475569; border-left: 2px solid #cbd5e1; padding-left: 6px;"><i>Instructions:</i> ${esc(s.source_instructions)}</div>`;
+    }
+    return out;
+}
 

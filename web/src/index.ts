@@ -14,6 +14,8 @@ $(async () => {
         } catch {
             $('#auth-error').show();
         }
+    } else {
+        $('#cta-info-unauth').show();
     }
 });
 

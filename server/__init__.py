@@ -61,8 +61,8 @@ async def custom_logging(request: Request, call_next):
     request._receive = receive
     response = await call_next(request)
 
-    # mask all common file requests
-    if request.url.path.endswith((".css", ".js", ".svg", ".png", ".json")):
+    # mask all common file requests and /api/me
+    if request.url.path.endswith((".css", ".js", ".svg", ".png", ".json")) or request.url.path == "/api/me":
         return response
 
     print(

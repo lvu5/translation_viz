@@ -36,6 +36,11 @@
       font-size: 1em;
       color: #475569;
       border-left: 4px solid black;
+      margin-top: 40px;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      width: 70%;
     }
 
     .auth-error {
@@ -95,7 +100,7 @@
         Contributors with 10 approved submissions are welcome to co-authorship on the resulting publication.
       </p>
 
-      <div id="cta-info-unauth" class="cta-info" style="max-width: 600px; margin: 40px auto 0 auto;">
+      <div id="cta-info-unauth" class="cta-info" style="display: none;">
         To access the interactive platform, please use the <strong>magic link</strong> provided you received in your
         email.
         <br>
@@ -105,11 +110,10 @@
         <a href="dashboard" class="btn btn-success" style="margin-top: 20px;">📊 Public Dashboard</a>
       </div>
 
-      <div id="role-buttons" class="cta-info"
-        style="display: none; margin-top: 40px; text-align: center; margin-left: auto; margin-right: auto; width: max-content; max-width: 90%;">
+      <div id="role-buttons" class="cta-info" style="display: none;">
       </div>
 
-      <div id="auth-error" class="auth-error" style="max-width: 600px; margin: 24px auto 0 auto;">
+      <div id="auth-error" class="auth-error cta-info">
         Invalid or expired magic link. Please request a new one from the administrators.
       </div>
 

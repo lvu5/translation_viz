@@ -46,11 +46,11 @@ async def schedule_daily_backup() -> None:
             await asyncio.sleep(delay)
             
             # Copy database file
-            backup_dir = os.path.join(os.path.dirname(DB_PATH) or "data", "backups")
+            backup_dir = os.path.dirname(DB_PATH) + "/backups"
             os.makedirs(backup_dir, exist_ok=True)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             backup_filename = f"db_{timestamp}.sqlite"
-            backup_path = os.path.join(backup_dir, backup_filename)
+            backup_path = backup_dir + "/" + backup_filename
             
             await asyncio.to_thread(shutil.copy, DB_PATH, backup_path)
             log(f"Database backup created at {backup_path}")
@@ -81,6 +81,7 @@ async def send_email(to_email: str, subject: str, body: str, headers: dict[str, 
         from email.header import Header
         from email.mime.text import MIMEText
         from email.utils import formatdate, make_msgid
+        log(f"Sending email to: {to_email}\nSubject: {subject}\n\n{body}\n{'-'*40}\n")
 
         if not EMAIL_SENDER or not EMAIL_PASSWORD or not EMAIL_SMTP_SERVER_PORT:
             log("Email configuration is missing (EMAIL_SENDER, EMAIL_PASSWORD, or EMAIL_SMTP_SERVER_PORT).")

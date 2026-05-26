@@ -246,7 +246,7 @@ if __name__ == "__main__":
 
     # Resolve path relative to this script
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    target_path = os.path.join(base_dir, "static", "languages.json")
+    target_path = base_dir + "/static/languages.json"
 
     os.makedirs(os.path.dirname(target_path), exist_ok=True)
     with open(target_path, "w", encoding="utf-8") as f:

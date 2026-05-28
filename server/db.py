@@ -130,7 +130,7 @@ async def init_db() -> None:
 
         if count == 0:
             default_users = [
-                ("admin", ["admin", "reviewer"]),
+                ("admin", ["admin", "reviewer", "contributor"]),
                 ("r1", ["reviewer"]),
                 ("c1", ["contributor"]),
                 ("c2", ["contributor"]),
@@ -148,23 +148,4 @@ async def init_db() -> None:
                     "INSERT INTO users (id, data) VALUES (?, ?)",
                     (uid, json.dumps(user)),
                 )
-            await db.commit()
-
-        async with db.execute("SELECT data FROM users") as cur:
-            users = [json.loads(r[0]) for r in await cur.fetchall()]
-
-        if not any("admin" in u["roles"] for u in users):
-            uid = max((u["id"] for u in users), default=0) + 1
-            user = {
-                "id": uid,
-                "username": "admin",
-                "magic_token": secrets.token_urlsafe(24),
-                "roles": ["admin", "reviewer"],
-                "quota": CONTRIBUTOR_QUOTA_DEFAULT,
-                "quota_used": 0,
-            }
-            await db.execute(
-                "INSERT INTO users (id, data) VALUES (?, ?)",
-                (uid, json.dumps(user)),
-            )
             await db.commit()

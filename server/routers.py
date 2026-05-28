@@ -335,11 +335,6 @@ def _filter_reviewer_submissions(
 
 @router.post("/api/translate-submission")
 async def translate_submission(req: TranslateReq, user=Depends(get_current_user)):
-    if "contributor" not in user["roles"]:
-        raise HTTPException(
-            status_code=403, detail="Only contributors can use translation quota"
-        )
-
     if not req.text and not req.source_media:
         raise HTTPException(
             status_code=400, detail="Enter source text or add media first"
@@ -361,7 +356,7 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
     target_name = req.target_lang
 
     quota_used = user["quota_used"]
-    quota = user.get("quota", CONTRIBUTOR_QUOTA_DEFAULT)
+    quota = user["quota"]
     if quota_used >= quota:
         raise HTTPException(status_code=429, detail="Quota exceeded")
 
@@ -496,6 +491,11 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
 
 @router.post("/api/verify-submission")
 async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
+    quota_used = user["quota_used"]
+    quota = user["quota"]
+    if quota_used >= quota:
+        raise HTTPException(status_code=429, detail="Quota exceeded")
+
     if not req.verification_rules:
         return {"results": [True] * len(req.translations)}
 
@@ -522,7 +522,10 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
     translation_to_result = dict(zip(unique_translations, unique_results))
     results = [translation_to_result[t] for t in req.translations]
     
-    return {"results": results}
+    user["quota_used"] = quota_used + 1
+    await save_user(user)
+    
+    return {"results": results, "quota": quota, "quota_used": quota_used + 1}
 
 
 # --- Submissions ---

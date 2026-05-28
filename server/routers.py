@@ -70,6 +70,12 @@ async def me(user=Depends(get_current_user)):
 
 @router.put("/api/profile")
 async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
+    new_email = req.email.strip().lower()
+    if new_email != user["email"].strip().lower():
+        users = await get_users()
+        if any(u["email"].strip().lower() == new_email for u in users if u["id"] != user["id"]):
+            raise HTTPException(status_code=400, detail="Email already taken")
+
     user.update(
         {
             "name": req.name,
@@ -91,7 +97,7 @@ async def register_user(req: ProfileReq):
     users = await get_users()
 
     # Check if email already exists
-    if any(u["email"].strip().lower() == req.email for u in users):
+    if any(u["email"].strip().lower() == req.email.strip().lower() for u in users):
         raise HTTPException(status_code=400, detail="User already registered")
 
     # Generate username from email prefix

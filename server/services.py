@@ -75,6 +75,7 @@ async def translate_lara(
 
             with tempfile.NamedTemporaryFile(suffix=mimetypes.guess_extension(mime) or ".png") as f:
                 f.write(base64.b64decode(base64_data))
+                f.flush()
                 temp_path = f.name
 
                 resp = await asyncio.to_thread(

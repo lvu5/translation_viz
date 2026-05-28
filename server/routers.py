@@ -366,6 +366,9 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
     if quota_used >= quota:
         raise HTTPException(status_code=429, detail="Quota exceeded")
 
+    user["quota_used"] = quota_used + 1
+    await save_user(user)
+
     async def _run_translate(
         name: str,
         func,
@@ -490,8 +493,6 @@ async def translate_submission(req: TranslateReq, user=Depends(get_current_user)
         r for r in results if r["translation"] is not None or r["error"] is not None
     ]
 
-    user["quota_used"] = quota_used + 1
-    await save_user(user)
     return {"results": results, "quota": quota, "quota_used": quota_used + 1}
 
 
@@ -504,6 +505,9 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
 
     if not req.verification_rules:
         return {"results": [True] * len(req.translations)}
+
+    user["quota_used"] = quota_used + 1
+    await save_user(user)
 
     async def _verify_single(
         source_text: str, translation: str, source_media: str = None
@@ -527,9 +531,6 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
     
     translation_to_result = dict(zip(unique_translations, unique_results))
     results = [translation_to_result[t] for t in req.translations]
-    
-    user["quota_used"] = quota_used + 1
-    await save_user(user)
     
     return {"results": results, "quota": quota, "quota_used": quota_used + 1}
 

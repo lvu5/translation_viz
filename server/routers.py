@@ -577,6 +577,7 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
         "status": "pending",
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "source_instructions": req.source_instructions,
+        "comments": [],
     }
     await db_create_submission(submission)
     return {"ok": True}
@@ -704,8 +705,6 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
     if req.action in ("accept", "return"):
         author = await get_user_by_id(submission["user_id"])
         if author:
-            if "notifications" not in author:
-                author["notifications"] = []
             prefix = submission["source_text"][:70].replace("\n", " ")
             if not prefix and submission["source_media"]:
                 prefix = "Media submission"
@@ -734,9 +733,6 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
     if not (is_reviewer or is_owner):
         raise HTTPException(status_code=403, detail="Not authorized to comment")
 
-    if "comments" not in submission:
-        submission["comments"] = []
-
     submission["comments"].append(
         {
             "author": user["username"],
@@ -748,8 +744,6 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
     if not is_owner:
         author = await get_user_by_id(submission["user_id"])
         if author:
-            if "notifications" not in author:
-                author["notifications"] = []
             prefix = submission["source_text"][:40]
             if not prefix and submission["source_media"]:
                 prefix = "Media submission"
@@ -767,9 +761,6 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
 
 @router.post("/api/notifications")
 async def handle_notifications(req: NotificationActionReq, user=Depends(get_current_user)):
-    if "notifications" not in user:
-        user["notifications"] = []
-        
     if req.action == "view":
         for n in user["notifications"]:
             n["status"] = "viewed"

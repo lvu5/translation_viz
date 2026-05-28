@@ -200,6 +200,10 @@ $(async () => {
             const source_text = String($('#src-text').val() ?? '').trim();
             const data = await verify(source_text, translations, rules, lastMediaData ?? undefined);
 
+            currentUser!.quota_used = data.quota_used;
+            currentUser!.quota = data.quota;
+            renderHeaderStatus(currentUser!);
+
             let resultIdx = 0;
             let pass = 0;
             lastResults.forEach((r, i) => {

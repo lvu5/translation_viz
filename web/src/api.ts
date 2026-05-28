@@ -143,7 +143,7 @@ export function verify(
     verification_rules: Rule[],
     source_media?: string,
 ) {
-    return apiCall<{ results: boolean[]; detail: string }>(
+    return apiCall<{ results: boolean[]; detail: string; quota: number; quota_used: number }>(
         'POST', 'api/verify-submission', { source_text, translations, verification_rules, source_media }
     );
 }

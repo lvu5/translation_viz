@@ -143,9 +143,14 @@ async def init_db() -> None:
                     "roles": roles,
                     "quota": CONTRIBUTOR_QUOTA_DEFAULT,
                     "quota_used": 0,
-                    "credit_consent": True,
                     "name": username.capitalize(),
                     "affiliation": "",
+                    "email": "",
+                    "review_langs": [],
+                    "credit_consent": True,
+                    "notification_consent": True,
+                    "notifications": [],
+                    "last_active": "",
                 }
                 await db.execute(
                     "INSERT INTO users (id, data) VALUES (?, ?)",

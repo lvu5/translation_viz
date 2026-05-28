@@ -24,8 +24,8 @@ async def migrate():
         if "notifications" not in u:
             u["notifications"] = []
             changed = True
-        if "notification-consent" not in u:
-            u["notification-consent"] = True
+        if "notification_consent" not in u:
+            u["notification_consent"] = True
             changed = True
         if changed:
             fields_updated += 1
@@ -80,7 +80,7 @@ async def send_notifications(users, target_users=None):
         if target_users is not None and u["username"] not in target_users:
             continue
             
-        if not u["notification-consent"]:
+        if not u["notification_consent"]:
             continue
             
         unread = [n for n in u["notifications"] if n["status"] == "unread"]

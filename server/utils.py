@@ -142,7 +142,7 @@ async def schedule_daily_notifications() -> None:
             users = await get_users()
             emails_sent = 0
             for u in users:
-                if not u["notification-consent"]:
+                if not u["notification_consent"]:
                     continue
                 unread = [n for n in u["notifications"] if n["status"] == "unread"]
                 if not unread:

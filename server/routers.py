@@ -51,7 +51,7 @@ router = APIRouter()
 @router.get("/api/me")
 async def me(user=Depends(get_current_user)):
     submissions = await db_get_submissions(user_id=user["id"])
-    total_accepted = sum(1 for s in submissions if s.get("status") == "accept")
+    total_accepted = sum(1 for s in submissions if s["status"] == "accept")
     return {
         "username": user["username"],
         "roles": user["roles"],
@@ -59,12 +59,12 @@ async def me(user=Depends(get_current_user)):
         "quota_used": user["quota_used"],
         "total_accepted": total_accepted,
         "total_submitted": len(submissions),
-        "name": user.get("name", ""),
-        "affiliation": user.get("affiliation", ""),
-        "email": user.get("email", ""),
-        "credit_consent": user.get("credit_consent", False),
-        "notification_consent": user.get("notification-consent", True),
-        "notifications": user.get("notifications", []),
+        "name": user["name"],
+        "affiliation": user["affiliation"],
+        "email": user["email"],
+        "credit_consent": user["credit_consent"],
+        "notification_consent": user["notification_consent"],
+        "notifications": user["notifications"],
     }
 
 
@@ -76,7 +76,7 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
             "affiliation": req.affiliation,
             "email": req.email,
             "credit_consent": req.credit_consent,
-            "notification-consent": req.notification_consent,
+            "notification_consent": req.notification_consent,
         }
     )
     await save_user(user)
@@ -91,7 +91,7 @@ async def register_user(req: ProfileReq):
     users = await get_users()
 
     # Check if email already exists
-    if any(u.get("email", "").strip().lower() == req.email for u in users):
+    if any(u["email"].strip().lower() == req.email for u in users):
         raise HTTPException(status_code=400, detail="User already registered")
 
     # Generate username from email prefix
@@ -123,8 +123,10 @@ async def register_user(req: ProfileReq):
         "affiliation": req.affiliation,
         "email": req.email,
         "credit_consent": req.credit_consent,
-        "notification-consent": req.notification_consent,
+        "notification_consent": req.notification_consent,
         "notifications": [],
+        "review_langs": [],
+        "last_active": "",
     }
     await save_user(new_user)
 
@@ -157,10 +159,10 @@ Best regards, the LTB Team"""
 @router.get("/api/unsubscribe")
 async def unsubscribe(user: str, token: str):
     u = await get_user_by_username(user)
-    if u is None or not secrets.compare_digest(u.get("magic_token", ""), token):
+    if u is None or not secrets.compare_digest(u["magic_token"], token):
         raise HTTPException(status_code=400, detail="Invalid unsubscribe link")
     
-    u["notification-consent"] = False
+    u["notification_consent"] = False
     await save_user(u)
     
     return {"ok": True, "message": "Successfully unsubscribed"}
@@ -168,22 +170,22 @@ async def unsubscribe(user: str, token: str):
 
 async def _admin_user_view(u: dict) -> dict:
     submissions = await db_get_submissions(user_id=u["id"])
-    total_accepted = sum(1 for s in submissions if s.get("status") == "accept")
+    total_accepted = sum(1 for s in submissions if s["status"] == "accept")
     return {
         "id": u["id"],
         "username": u["username"],
         "roles": u["roles"],
-        "magic_token": u.get("magic_token", ""),
-        "name": u.get("name", ""),
-        "affiliation": u.get("affiliation", ""),
-        "email": u.get("email", ""),
-        "credit_consent": u.get("credit_consent", False),
-        "quota": u.get("quota", CONTRIBUTOR_QUOTA_DEFAULT),
-        "quota_used": u.get("quota_used", 0),
-        "review_langs": u.get("review_langs", []),
+        "magic_token": u["magic_token"],
+        "name": u["name"],
+        "affiliation": u["affiliation"],
+        "email": u["email"],
+        "credit_consent": u["credit_consent"],
+        "quota": u["quota"],
+        "quota_used": u["quota_used"],
+        "review_langs": u["review_langs"],
         "total_accepted": total_accepted,
         "total_submitted": len(submissions),
-        "last_active": u.get("last_active", ""),
+        "last_active": u["last_active"],
     }
 
 
@@ -200,12 +202,12 @@ async def public_dashboard():
     submissions = await db_get_submissions()
     accepted_by_user: dict[int, int] = {}
     for submission in submissions:
-        if submission.get("status") != "accept":
+        if submission["status"] != "accept":
             continue
-        user_id = submission.get("user_id")
+        user_id = submission["user_id"]
         accepted_by_user[user_id] = accepted_by_user.get(user_id, 0) + 1
 
-    users_by_id = {u["id"]: u for u in users if isinstance(u.get("id"), int)}
+    users_by_id = {u["id"]: u for u in users if isinstance(u["id"], int)}
     rows: list[dict] = []
     anonymous_submissions = 0
     anonymous_users = set()
@@ -318,13 +320,13 @@ def _filter_reviewer_submissions(
     username: str,
 ) -> list[dict]:
     if status == "pending":
-        rows = [s for s in rows if s.get("status", "pending") == "pending"]
+        rows = [s for s in rows if s["status"] == "pending"]
     elif status == "accepted_or_returned":
-        rows = [s for s in rows if s.get("status", "pending") in ("accept", "return")]
+        rows = [s for s in rows if s["status"] in ("accept", "return")]
     elif status == "accepted":
-        rows = [s for s in rows if s.get("status", "pending") == "accept"]
+        rows = [s for s in rows if s["status"] == "accept"]
     elif status == "returned":
-        rows = [s for s in rows if s.get("status", "pending") == "return"]
+        rows = [s for s in rows if s["status"] == "return"]
     if source_lang:
         rows = [s for s in rows if s["source_lang"] == source_lang]
     if target_lang:
@@ -585,7 +587,7 @@ async def update_submission(
             status_code=403, detail="Not authorized to update this submission"
         )
         
-    if submission.get("status") == "accept":
+    if submission["status"] == "accept":
         raise HTTPException(
             status_code=403, detail="Cannot edit an accepted submission"
         )
@@ -639,12 +641,12 @@ async def list_submissions(
         rows = sorted(
             await db_get_submissions(),
             key=lambda s: (
-                0 if s.get("status", "pending") == "pending"
-                else (1 if s.get("status") == "return" else 2),
+                0 if s["status"] == "pending"
+                else (1 if s["status"] == "return" else 2),
                 s["created_at"]
             ),
         )
-        review_langs = user.get("review_langs", [])
+        review_langs = user["review_langs"]
         if review_langs:
             rows = [s for s in rows if _submission_matches_scope(s, review_langs)]
         rows = _filter_reviewer_submissions(
@@ -696,10 +698,10 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
         if author:
             if "notifications" not in author:
                 author["notifications"] = []
-            prefix = submission.get("source_text", "")[:70].replace("\n", " ")
-            if not prefix and submission.get("source_media"):
+            prefix = submission["source_text"][:70].replace("\n", " ")
+            if not prefix and submission["source_media"]:
                 prefix = "Media submission"
-            content = f"#{submission['id']}: {prefix}..." if len(submission.get("source_text", "")) > 40 else f"#{submission['id']}: {prefix}"
+            content = f"#{submission['id']}: {prefix}..." if len(submission["source_text"]) > 40 else f"#{submission['id']}: {prefix}"
             author["notifications"].append({
                 "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 "type": "accepted" if req.action == "accept" else "returned",
@@ -740,10 +742,10 @@ async def add_comment(sid: int, req: CommentReq, user=Depends(get_current_user))
         if author:
             if "notifications" not in author:
                 author["notifications"] = []
-            prefix = submission.get("source_text", "")[:40]
-            if not prefix and submission.get("source_media"):
+            prefix = submission["source_text"][:40]
+            if not prefix and submission["source_media"]:
                 prefix = "Media submission"
-            content = f"#{submission['id']}: {prefix}..." if len(submission.get("source_text", "")) > 40 else f"#{submission['id']}: {prefix}"
+            content = f"#{submission['id']}: {prefix}..." if len(submission["source_text"]) > 40 else f"#{submission['id']}: {prefix}"
             author["notifications"].append({
                 "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 "type": "commented",

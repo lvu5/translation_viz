@@ -13,7 +13,7 @@ async def get_current_user(
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     user = await get_user_by_username(ltb_user)
-    if user is None or not secrets.compare_digest(user.get("magic_token", ""), ltb_token):
+    if user is None or not secrets.compare_digest(user["magic_token"], ltb_token):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return user
 

@@ -74,6 +74,8 @@ async def me(user=Depends(get_current_user)):
 
 @router.put("/api/profile")
 async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
+    if not req.name.strip() or not req.email.strip():
+        raise HTTPException(status_code=400, detail="Name and email are required")
     new_email = req.email.strip().lower()
     if new_email != user["email"].strip().lower():
         users = await get_users()
@@ -239,7 +241,8 @@ async def public_dashboard():
         else:
             anonymous_submissions += accepted
             anonymous_users.add(user_id)
-            anonymous_affiliations.add(user["affiliation"])
+            if user:
+                anonymous_affiliations.add(user["affiliation"])
 
     if anonymous_submissions > 0:
         rows.append(
@@ -610,9 +613,8 @@ async def update_submission(
         "status": "pending",
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "source_instructions": req.source_instructions,
+        "source_media": req.source_media,
     }
-    if req.source_media is not None:
-        update["source_media"] = req.source_media
     submission.update(update)
     await save_submission(submission)
     return {"ok": True}

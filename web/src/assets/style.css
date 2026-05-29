@@ -200,6 +200,16 @@ textarea {
   outline-offset: 1px;
 }
 
+.edit-btn {
+  background: #64748b;
+  color: #fff;
+  margin: 0;
+  font-size: 0.78em;
+  height: auto;
+  padding: 2px 8px;
+  line-height: normal;
+}
+
 /* ---------- badges ---------- */
 .badge {
   display: inline-block;

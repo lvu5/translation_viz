@@ -292,6 +292,7 @@ textarea {
   font-size: 0.9em;
   color: #374151;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .tr-error {

@@ -533,7 +533,7 @@ function renderMySug(s: Submission): string {
             ${renderSource(s)}
         </div>
         
-        <div style="margin-bottom: 8px; color: #475569; word-break: break-word;">
+        <div style="margin-bottom: 8px; color: #475569; word-break: break-word; white-space: pre-wrap;">
             ${escHtml(humanTr)}
         </div>
         

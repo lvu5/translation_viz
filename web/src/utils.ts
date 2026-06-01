@@ -112,7 +112,7 @@ export function renderSource(s: Submission): string {
             : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`;
     }
     if (s.source_text) {
-        out += `<div>${esc(s.source_text)}</div>`;
+        out += `<div style="white-space: pre-wrap;">${esc(s.source_text)}</div>`;
     }
     if (s.source_instructions) {
         out += `<div style="margin-top: 4px; font-size: 0.9em; color: #475569; border-left: 2px solid #cbd5e1; padding-left: 6px;"><i>Instructions:</i> ${esc(s.source_instructions)}</div>`;

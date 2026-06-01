@@ -120,3 +120,26 @@ export function renderSource(s: Submission): string {
     return out;
 }
 
+$(function() {
+    $(document).on('click', 'img.context_image', function() {
+        const src = $(this).attr('src');
+        if (!src) return;
+        
+        const overlay = $('<div>').css({
+            position: 'fixed',
+            top: 0, left: 0, width: '100vw', height: '100vh',
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 9999, cursor: 'zoom-out'
+        }).on('click', function() {
+            $(this).remove();
+        });
+        
+        const img = $('<img>').attr('src', src).css({
+            maxWidth: '90%', maxHeight: '90%', objectFit: 'contain'
+        });
+        
+        overlay.append(img);
+        $('body').append(overlay);
+    });
+});

@@ -51,7 +51,7 @@ $(async () => {
                 // Show success message and hide form
                 $('.profile-wrap').html(`
                     <h2>Registration Successful</h2>
-                    <p class="sub" style="margin-bottom: 0;">Your profile has been created. Please check your email for login instructions.</p>
+                    <p class="sub" style="margin-bottom: 0;">Your profile has been created. Please check your email (including spam folder) for login instructions.</p>
                     <div style="text-align: center; margin-top: 24px;">
                         <a href="index.html" class="btn btn-secondary" style="text-decoration: none; display: inline-block;">Return to Home</a>
                     </div>

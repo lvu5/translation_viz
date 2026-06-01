@@ -112,8 +112,11 @@ function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
             dataType: 'json',
             success: (x: T) => resolve(x),
             error: (xhr: JQuery.jqXHR) => {
-                const detail = (xhr.responseJSON as { detail?: string })?.detail ?? 'Request failed';
-                reject(detail);
+                let detail = (xhr.responseJSON as any)?.detail;
+                if (detail !== undefined && typeof detail !== 'string') {
+                    detail = JSON.stringify(detail);
+                }
+                reject(detail ?? 'Request failed');
             },
         };
         if (data !== undefined) settings.data = JSON.stringify(data);

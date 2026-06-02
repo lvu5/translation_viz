@@ -581,6 +581,7 @@ async def create_submission(req: SubmissionReq, user=Depends(get_current_user)):
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "source_instructions": req.source_instructions,
         "comments": [],
+        "reviewed_by": None,
     }
     await db_create_submission(submission)
     return {"ok": True}
@@ -611,6 +612,7 @@ async def update_submission(
         "verification_rules": [r.model_dump() for r in req.verification_rules],
         "translations": [t.model_dump() for t in req.translations],
         "status": "pending",
+        "reviewed_by": None,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "source_instructions": req.source_instructions,
         "source_media": req.source_media,
@@ -703,6 +705,8 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
         submission["status"] = "pending"
     else:
         raise HTTPException(status_code=400, detail="Invalid action")
+
+    submission["reviewed_by"] = user["username"]
 
     if req.action in ("accept", "return"):
         author = await get_user_by_id(submission["user_id"])

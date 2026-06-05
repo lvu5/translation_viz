@@ -732,6 +732,8 @@ async def list_submissions(
                 for s in rows
                 # either not accepted
                 if s["status"] != "accept"
+                # or own submission
+                or s["user_id"] == user["id"]
                 # or reviewed by reviewer
                 or s["reviewed_by"] == user["username"]
                 # or commented by reviewer

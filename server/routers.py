@@ -727,7 +727,19 @@ async def list_submissions(
         
         # prevent non-admins from listing accepted submissions
         if not is_admin:
-            rows = [s for s in rows if s["status"] != "accept"]
+            rows = [
+                s
+                for s in rows
+                # either not accepted
+                if s["status"] != "accept"
+                # or reviewed by reviewer
+                or s["reviewed_by"] == user["username"]
+                # or commented by reviewer
+                or any(
+                    c["author"] == user["username"]
+                    for c in s["comments"]
+                )
+            ]
     else:
         rows = await db_get_submissions(user_id=user["id"])
     return rows

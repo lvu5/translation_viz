@@ -97,6 +97,8 @@
 
   <div class="card profile-wrap">
     <h2>Complete your profile</h2>
+    
+    <div id="registration-form">
       <p class="sub">This information is required before you can contribute.</p>
 
       <div class="form-group">
@@ -132,8 +134,29 @@
         By continuing, you agree that your contributed anonymized data may be used in research under the MIT license.
       </p>
 
-    <button class="btn btn-success btn-full" id="save-btn">Save &amp; Continue</button>
-    <div id="status-msg"></div>
+      <button class="btn btn-success btn-full" id="save-btn">Save &amp; Continue</button>
+      <div id="status-msg"></div>
+
+      <div id="recover-link-container" style="text-align: center; margin-top: 24px; display: none;">
+        <button id="show-recover-btn" class="btn-underlined" style="font-size: 0.9em;">I've lost my login link</button>
+      </div>
+    </div>
+
+    <div id="recover-window" style="display: none;">
+      <div id="recover-form-content">
+        <p class="sub">Enter your registered email to receive a new login link.</p>
+        <div class="form-group">
+          <label for="recover-email">Email Address</label>
+          <input type="email" id="recover-email" placeholder="jane@example.com">
+        </div>
+        <button class="btn btn-success btn-full" id="send-recover-btn">Send Login Link</button>
+        <div style="text-align: center; margin-top: 24px;">
+          <button id="back-to-register-btn" class="btn-underlined" style="font-size: 0.9em;">Back to registration</button>
+        </div>
+      </div>
+      <div id="recover-status-msg" style="margin-top: 16px; text-align: center; min-height: 20px;"></div>
+    </div>
+
   </div>
 </body>
 

@@ -229,6 +229,10 @@ export function registerUser(data: {
     return apiCall<{ ok: boolean }>('POST', 'api/register', data);
 }
 
+export function recoverLink(email: string) {
+    return apiCall<{ ok: boolean }>('POST', 'api/recover-link', { email });
+}
+
 export interface AdminUser {
     id: number;
     username: string;

@@ -52,6 +52,9 @@ class ProfileReq(BaseModel):
     credit_consent: bool
     notification_consent: bool
 
+class RecoverLinkReq(BaseModel):
+    email: str = Field(max_length=100)
+
 class CommentReq(BaseModel):
     comment: str = Field(max_length=1000)
 

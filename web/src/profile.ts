@@ -1,7 +1,7 @@
 import './assets/style.css';
 import $ from 'jquery';
 
-import { getCookie, getMe, updateProfile, registerUser, renderRoleSwitcher } from './api';
+import { getCookie, getMe, updateProfile, registerUser, recoverLink, renderRoleSwitcher } from './api';
 import { renderHeaderStatus } from './utils';
 
 $(async () => {
@@ -28,7 +28,8 @@ $(async () => {
     } else {
         // Change text for registration mode
         $('.profile-wrap h2').text('Register as Contributor');
-        $('.sub').text('Fill out your details to request an account (can be modified later).');
+        $('#registration-form .sub').text('Fill out your details to request an account (can be modified later).');
+        $('#recover-link-container').show();
     }
 
     $('#save-btn').on('click', async () => {
@@ -64,6 +65,46 @@ $(async () => {
         } catch (err) {
             $('#status-msg').removeClass('msg-ok').addClass('msg-err').text(String(err));
             $('#save-btn').prop('disabled', false);
+        }
+    });
+
+    $('#show-recover-btn').on('click', (e) => {
+        e.preventDefault();
+        $('#registration-form').hide();
+        $('#recover-window').show();
+        $('#recover-form-content').show();
+        $('.profile-wrap h2').text('Recover Login Link');
+        $('#recover-status-msg').text('').removeClass('msg-ok msg-err').css('color', '');
+        $('#recover-email').prop('disabled', false).val('');
+        $('#send-recover-btn').prop('disabled', false);
+    });
+
+    $('#back-to-register-btn').on('click', (e) => {
+        e.preventDefault();
+        $('#recover-window').hide();
+        $('#registration-form').show();
+        $('.profile-wrap h2').text('Register as Contributor');
+    });
+
+    $('#send-recover-btn').on('click', async () => {
+        const email = String($('#recover-email').val()).trim();
+        if (!email) {
+            $('#recover-status-msg').removeClass('msg-ok').addClass('msg-err').text('Please enter your email.');
+            return;
+        }
+
+        $('#send-recover-btn').prop('disabled', true);
+        $('#recover-email').prop('disabled', true);
+        try {
+            await recoverLink(email);
+            $('#recover-form-content').hide();
+            $('#recover-status-msg').removeClass('msg-err msg-ok').css('color', 'inherit').text('If an account exists, a link has been sent.');
+            $('#recover-email').val('');
+            // Do not re-enable on success
+        } catch (err) {
+            $('#recover-status-msg').removeClass('msg-ok').addClass('msg-err').text('Failed to process request.');
+            $('#send-recover-btn').prop('disabled', false);
+            $('#recover-email').prop('disabled', false);
         }
     });
 });

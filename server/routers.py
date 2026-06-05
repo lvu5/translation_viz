@@ -33,6 +33,7 @@ from .models import (
     NotificationActionReq,
     ProfileReq,
     QuotaReq,
+    RecoverLinkReq,
     ReviewScopeReq,
     RolesReq,
     ScoreReq,
@@ -170,6 +171,34 @@ Best regards, the LTB Team"""
         body=email_body,
         user_obj=new_user,
     )
+
+    return {"ok": True}
+
+
+@router.post("/api/recover-link")
+async def recover_link(req: RecoverLinkReq):
+    users = await get_users()
+    target_email = req.email.strip().lower()
+
+    for user in users:
+        if user["email"].strip().lower() == target_email:
+            host_url = (os.getenv("HOST_PUBLIC") or "").rstrip("/")
+            link = f"{host_url}/?user={user['username']}&token={user['magic_token']}"
+            email_body = f"""Dear {user['name']},
+
+You requested a login link for the Last Translation Benchmark.
+
+Use this passwordless login link to access the platform:
+{link}
+
+Best regards, the LTB Team"""
+            asyncio.create_task(send_email(
+                to_email=target_email,
+                subject="Last Translation Benchmark - Login Link",
+                body=email_body,
+                user_obj=user,
+            ))
+            break
 
     return {"ok": True}
 

@@ -6,7 +6,7 @@ import {
     User, Submission, Rule,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource, sortSubmissions } from './utils';
 import instructionsHtml from './assets/instructions.html';
 
 let currentUser: User | null = null;
@@ -20,6 +20,7 @@ let allMySubmissions: Submission[] = [];
 let lastMediaData: string | null = null;
 let rules: Rule[] = [{ value: '' }];
 let inputCorrespondsToTranslations = true;
+let curSort = 'last_updated';
 
 
 
@@ -55,6 +56,10 @@ $(async () => {
 
     loadMySubmissions();
     $('#filter-pending, #filter-returned, #filter-accepted').on('change', () => {
+        renderFilteredSubmissions();
+    });
+    $('#filter-sort').on('change', function () {
+        curSort = String($(this).val());
         renderFilteredSubmissions();
     });
     renderRules();
@@ -505,6 +510,7 @@ function renderFilteredSubmissions(): void {
         $el.html('<div class="empty">No submissions yet</div>');
         return;
     }
+    sortSubmissions(filtered, curSort, currentUser!.username);
     $el.html(filtered.map(renderMySug).join(''));
 }
 
@@ -512,7 +518,7 @@ function renderMySug(s: Submission): string {
     const humanTr = s.translations.find(t => t.model === 'human')?.translation ?? s.translations[0]?.translation ?? '';
 
     const rulesHtml = s.verification_rules.map((r, i) =>
-        `<div style="margin-bottom: 2px;">${i + 1}. ${escHtml(r.value)}</div>`
+        `<div class="sug-box" style="margin-bottom: 4px; font-size: 0.9em; background: transparent; padding: 0;"><span class="lbl">VERIFICATION: </span>${escHtml(r.value)}</div>`
     ).join('');
 
     const comments = s.comments ?? [];
@@ -529,15 +535,13 @@ function renderMySug(s: Submission): string {
             ${s.status === 'accept' ? '' : `<button class="score-btn edit-btn" data-id="${s.id}">Edit submission</button>`}
         </div>
         
-        <div style="margin-bottom: 8px; color: #1e293b; font-weight: 500; word-break: break-word;">
-            ${renderSource(s)}
+        <div class="sug-box" style="margin-bottom: 8px; color: #1e293b; font-weight: 500; word-break: break-word; background: transparent; padding: 0;">
+            <span class="lbl">INPUT: </span>${renderSource(s)}
         </div>
         
-        <div style="margin-bottom: 8px; color: #475569; word-break: break-word; white-space: pre-wrap;">
-            ${escHtml(humanTr)}
-        </div>
+        <div class="sug-box" style="margin-bottom: 8px; color: #475569; word-break: break-word; white-space: pre-wrap; background: transparent; padding: 0;"><span class="lbl">HUMAN: </span>${escHtml(humanTr)}</div>
         
-        <div style="margin-bottom: 8px; color: #64748b; font-size: 0.9em; word-break: break-word;">
+        <div style="margin-bottom: 8px; word-break: break-word;">
             ${rulesHtml || '<div style="color: #94a3b8; font-style: italic;">No rules</div>'}
         </div>
 

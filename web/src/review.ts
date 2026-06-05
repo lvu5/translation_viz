@@ -6,11 +6,12 @@ import {
     Submission, deleteSubmission, addComment,
 } from './api';
 
-import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource } from './utils';
+import { esc as escHtml, fmtDate, scoreBadge, accessDenied, renderCommentThread, renderHeaderStatus, renderSource, sortSubmissions } from './utils';
 import instructionsHtml from './assets/instructions.html';
 
 let allSugs: Submission[] = [];
 let curFilter = 'pending';
+let curSort = 'last_updated';
 let currentUser: User | null = null;
 
 $(async () => {
@@ -37,6 +38,12 @@ $(async () => {
     $('#filter-status').on('change', function () {
         curFilter = String($(this).val());
         loadSubmissions();
+    });
+
+    // Sort filter dropdown
+    $('#filter-sort').on('change', function () {
+        curSort = String($(this).val());
+        renderList();
     });
 
     // Language / user filter selects
@@ -179,6 +186,7 @@ function populateFilters(): void {
 function renderList(): void {
     const $el = $('#sen-list');
     if (!allSugs.length) { $el.html('<div class="empty">No submissions here</div>'); return; }
+    sortSubmissions(allSugs, curSort, currentUser!.username);
     $el.html(allSugs.map(renderSug).join(''));
 }
 
@@ -223,17 +231,15 @@ function renderSug(s: Submission): string {
     }).join('');
 
     const ruleRows = s.verification_rules.map(r => {
-        let label = "LLM-VERIFICATION";
-
         return `<div class="sug-box" style="margin-bottom:4px; font-size: 0.9em;">
-            <div class="lbl" style="font-size: 0.7em;">RULE: ${label}</div>
+            <div class="lbl"">VERIFICATION</div>
             ${escHtml(r.value)}
         </div>`;
     }).join('');
 
     return `<div class="sug-item" id="sug-${s.id}">
         <div class="sug-meta">#${s.id} &middot; <b>${escHtml(s.username)}</b> &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.status, (s.comments?.length ?? 0) > 0)}</div>
-        <div class="sug-box" style="margin-bottom:8px"><div class="lbl">SOURCE</div>${renderSource(s)}</div>
+        <div class="sug-box" style="margin-bottom:8px"><div class="lbl">INPUT</div>${renderSource(s)}</div>
         <div style="margin-bottom:8px">${trRows}</div>
         <div style="margin-bottom:8px">${ruleRows}</div>
         <div id="comment-thread-${s.id}">${renderCommentThreadWrap(s.comments)}</div>

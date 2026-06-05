@@ -710,17 +710,7 @@ async def list_submissions(
     username: str = "",
 ):
     if mode == "reviewer" and "reviewer" in user["roles"]:
-        rows = sorted(
-            await db_get_submissions(),
-            key=lambda s: (
-                (
-                    0
-                    if s["status"] == "pending"
-                    else (1 if s["status"] == "return" else 2)
-                ),
-                s["created_at"],
-            ),
-        )
+        rows = await db_get_submissions()
         review_langs = {lang.lower() for lang in user["review_langs"]}
         is_admin = "admin" in user["roles"]
         
@@ -739,11 +729,7 @@ async def list_submissions(
         if not is_admin:
             rows = [s for s in rows if s["status"] != "accept"]
     else:
-        rows = sorted(
-            await db_get_submissions(user_id=user["id"]),
-            key=lambda s: s["created_at"],
-            reverse=True,
-        )
+        rows = await db_get_submissions(user_id=user["id"])
     return rows
 
 

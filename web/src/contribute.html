@@ -153,8 +153,16 @@
             <label><input type="checkbox" id="filter-pending"> Pending</label>
             <label><input type="checkbox" id="filter-returned" checked> Returned</label>
             <label><input type="checkbox" id="filter-accepted"> Accepted</label>
+            <div style="margin-bottom: 10px;">
+              <select id="filter-sort" class="tab" style="width: 180px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="last_updated">Last updated</option>
+                <option value="last_commented">Last commented</option>
+                <option value="oldest_updated">Oldest updated</option>
+                <option value="oldest_commented">Oldest commented</option>
+              </select>
+            </div>
           </div>
-          <div id="my-submissions" style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+            <div id="my-submissions" style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
             <div class="empty">No submissions yet</div>
           </div>
         </div>

@@ -91,7 +91,7 @@ export function renderCommentThread(comments: Comment[] | undefined, currentUser
         const bg = getUsernameColor(c.author);
         return `<div class="comment-msg" style="align-self: ${align}; background: ${bg};">
             <span class="comment-author" title="${esc(c.created_at)}" style="cursor: help;">${esc(c.author)}</span>
-            <div class="comment-body">${esc(c.text)}</div>
+            <span class="comment-body">${esc(c.text)}</span>
         </div>`;
     }).join('')}</div>`;
 }
@@ -112,7 +112,7 @@ export function renderSource(s: Submission): string {
             : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`;
     }
     if (s.source_text) {
-        out += `<div style="white-space: pre-wrap;">${esc(s.source_text)}</div>`;
+        out += `<span style="white-space: pre-wrap;">${esc(s.source_text)}</span>`;
     }
     if (s.source_instructions) {
         out += `<div style="margin-top: 4px; font-size: 0.9em; color: #475569; border-left: 2px solid #cbd5e1; padding-left: 6px;"><i>Instructions:</i> ${esc(s.source_instructions)}</div>`;
@@ -143,3 +143,40 @@ $(function() {
         $('body').append(overlay);
     });
 });
+
+export function sortSubmissions(submissions: Submission[], sortOption: string, myUsername: string): void {
+    submissions.sort((a, b) => {
+        const getLatestNonMineCommentDate = (s: Submission): string | null => {
+            if (!s.comments || s.comments.length === 0) return null;
+            const nonMine = s.comments.filter(c => c.author !== myUsername);
+            if (nonMine.length === 0) return null;
+            return nonMine.reduce((max, c) => c.created_at > max ? c.created_at : max, nonMine[0].created_at);
+        };
+
+        if (sortOption === 'last_updated' || sortOption === 'oldest_updated') {
+            const valA = a.created_at;
+            const valB = b.created_at;
+            if (valA === valB) return 0;
+            if (sortOption === 'last_updated') return valB.localeCompare(valA);
+            return valA.localeCompare(valB);
+        } else {
+            const dateA = getLatestNonMineCommentDate(a);
+            const dateB = getLatestNonMineCommentDate(b);
+
+            if (dateA !== null && dateB !== null) {
+                if (dateA === dateB) {
+                    if (a.created_at === b.created_at) return 0;
+                    return sortOption === 'last_commented' ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at);
+                }
+                return sortOption === 'last_commented' ? dateB.localeCompare(dateA) : dateA.localeCompare(dateB);
+            } else if (dateA !== null && dateB === null) {
+                return -1; // items with comments always come first
+            } else if (dateA === null && dateB !== null) {
+                return 1;  // items with comments always come first
+            } else {
+                if (a.created_at === b.created_at) return 0;
+                return sortOption === 'last_commented' ? b.created_at.localeCompare(a.created_at) : a.created_at.localeCompare(b.created_at);
+            }
+        }
+    });
+}

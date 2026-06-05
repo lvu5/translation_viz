@@ -543,24 +543,24 @@ async def verify_submission(req: VerifyReq, user=Depends(get_current_user)):
         raise HTTPException(status_code=429, detail="Quota exceeded")
 
     if not req.verification_rules:
-        return {"results": [True] * len(req.translations)}
+        return {"results": [[]] * len(req.translations)}
 
     user["quota_used"] = quota_used + 1
     await save_user(user)
 
     async def _verify_single(
         source_text: str, translation: str, source_media: str | None = None
-    ) -> bool:
+    ) -> list[bool]:
+        results = []
         for rule in req.verification_rules:
             try:
                 res = await verify_llm(
                     source_text, translation, rule.value, source_media
                 )
-                if not res:
-                    return False
+                results.append(res)
             except Exception as exc:
                 raise HTTPException(status_code=502, detail=f"LLM API error: {exc}")
-        return True
+        return results
 
     unique_translations = list(set(req.translations))
     unique_results = await asyncio.gather(

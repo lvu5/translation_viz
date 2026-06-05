@@ -27,7 +27,7 @@ class VerifyReq(BaseModel):
 class TranslationEntry(BaseModel):
     model: str
     translation: str
-    verified: Optional[bool] = None
+    verified: Optional[list[bool]] = None
 
 class SubmissionReq(BaseModel):
     # Restrict to an appropriate character limit, e.g., 5000 chars

@@ -27,7 +27,7 @@ export interface User {
 export interface TranslationEntry {
     model: string;
     translation: string;
-    verified: boolean | null;
+    verified: boolean[] | null;
 }
 
 export interface Comment {
@@ -146,7 +146,7 @@ export function verify(
     verification_rules: Rule[],
     source_media?: string,
 ) {
-    return apiCall<{ results: boolean[]; detail: string; quota: number; quota_used: number }>(
+    return apiCall<{ results: boolean[][]; detail: string; quota: number; quota_used: number }>(
         'POST', 'api/verify-submission', { source_text, translations, verification_rules, source_media }
     );
 }
@@ -183,7 +183,7 @@ export function createSubmission(data: {
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
-    translations: Array<{ model: string; translation: string; verified: boolean | null }>;
+    translations: Array<{ model: string; translation: string; verified: boolean[] | null }>;
 }) {
     return apiCall<{ ok: boolean }>('POST', 'api/submissions', data);
 }
@@ -195,7 +195,7 @@ export function updateSubmission(id: number, data: {
     source_lang: string;
     target_lang: string;
     verification_rules: Rule[];
-    translations: Array<{ model: string; translation: string; verified: boolean | null }>;
+    translations: Array<{ model: string; translation: string; verified: boolean[] | null }>;
 }) {
     return apiCall<{ ok: boolean }>('PUT', `api/submissions/${id}`, data);
 }

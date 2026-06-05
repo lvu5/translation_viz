@@ -12,9 +12,9 @@ import instructionsHtml from './assets/instructions.html';
 let currentUser: User | null = null;
 
 // Last set of API translation results
-type ApiResult = { model: string; translation: string | null; error: string | null; verified?: boolean | null };
+type ApiResult = { model: string; translation: string | null; error: string | null; verified?: boolean[] | null };
 let lastResults: ApiResult[] = [];
-let ownVerified: boolean | null = null;
+let ownVerified: boolean[] | null = null;
 let editingSubmissionId: number | null = null;
 let allMySubmissions: Submission[] = [];
 let lastMediaData: string | null = null;
@@ -211,22 +211,22 @@ $(async () => {
             let pass = 0;
             lastResults.forEach((r, i) => {
                 if (r.translation !== null) {
-                    const verified = data.results[resultIdx++];
+                    const verified: boolean[] = data.results[resultIdx++];
                     r.verified = verified;
-                    const badge = verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                    const badge = verified.map(v => v ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>').join('');
                     $(`[data-idx="${i}"]`).html(badge);
-                    if (verified) pass++;
+                    if (verified.every(v => v)) pass++;
                 } else {
                     $(`[data-idx="${i}"]`).html('');
                 }
             });
 
             if (ownTranslation) {
-                const verified = data.results[resultIdx++];
+                const verified: boolean[] = data.results[resultIdx++];
                 ownVerified = verified;
-                const badge = verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                const badge = verified.map(v => v ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>').join('');
                 $('#own-verify-badge').html(badge);
-                if (verified) pass++;
+                if (verified.every(v => v)) pass++;
             } else {
                 ownVerified = null;
                 $('#own-verify-badge').html('');
@@ -247,7 +247,7 @@ $(async () => {
         const source_text = String($('#src-text').val() ?? '').trim();
         const ownTranslation = String($('#own-translation').val() ?? '').trim();
 
-        const translations: Array<{ model: string; translation: string; verified: boolean | null }> = [];
+        const translations: Array<{ model: string; translation: string; verified: boolean[] | null }> = [];
         lastResults.forEach(r => {
             if (r.translation !== null) {
                 translations.push({ model: r.model, translation: r.translation, verified: r.verified ?? null });
@@ -277,12 +277,12 @@ $(async () => {
             $('#submit-status').html('<span class="msg-err">Please verify translations before submitting</span>');
             return;
         }
-        if (ownVerified !== true) {
+        if (ownVerified !== null && !ownVerified.every(v => v)) {
             $('#submit-status').html('<span class="msg-err">Human translation must pass verification</span>');
             return;
         }
 
-        const mtPassCount = lastResults.filter(r => r.verified === true).length;
+        const mtPassCount = lastResults.filter(r => r.verified != null && r.verified.every(v => v)).length;
         if (mtPassCount > 2) {
             $('#submit-status').html('<span class="msg-err">At most two MT translations can pass verification</span>');
             return;
@@ -375,7 +375,7 @@ $(async () => {
             $('#own-translation').val(ownTr.translation);
             ownVerified = ownTr.verified;
             if (ownVerified !== null) {
-                const badge = ownVerified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                const badge = ownVerified.map(v => v ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>').join('');
                 $('#own-verify-badge').html(badge);
             }
         }
@@ -392,8 +392,8 @@ $(async () => {
             renderApiResults();
             // Show verification badges
             lastResults.forEach((r, i) => {
-                if (r.verified !== null) {
-                    const badge = r.verified ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>';
+                if (r.verified != null) {
+                    const badge = r.verified.map(v => v ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>').join('');
                     $(`[data-idx="${i}"]`).html(badge);
                 }
             });
@@ -471,7 +471,7 @@ function renderApiResults(): void {
         return `<div class="translation-result-row">
           <span class="api-name">${escHtml(r.model)}</span>
           <div class="tr-display">${trText}</div>
-          <span data-idx="${i}">${verifyBadge}</span>
+          <div data-idx="${i}" style="display: flex; gap: 4px; flex-wrap: wrap;">${verifyBadge}</div>
         </div>`;
     }).join(''));
     $body.show();
@@ -565,8 +565,8 @@ function updateButtonStates(): void {
     $('#verify-btn').prop('disabled', !canVerify);
 
     const rulesNotEmpty = rules.length > 0 && rules.every(r => r.value.trim() !== '');
-    const humanExistsAndPasses = hasOwnTranslation && ownVerified === true;
-    const mtPassCount = lastResults.filter(r => r.verified === true).length;
+    const humanExistsAndPasses = hasOwnTranslation && ownVerified !== null && ownVerified.every(v => v);
+    const mtPassCount = lastResults.filter(r => r.verified != null && r.verified.every(v => v)).length;
     const mtPassValid = mtPassCount <= 2;
 
     // Submit button: enabled only if all requirements pass AND translations correspond to current input

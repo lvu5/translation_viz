@@ -204,15 +204,13 @@ function renderSug(s: Submission): string {
 
 
     const trRows = s.translations.map(t => {
-        const badge = t.verified === true
-            ? '<span class="vpill vpill-pass">✓</span>'
-            : t.verified === false
-                ? '<span class="vpill vpill-fail">✗</span>'
-                : '';
+        const badge = Array.isArray(t.verified)
+            ? t.verified.map(v => v ? '<span class="vpill vpill-pass">✓</span>' : '<span class="vpill vpill-fail">✗</span>').join('')
+            : '';
         return `<div class="translation-result-row">
           <span class="api-name">${escHtml(t.model)}</span>
           <div class="tr-display">${escHtml(t.translation)}</div>
-          ${badge}
+          <div style="display: flex; gap: 4px; flex-wrap: wrap;">${badge}</div>
         </div>`;
     }).join('');
 

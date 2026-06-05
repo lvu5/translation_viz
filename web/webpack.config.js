@@ -77,7 +77,10 @@ module.exports = (env, argv) => ({
     }),
 
     new CopyWebpackPlugin({
-      patterns: [{ from: 'src/assets/', to: 'assets' }],
+      patterns: [
+        { from: 'src/assets/', to: 'assets' },
+        { from: 'src/robots.txt', to: 'robots.txt' }
+      ],
     }),
   ],
   devServer: {

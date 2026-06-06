@@ -8,6 +8,7 @@ os.makedirs("../computed/", exist_ok=True)
 
 with open("../data/users.json", "r") as f:
     data_users = json.load(f)
+
 with open("../data/submissions.json", "r") as f:
     data_submissions = json.load(f)
 
@@ -17,7 +18,7 @@ user_counts = collections.defaultdict(set)
 user_counts["registered"] = set(x["username"] for x in data_users)
 user_counts["submitted"] = set(x["username"] for x in data_submissions)
 user_counts["accepted"] = set(x["username"] for x in data_submissions if x["status"] == "accept")
-user_counts["reviewers"] = set(x["username"] for x in data_users if "reviewer" in x["roles"])
+user_counts["reviewers"] = set(x["reviewed_by"] for x in data_submissions if x["reviewed_by"] is not None)
 user_counts["admins"] = set(x["username"] for x in data_users if "admin" in x["roles"])
 
 data_out["user_counts"] = {k: len(v) for k, v in user_counts.items()}

@@ -1,6 +1,8 @@
+import hashlib
 import json
 import os
 import secrets
+from functools import wraps
 
 import aiosqlite
 
@@ -145,6 +147,9 @@ async def init_db() -> None:
         await db.execute(
             "CREATE TABLE IF NOT EXISTS submissions (id INTEGER PRIMARY KEY, data TEXT NOT NULL)"
         )
+        await db.execute(
+            "CREATE TABLE IF NOT EXISTS api_cache (query_hash TEXT PRIMARY KEY, response_text TEXT NOT NULL)"
+        )
         await db.commit()
 
         async with db.execute("SELECT COUNT(*) FROM users") as cur:
@@ -182,3 +187,49 @@ async def init_db() -> None:
                     (uid, json.dumps(user)),
                 )
             await db.commit()
+
+
+def sqlite_cache():
+    """
+    A decorator that caches the output of an async function in the SQLite database.
+    It expects the function to be async.
+    """
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            # Include function name in the payload
+            payload_dict = {
+                "func": func.__name__,
+                "args": args,
+                "kwargs": kwargs
+            }
+            # json.dumps with sort_keys=True ensures deterministic hashing
+            payload_str = json.dumps(payload_dict, sort_keys=True)
+            query_hash = hashlib.sha256(payload_str.encode('utf-8')).hexdigest()
+            
+            async with _open_db() as db:
+                async with db.execute(
+                    "SELECT response_text FROM api_cache WHERE query_hash = ?", 
+                    (query_hash,)
+                ) as cur:
+                    cached_result = await cur.fetchone()
+                
+                if cached_result:
+                    # Cache hit
+                    return json.loads(cached_result[0])
+            
+            # Cache miss: call the actual async function
+            actual_response = await func(*args, **kwargs)
+            
+            async with _open_db() as db:
+                # Use INSERT OR REPLACE in case multiple identical queries run concurrently
+                await db.execute(
+                    "INSERT OR REPLACE INTO api_cache (query_hash, response_text) VALUES (?, ?)", 
+                    (query_hash, json.dumps(actual_response))
+                )
+                await db.commit()
+                
+            return actual_response
+            
+        return wrapper
+    return decorator

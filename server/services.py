@@ -8,6 +8,7 @@ import lara_sdk
 from deep_translator import DeeplTranslator, GoogleTranslator
 from openrouter import OpenRouter
 
+from .db import sqlite_cache
 from .languages import LANGUAGES
 from .utils import get_config, retry_async
 
@@ -52,6 +53,7 @@ def translate_google(
     return GoogleTranslator(source=source_code, target=target_code).translate(text)
 
 
+@sqlite_cache()
 async def translate_google_with_api(
     text: str,
     src_lang: str,
@@ -101,6 +103,7 @@ def translate_deepl(
     ).translate(text)
 
 
+@sqlite_cache()
 async def translate_lara(
     text: str,
     src_lang: str,
@@ -153,6 +156,7 @@ async def translate_lara(
     return resp.translation # type: ignore
 
 
+@sqlite_cache()
 async def call_llm(prompt: str, model: str = "google/gemini-2.5-flash") -> str:
     # use global openrouter client
     response = await OPENROUTER_CLIENT.chat.send_async(
@@ -194,6 +198,7 @@ async def verify_llm(
         raise ValueError(f"Invalid LLM response: {text}")
 
 
+@sqlite_cache()
 async def call_llm_multimodal(
     prompt: str, model: str, source_media: str | None = None
 ) -> str:

@@ -20,8 +20,13 @@ function renderOverview(data: AdminOverview) {
     if (data.submissions_without_reviewer.length > 0) {
         html += `<p style="font-weight: bold; margin-bottom: 4px;">Pending submissions with no elligible reviewers (${data.submissions_without_reviewer.length}):</p>`;
         html += `<ul style="margin-top: 0; margin-bottom: 12px;">`;
+        const grouped: Record<string, number[]> = {};
         for (const sub of data.submissions_without_reviewer) {
-            html += `<li>(#${sub.id}) ${esc(sub.source_lang)} &rarr; ${esc(sub.target_lang)} by ${esc(sub.user_name || sub.username)}</li>`;
+            const key = `${esc(sub.source_lang)} &rarr; ${esc(sub.target_lang)} by ${esc(sub.user_name || sub.username)}`;
+            (grouped[key] ||= []).push(sub.id);
+        }
+        for (const [key, ids] of Object.entries(grouped)) {
+            html += `<li>${key} (${ids.map(id => `#${id}`).join(', ')})</li>`;
         }
         html += `</ul>`;
     }
@@ -56,17 +61,22 @@ function renderTable(users: AdminUser[]): void {
         }).join('');
 
         const sugg = u.review_suggestions || [];
-        let suggHtml = sugg.length === 0 ? '<span class="muted">None</span>' : `<span class="sugg-toggle" style="cursor:pointer;" data-uid="${u.id}">${sugg.length} possible</span>`;
+        let suggHtml = sugg.length === 0 ? '<span class="muted" style="font-size: 0.8em;">none</span>' : `<span class="sugg-toggle" style="cursor:pointer;" data-uid="${u.id}">${sugg.length} possible</span>`;
         if (sugg.length > 0 && !u.roles.includes('reviewer')) {
              suggHtml += `<br><span style="font-size: 0.8em;">not a reviewer</span>`;
         }
 
         let suggListHtml = '';
         if (sugg.length > 0) {
+            const groupedSugg: Record<string, number[]> = {};
+            for (const s of sugg) {
+                const key = `${esc(s.source_lang)} &rarr; ${esc(s.target_lang)} by ${esc(s.user_name || s.username)}`;
+                (groupedSugg[key] ||= []).push(s.id);
+            }
             suggListHtml = `<tr class="sugg-row-${u.id}" style="display:none;">
                 <td colspan="10" style="padding: 10px 20px; border-bottom: 1px solid #e2e8f0;">
                     <ul style="margin: 0; padding-left: 20px; font-size: 0.9em;">
-                        ${sugg.map(s => `<li>(#${s.id}) ${esc(s.source_lang)} &rarr; ${esc(s.target_lang)} by ${esc(s.user_name || s.username)}</li>`).join('')}
+                        ${Object.entries(groupedSugg).map(([k, ids]) => `<li>${k} (${ids.map(id => `#${id}`).join(', ')})</li>`).join('')}
                     </ul>
                 </td>
             </tr>`;

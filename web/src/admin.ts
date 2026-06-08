@@ -11,8 +11,8 @@ let allUsers: AdminUser[] = [];
 let adminOverview: AdminOverview | null = null;
 
 function renderOverview(data: AdminOverview) {
-    const statusCounts = Object.keys(data.submissions_total)
-        .map(status => `<strong>${data.submissions_total[status]}</strong> ${esc(status)}`)
+    const statusCounts = Object.entries(data.submissions_total)
+        .map(([status, count]) => `<strong>${count}</strong> ${esc(status)}`)
         .join(', ');
     
     let html = `<p style="margin-top:0;"><strong>Total Submissions:</strong> ${statusCounts}. `;
@@ -24,6 +24,15 @@ function renderOverview(data: AdminOverview) {
             html += `<li>(#${sub.id}) ${esc(sub.source_lang)} &rarr; ${esc(sub.target_lang)} by ${esc(sub.user_name || sub.username)}</li>`;
         }
         html += `</ul>`;
+    }
+
+    const pendingLangsCount = Object.keys(data.pending_languages || {}).length;
+    if (pendingLangsCount > 0) {
+        const sortedLangs = Object.entries(data.pending_languages)
+            .sort((a: [string, number], b: [string, number]) => b[1] - a[1])
+            .map(([lang, count]: [string, number]) => `<strong>${count}</strong> ${esc(lang)}`)
+            .join(', ');
+        html += `<p style="margin-top: 0; margin-bottom: 12px;"><strong>Pending by language:</strong> ${sortedLangs}</p>`;
     }
 
     html += `</p>`
@@ -47,7 +56,7 @@ function renderTable(users: AdminUser[]): void {
         }).join('');
 
         const sugg = u.review_suggestions || [];
-        let suggHtml = sugg.length === 0 ? '<span class="muted">None</span>' : `<span class="sugg-toggle" style="cursor:pointer; text-decoration: underline;" data-uid="${u.id}">${sugg.length} possible</span>`;
+        let suggHtml = sugg.length === 0 ? '<span class="muted">None</span>' : `<span class="sugg-toggle" style="cursor:pointer;" data-uid="${u.id}">${sugg.length} possible</span>`;
         if (sugg.length > 0 && !u.roles.includes('reviewer')) {
              suggHtml += `<br><span style="font-size: 0.8em;">not a reviewer</span>`;
         }

@@ -318,10 +318,17 @@ async def admin_overview(user=Depends(get_current_user)):
         }
         user_views.append(view)
 
+    pending_languages = {}
+    for sub in submissions_pending:
+        langs = set([sub["source_lang"], sub["target_lang"]])
+        for lang in langs:
+            pending_languages[lang] = pending_languages.get(lang, 0) + 1
+
     return {
         "users": user_views,
         "submissions_without_reviewer": submissions_without_reviewer,
-        "submissions_total": submissions_total
+        "submissions_total": submissions_total,
+        "pending_languages": pending_languages,
     }
 
 

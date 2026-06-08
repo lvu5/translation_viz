@@ -266,6 +266,7 @@ export interface AdminOverview {
     users: AdminUser[];
     submissions_without_reviewer: ReviewSuggestion[];
     submissions_total: Record<string, number>;
+    pending_languages: Record<string, number>;
 }
 
 export function getAdminOverview() {

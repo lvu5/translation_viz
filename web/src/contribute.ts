@@ -72,7 +72,7 @@ $(async () => {
             ($('#src-file')[0] as HTMLInputElement).value = '';
             lastMediaData = null;
             $('#media-preview').empty();
-            $('#add-media-btn').text('Add image/audio');
+            $('#add-media-btn').text('Add image/audio/video');
             inputCorrespondsToTranslations = false;
             invalidateVerification();
             updateButtonStates();
@@ -101,14 +101,17 @@ $(async () => {
         $('#media-preview').empty();
 
         const isAudio = /\.(mp3|wav)$/i.test(file.name);
+        const isVideo = /\.(mp4|webm|mpeg|mov)$/i.test(file.name);
         const reader = new FileReader();
         reader.onload = (e) => {
             const dataUrl = String(e.target?.result ?? '');
             lastMediaData = dataUrl;
-            const mediaTag = isAudio ? `<audio class="context_audio" controls src="${dataUrl}"></audio>` : `<img class="context_image" src="${dataUrl}">`;
+            let mediaTag = `<img class="context_image" src="${dataUrl}">`;
+            if (isAudio) mediaTag = `<audio class="context_audio" controls src="${dataUrl}"></audio>`;
+            else if (isVideo) mediaTag = `<video class="context_video" controls src="${dataUrl}" style="max-width:100%; max-height:150px;"></video>`;
 
             $('#media-preview').html(mediaTag);
-            $('#add-media-btn').text('Remove audio/image');
+            $('#add-media-btn').text('Remove media');
             inputCorrespondsToTranslations = false;
             invalidateVerification();
             updateButtonStates();
@@ -342,13 +345,16 @@ $(async () => {
         if (sub.source_media) {
             lastMediaData = sub.source_media;
             const isAudio = /^data:audio/.test(sub.source_media);
-            const mediaTag = isAudio ? `<audio class="context_audio" controls src="${sub.source_media}"></audio>` : `<img class="context_image" src="${sub.source_media}">`;
+            const isVideo = /^data:video/.test(sub.source_media);
+            let mediaTag = `<img class="context_image" src="${sub.source_media}">`;
+            if (isAudio) mediaTag = `<audio class="context_audio" controls src="${sub.source_media}"></audio>`;
+            else if (isVideo) mediaTag = `<video class="context_video" controls src="${sub.source_media}" style="max-width:100%; max-height:150px;"></video>`;
             $('#media-preview').html(mediaTag);
-            $('#add-media-btn').text('Remove image/audio');
+            $('#add-media-btn').text('Remove media');
         } else {
             lastMediaData = null;
             $('#media-preview').empty();
-            $('#add-media-btn').text('Add image/audio');
+            $('#add-media-btn').text('Add image/audio/video');
         }
 
         if (sub.source_instructions) {
@@ -435,7 +441,7 @@ $(async () => {
         setTimeout(() => $('#submit-status').html(''), 3000);
 
         $('#media-preview').empty();
-        $('#add-media-btn').text('Add image/audio');
+        $('#add-media-btn').text('Add image/audio/video');
         $('#src-instructions').val('').hide();
         $('#add-context-btn').text('Add instructions');
         updateButtonStates();

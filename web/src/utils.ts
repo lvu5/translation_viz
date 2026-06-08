@@ -105,11 +105,16 @@ export function accessDenied(roles: string[], target: string): void {
 
 export function renderSource(s: Submission): string {
     const isAudio = s.source_media && /^data:audio/.test(s.source_media);
+    const isVideo = s.source_media && /^data:video/.test(s.source_media);
     let out = '';
     if (s.source_media) {
-        out += isAudio
-            ? `<audio controls src="${s.source_media}" class="context_audio"></audio>`
-            : `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`;
+        if (isAudio) {
+            out += `<audio controls src="${s.source_media}" class="context_audio"></audio>`;
+        } else if (isVideo) {
+            out += `<video controls src="${s.source_media}" class="context_video" style="max-width:100%; max-height:150px;"></video>`;
+        } else {
+            out += `<img src="${s.source_media}" class="context_image" style="max-width:100%; max-height:150px;">`;
+        }
     }
     if (s.source_text) {
         out += `<span style="white-space: pre-wrap;">${esc(s.source_text)}</span>`;

@@ -176,7 +176,8 @@ async def verify_llm(
         source_text = "(attached)"
     prompt = f"Your goal is to verify whether a translation fulfills a criterion.\n\nCriterion: {rule}\n\nInput: {source_text}\n\nTranslation to verify: {translation}\n\nOutput only pass or fail and nothing else."
     if source_media:
-        context_type = "audio" if ("audio" in source_media.split(",")[0]) else "image"
+        mime = source_media.split(",")[0]
+        context_type = "audio" if "audio" in mime else ("video" if "video" in mime else "image")
         prompt += f"\n\nUse the provided {context_type} as additional context."
 
     text = await call_llm_multimodal(
@@ -205,11 +206,12 @@ async def call_llm_multimodal(
         mime = header[5:].split(";", 1)[0]
         has_audio = "audio" in mime
         has_image = "image" in mime
+        has_video = "video" in mime
     else:
         return await call_llm(prompt, model=model)
 
-    if len(base64_data) > 1024 * 1024:
-        raise ValueError("Media data too large (max 1MB)")
+    if len(base64_data) > 2 * 1024 * 1024:
+        raise ValueError("Media data too large (max 2MB)")
 
     content: list = [{"type": "text", "text": prompt}]
     if has_audio:
@@ -222,6 +224,8 @@ async def call_llm_multimodal(
                 },
             }
         )
+    elif has_video:
+        content.append({"type": "video_url", "video_url": {"url": source_media}})
     elif has_image:
         content.append({"type": "image_url", "image_url": {"url": source_media}})
     else:
@@ -249,8 +253,10 @@ async def translate_openrouter(
         return await call_llm(prompt, model=model)
 
     # Detect media type for prompt
-    has_audio = "audio" in source_media.split(",")[0]
-    context_type = "audio" if has_audio else "image"
+    mime = source_media.split(",")[0]
+    has_audio = "audio" in mime
+    has_video = "video" in mime
+    context_type = "audio" if has_audio else ("video" if has_video else "image")
 
     if text:
         prompt = (

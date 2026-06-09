@@ -6,7 +6,7 @@ from functools import wraps
 
 import aiosqlite
 
-from .utils import CONTRIBUTOR_QUOTA_DEFAULT, DB_PATH
+from .utils import CONTRIBUTOR_QUOTA_DEFAULT, DB_CACHE_PATH, DB_PATH
 
 
 def _open_db():
@@ -14,6 +14,13 @@ def _open_db():
     if db_dir:
         os.makedirs(db_dir, exist_ok=True)
     return aiosqlite.connect(DB_PATH)
+
+
+def _open_cache_db():
+    db_dir = os.path.dirname(DB_CACHE_PATH)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+    return aiosqlite.connect(DB_CACHE_PATH)
 
 
 _TABLES = {"users", "submissions"}
@@ -140,15 +147,18 @@ async def create_submission(submission: dict) -> int:
 
 
 async def init_db() -> None:
+    async with _open_cache_db() as cache_db:
+        await cache_db.execute(
+            "CREATE TABLE IF NOT EXISTS api_cache (query_hash TEXT PRIMARY KEY, response_text TEXT NOT NULL)"
+        )
+        await cache_db.commit()
+
     async with _open_db() as db:
         await db.execute(
             "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, data TEXT NOT NULL)"
         )
         await db.execute(
             "CREATE TABLE IF NOT EXISTS submissions (id INTEGER PRIMARY KEY, data TEXT NOT NULL)"
-        )
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS api_cache (query_hash TEXT PRIMARY KEY, response_text TEXT NOT NULL)"
         )
         await db.commit()
 
@@ -207,7 +217,7 @@ def sqlite_cache():
             payload_str = json.dumps(payload_dict, sort_keys=True)
             query_hash = hashlib.sha256(payload_str.encode('utf-8')).hexdigest()
             
-            async with _open_db() as db:
+            async with _open_cache_db() as db:
                 async with db.execute(
                     "SELECT response_text FROM api_cache WHERE query_hash = ?", 
                     (query_hash,)
@@ -221,7 +231,7 @@ def sqlite_cache():
             # Cache miss: call the actual async function
             actual_response = await func(*args, **kwargs)
             
-            async with _open_db() as db:
+            async with _open_cache_db() as db:
                 # Use INSERT OR REPLACE in case multiple identical queries run concurrently
                 await db.execute(
                     "INSERT OR REPLACE INTO api_cache (query_hash, response_text) VALUES (?, ?)", 

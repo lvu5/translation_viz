@@ -9,6 +9,7 @@ GOOGLE_TRANSLATE_API_KEY = ""
 
 CONTRIBUTOR_QUOTA_DEFAULT = 100
 DB_PATH = "data/db.sqlite"
+DB_PATH_CACHE = "data/db_cache.sqlite"
 
 # specific to our FORPSI email
 EMAIL_SENDER = ""

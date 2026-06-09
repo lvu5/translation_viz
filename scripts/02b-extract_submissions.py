@@ -9,7 +9,7 @@ args = argparse.ArgumentParser(
     description="Extract confirmed submissions from sqlite database."
 )
 args.add_argument("--db", help="Path to the .sqlite file", default="data/db.sqlite")
-args.add_argument("--output", default="scripts/data/data.json", help="Output path")
+args.add_argument("--output", default="../submissions.json", help="Output path")
 args = args.parse_args()
 
 os.makedirs(os.path.dirname(args.output), exist_ok=True)

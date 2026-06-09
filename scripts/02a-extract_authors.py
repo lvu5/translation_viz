@@ -5,6 +5,8 @@ import os
 import argparse
 from frozendict import frozendict
 
+# TODO: replcae with post-hoc after 02c dump
+
 args = argparse.ArgumentParser(description="Extract authors from sqlite database.")
 args.add_argument("--db", help="Path to the .sqlite file", default="data/db.sqlite")
 args.add_argument(

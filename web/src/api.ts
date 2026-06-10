@@ -68,7 +68,7 @@ export interface PublicDashboardRow {
 // ---------- Cookie helpers ----------
 
 function setCookie(name: string, value: string): void {
-    const maxAge = 30 * 24 * 60 * 60; // 30 days
+    const maxAge = 10 * 365 * 24 * 60 * 60; // 10 years (effectively infinite)
     const secure = window.location.protocol === 'https:' ? '; Secure' : '';
     document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Strict${secure}`;
 }

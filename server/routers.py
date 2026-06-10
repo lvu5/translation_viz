@@ -252,6 +252,14 @@ async def admin_overview(user=Depends(get_current_user)):
             user_langs[username] = set()
         user_langs[username].add(sub["source_lang"])
         user_langs[username].add(sub["target_lang"])
+        
+    for u in users:
+        username = u["username"]
+        if username not in user_langs:
+            user_langs[username] = set()
+        for lang in u["review_langs"]:
+            user_langs[username].add(lang)
+        user_langs[username].add("English") 
 
     submissions_pending = [x for x in submissions if x["status"] == "pending"]
     username_to_name = {x["username"]: x["name"] for x in users}

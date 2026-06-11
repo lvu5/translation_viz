@@ -10,7 +10,7 @@ from openrouter import OpenRouter
 
 from .db import sqlite_cache
 from .languages import LANGUAGES
-from .utils import get_config, retry_async
+from .utils import get_config, log, retry_async
 
 OPENROUTER_CLIENT = OpenRouter(api_key=get_config("OPENROUTER_API_KEY", ""))
 
@@ -156,7 +156,7 @@ async def translate_lara(
     return resp.translation # type: ignore
 
 
-@sqlite_cache()
+@sqlite_cache(discard_none=True)
 async def call_llm(prompt: str, model: str = "google/gemini-2.5-flash") -> str:
     # use global openrouter client
     response = await OPENROUTER_CLIENT.chat.send_async(
@@ -169,7 +169,10 @@ async def call_llm(prompt: str, model: str = "google/gemini-2.5-flash") -> str:
         ],
         seed=0,
     )
-    return response.choices[0].message.content  # type: ignore
+    content = response.choices[0].message.content
+    if content is None:
+        log(f"None LLM response: {response.choices[0]}")
+    return content  # type: ignore
 
 
 @retry_async(times=3)
@@ -188,7 +191,7 @@ async def verify_llm(
         prompt, model="google/gemini-2.5-pro", source_media=source_media
     )
     if text is None:
-        raise ValueError("No response from LLM. Try simplifying your input.")
+        raise ValueError("No response from LLM. Try simplifying your input and verification rules.")
     text_clean = text.strip().lower().strip(" \t\n\r.,!?\"'*")
     if text_clean == "pass":
         return True
@@ -198,7 +201,7 @@ async def verify_llm(
         raise ValueError(f"Invalid LLM response: {text}")
 
 
-@sqlite_cache()
+@sqlite_cache(discard_none=True)
 async def call_llm_multimodal(
     prompt: str, model: str, source_media: str | None = None
 ) -> str:
@@ -240,7 +243,10 @@ async def call_llm_multimodal(
         model=model,
         messages=[{"role": "user", "content": content}],
     )
-    return response.choices[0].message.content # type: ignore
+    msg_content = response.choices[0].message.content
+    if msg_content is None:
+        log(f"None LLM response: {response.choices[0]}")
+    return msg_content # type: ignore
 
 
 async def translate_openrouter(

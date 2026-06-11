@@ -199,7 +199,7 @@ async def init_db() -> None:
             await db.commit()
 
 
-def sqlite_cache():
+def sqlite_cache(discard_none: bool = False):
     """
     A decorator that caches the output of an async function in the SQLite database.
     It expects the function to be async.
@@ -231,6 +231,9 @@ def sqlite_cache():
             # Cache miss: call the actual async function
             actual_response = await func(*args, **kwargs)
             
+            if discard_none and actual_response is None:
+                return actual_response
+
             async with _open_cache_db() as db:
                 # Use INSERT OR REPLACE in case multiple identical queries run concurrently
                 await db.execute(

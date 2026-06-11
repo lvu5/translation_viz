@@ -188,7 +188,7 @@ async def verify_llm(
         prompt, model="google/gemini-2.5-pro", source_media=source_media
     )
     if text is None:
-        raise ValueError("No response from LLM. Try again later.")
+        raise ValueError("No response from LLM. Try simplifying your input.")
     text_clean = text.strip().lower().strip(" \t\n\r.,!?\"'*")
     if text_clean == "pass":
         return True

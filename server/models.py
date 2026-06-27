@@ -46,7 +46,7 @@ class ScoreReq(BaseModel):
     comment: Optional[str] = None
 
 class ProfileReq(BaseModel):
-    name: str = Field(max_length=500)
+    name: str = Field(max_length=50)
     affiliation: str = Field(max_length=100)
     email: str = Field(max_length=100)
     credit_consent: bool

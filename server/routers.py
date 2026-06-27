@@ -117,7 +117,7 @@ async def register_user(req: ProfileReq):
     # Generate username from name: First_Last
     parts = req.name.strip().split()
     base_username = "_".join(part.capitalize() for part in parts)
-    base_username = "".join(c for c in base_username if c.isalnum() or c == "_")
+    base_username = "".join(c for c in base_username if c.isalnum() or c == "_")[:50]
     if not base_username:
         raise HTTPException(status_code=400, detail="Invalid name for username generation")
 

@@ -49,6 +49,19 @@ $(async () => {
     // Language / user filter selects
     $('#filter-source-lang, #filter-target-lang, #filter-user').on('change', loadSubmissions);
 
+    $('#sen-list').on('input', '.comment-input', function () {
+        const id = parseInt(String($(this).closest('.sug-item').attr('id')?.replace('sug-', '')));
+        const text = String($(this).val() ?? '').trim();
+        const $item = $(`#sug-${id}`);
+        if (text) {
+            $item.find('.score-btn[data-action="return"]').text('Comment & return submission');
+            $item.find('.score-btn[data-action="accept"]').text('Comment & accept submission');
+        } else {
+            $item.find('.score-btn[data-action="return"]').text('Return submission');
+            $item.find('.score-btn[data-action="accept"]').text('Accept submission');
+        }
+    });
+
     $('#sen-list').on('click', '.score-btn:not(.comment-send-btn)', async function () {
         if ($(this).prop('disabled')) return;
         const id = parseInt(String($(this).data('id')));
@@ -70,7 +83,28 @@ $(async () => {
         const isActive = $(this).hasClass('active');
         const targetAction = isActive ? 'pending' : action;
 
+        const $input = $(`#comment-box-${id} .comment-input`);
+        const commentText = String($input.val() ?? '').trim();
+
         try {
+            if (commentText && targetAction !== 'pending') {
+                $(this).prop('disabled', true).text('Sending…');
+                await addComment(id, commentText);
+                const sug = allSugs.find(s => s.id === id);
+                if (sug) {
+                    if (!sug.comments) sug.comments = [];
+                    sug.comments.push({ author: currentUser!.username, author_name: currentUser!.name, text: commentText, created_at: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+                }
+                $input.val('');
+                if (sug) {
+                    $(`#comment-thread-${id}`).html(renderCommentThreadWrap(sug.comments));
+                }
+                
+                $(`#sug-${id} .score-btn[data-action="return"]`).text('Return submission');
+                $(`#sug-${id} .score-btn[data-action="accept"]`).text('Accept submission');
+                $(this).prop('disabled', false).text(targetAction === 'return' ? 'Return submission' : 'Accept submission');
+            }
+
             await scoreSubmission(id, targetAction);
             const status = targetAction === 'accept' ? 'accept' : (targetAction === 'return' ? 'return' : 'pending');
             const sug = allSugs.find(s => s.id === id);
@@ -81,7 +115,12 @@ $(async () => {
                 $(this).addClass('active');
             }
             $item.find('.sug-meta .badge').replaceWith(scoreBadge(status, (sug?.comments?.length ?? 0) > 0));
-        } catch { alert('Failed to save'); }
+        } catch { 
+            alert('Failed to save');
+            if ($(this).prop('disabled')) {
+                $(this).prop('disabled', false).text(targetAction === 'return' ? 'Comment & return' : 'Comment & accept');
+            }
+        }
     });
 
     // Send comment from inline box

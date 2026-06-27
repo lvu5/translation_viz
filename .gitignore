@@ -1,5 +1,6 @@
 web/src/model_results.svg
 computed/
+.vscode/
 
 config.toml
 scripts/data/

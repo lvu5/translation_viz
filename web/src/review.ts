@@ -219,6 +219,10 @@ function populateFilters(): void {
     $('#filter-target-lang').html('<option value="">All Target Languages</option>' + myTargetLangsOption +
         targetLangs.map(l => `<option value="${l}"${l === targetLangVal ? ' selected' : ''}>${escHtml(l)}</option>`).join(''));
     const userDisplay = (u: string) => {
+        const existingOption = $(`#filter-user option[value="${u}"]`);
+        if (existingOption.length && existingOption.text()) {
+            return existingOption.text();
+        }
         const sub = allSugs.find(s => s.username === u);
         return sub?.user_name || u;
     };

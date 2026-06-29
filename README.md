@@ -68,3 +68,17 @@ We welcome bugreports, hands-on, and research contributions.
 AI-generated PRs are fine as long as you verify everything and take ownership of the changes.
 This effort is organized by a collective of researchers from ETH Zurich, JHU, CUNI, UvA, KIT, and many others.
 Reach out to [last-translation-benchmark@vilda.net](mailto:last-translation-benchmark@vilda.net) with inquiries.
+
+## Citation
+
+The Last Translation Benchmark is still in preparation.
+If you need to cite this project, please use this temporary BibTeX:
+```bibtex
+@misc{last-translation-benchmark,
+title={Last Translation Benchmark},
+author={Vilém Zouhar and Niyati Bafna and Maike Züfle and Patrícia Schmidtová and Bhavitvya Malik and Sara Rajaee and Leshem Choshen and Gabriele Sarti and Marek Šuppa and Orfeas Menis and Jingwei Ni and Yu Fan and Jan Niehues and Mukund Choudhary and Michelle Wastl and Pinzhen Chen and Alon Lavie and Ondřej Bojar and Sara Papi and Fabian Retkowski and Orfeas Menis Mastromichalakis and Javier García Gilabert and Eliya Habba and Maria Lymperaiou and Dominik Macháček and Sophia Conrad and Sergey Troshin and Jannis Vamvas and Marco Gaido and Sankalan Pal Chowdhury and Malik Marmonier and Koel Dutta Chowdhury and Samuel Simko and Rachel Bawden and Peng Cui and Lukas Edman and Jirui Qi and David Stap and Blanka Kövér and Benoît Sagot and Ruta Binkyte and Ondrej Klejch and Ona de Gibert and Isabelle Caroline Rose Cretton and Bastian Bunzeck and Seth Aycock and Juri Opitz and Evgeniia Tokarchuk and Wafa Aissa and Shaomu Tan and Pavel Stepachev and Nathaniel Berger and Mateusz Lango and Heejin Do and Hanna Yukhymenko and Beni Egressy and Avijit Thawani},
+year={2026},
+url={https://last-translation-benchmark.vilda.net/},
+note={In preparation},
+}
+```

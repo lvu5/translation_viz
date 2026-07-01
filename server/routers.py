@@ -259,6 +259,7 @@ async def admin_overview(user=Depends(get_current_user)):
             user_langs[username] = set()
         for lang in u["review_langs"]:
             user_langs[username].add(lang)
+        # everyone knows English (?)
         user_langs[username].add("English") 
 
     submissions_pending = [x for x in submissions if x["status"] == "pending"]
@@ -270,7 +271,11 @@ async def admin_overview(user=Depends(get_current_user)):
     for u_username, langs in user_langs.items():
         feasible = [
             x for x in submissions_pending
-            if x["source_lang"] in langs and x["target_lang"] in langs and x["username"] != u_username
+            if (
+                (x["source_lang"] in langs or any(lang in x["source_lang"] for lang in langs)) and
+                (x["target_lang"] in langs or any(lang in x["target_lang"] for lang in langs)) and
+                x["username"] != u_username
+            )
         ]
         if feasible:
             if u_username not in review_suggestions_by_user:

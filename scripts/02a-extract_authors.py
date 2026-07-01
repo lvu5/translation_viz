@@ -14,13 +14,17 @@ submissions =  [
 
 user_points = {}
 for s in submissions:
-    uid = s.get("user_id")
-    user_points[uid] = user_points.get(uid, 0) + 1
+    contributor_username = s.get("username")
+    reviewer_username = s.get("reviewed_by")
+    user_points[contributor_username] = user_points.get(contributor_username, 0) + 1
+    # add partial credit for reviewing
+    user_points[reviewer_username] = user_points.get(reviewer_username, 0) + 0.2
+
 
 # Filter authors who have enough points and gave credit consent
 authors = []
 for u in users:
-    pts = user_points.get(u["id"], 0)
+    pts = user_points.get(u["username"], 0)
     if pts >= POINTS_MIN and u["credit_consent"]:
         authors.append(
             {

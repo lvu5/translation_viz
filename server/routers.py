@@ -853,14 +853,13 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
 
     submission["reviewed_by"] = user["username"]
 
-    if req.action in ("accept", "return"):
-        submission["comments"].append(
-            {
-                "author": user["username"],
-                "text": "ACCEPT" if req.action == "accept" else "RETURN",
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            }
-        )
+    submission["comments"].append(
+        {
+            "author": user["username"],
+            "text": req.action.upper(),
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        }
+    )
 
     if req.action in ("accept", "return"):
         author = await get_user_by_id(submission["user_id"])

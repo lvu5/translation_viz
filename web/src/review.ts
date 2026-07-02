@@ -108,7 +108,12 @@ $(async () => {
             await scoreSubmission(id, targetAction);
             const status = targetAction === 'accept' ? 'accept' : (targetAction === 'return' ? 'return' : 'pending');
             const sug = allSugs.find(s => s.id === id);
-            if (sug) { sug.status = status; }
+            if (sug) { 
+                sug.status = status; 
+                if (!sug.comments) sug.comments = [];
+                sug.comments.push({ author: currentUser!.username, author_name: currentUser!.name, text: targetAction.toUpperCase(), created_at: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+                $(`#comment-thread-${id}`).html(renderCommentThreadWrap(sug.comments));
+            }
             const $item = $(`#sug-${id}`);
             $item.find('.score-btn').removeClass('active');
             if (targetAction !== 'pending') {

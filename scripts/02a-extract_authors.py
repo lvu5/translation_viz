@@ -45,5 +45,5 @@ authors_export = [
 authors_export = list(dict.fromkeys(authors_export))
 authors_export = [{"name": a[0], "affiliation": a[1]} for a in authors_export]
 
-with open("data/contributors.json", "w") as f:
+with open("computed/contributors.json", "w") as f:
     json.dump(authors_export, f, indent=2, ensure_ascii=False)

@@ -1,6 +1,11 @@
 import collections
 import json
 import os
+import utils_fig
+import matplotlib.pyplot as plt
+from datetime import datetime
+import numpy as np
+os.chdir(os.path.dirname(os.path.abspath(__file__))+ "/../")
 
 os.makedirs("computed/", exist_ok=True)
 
@@ -30,11 +35,74 @@ for submission in data_submissions:
 
 data_out["language_counts"] = dict(language_counts.most_common())
 
+def date_to_delta(date_str):
+    # subtract fom 2026-05-01
+    # 2026-05-26 23:23
+    # remove micros?
+    if date_str.count(":") == 2:
+        date_str = date_str.rsplit(":", 1)[0]
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M")
+    delta = date_obj - datetime(2026, 5, 1)
+    return delta.days
 
 # number of accepted, rejected, pending submissions
 status_counts = collections.Counter()
+delta_today = date_to_delta(datetime.now().strftime("%Y-%m-%d %H:%M"))
+dates_pending = [0]*(delta_today+1)
+dates_accepted = [0]*(delta_today+1)
+dates_returned = [0]*(delta_today+1)
 for submission in data_submissions:
     status_counts[submission["status"]] += 1
+    dates = [submission["created_at"]] + [x["created_at"] for x in submission["comments"]]
+    delta_first = date_to_delta(min(dates))
+    delta_last = date_to_delta(max(dates))
+
+    if submission["status"] == "accept":
+        for i in range(delta_last+1, delta_today+1): 
+            dates_accepted[i] += 1
+        for i in range(delta_first, delta_last+1):
+            dates_pending[i] += 1
+    elif submission["status"] == "return":
+        for i in range(delta_first, delta_last+1):
+            dates_pending[i] += 1
+        for i in range(delta_last, delta_today+1):
+            dates_returned[i] += 1
+    elif submission["status"] == "pending":
+        for i in range(delta_first, delta_today+1):
+            dates_pending[i] += 1
+
+dates_accepted = np.array(dates_accepted)
+dates_pending = np.array(dates_pending)
+dates_returned = np.array(dates_returned)
+
+plt.fill_between(range(delta_today+1), dates_accepted, color="green", alpha=0.5, linewidth=0, label="accepted")
+plt.fill_between(range(delta_today+1), dates_pending, color="orange", alpha=0.5, linewidth=0, label="pending")
+plt.fill_between(range(delta_today+1), dates_returned, color="red", alpha=0.5, linewidth=0, label="returned")
+plt.ylabel("Number of submissions")
+plt.xlabel("Days since 2026-05-01")
+plt.text(
+    x=delta_today,
+    y=dates_accepted[-1],
+    s=f"Accepted: {status_counts['accept']}   ",
+    ha="right", va="top",
+)
+plt.text(
+    x=delta_today,
+    y=dates_pending[-1],
+    s=f"Pending: {status_counts['pending']}   ",
+    ha="right", va="top",
+)
+plt.text(
+    x=delta_today,
+    y=dates_returned[-1],
+    s=f"Returned: {status_counts['return']}   ",
+    ha="right", va="top",
+)
+
+plt.gca().spines[["top", "right"]].set_visible(False)
+plt.tight_layout(pad=1)
+
+plt.show()
 
 data_out["status_counts"] = dict(status_counts.most_common())
 
@@ -49,8 +117,6 @@ for submission in data_submissions:
     passing = sum(all(entry["verified"]) for entry in submission["translations"] if entry["verified"] is not None)
     counter_passing[passing-1] += 1
 
-print(counter_passing)
 data_out["passing_counts"] = dict(counter_passing.most_common())
-
 with open("computed/bake_results.json", "w") as f:
     json.dump(data_out, f, indent=2)

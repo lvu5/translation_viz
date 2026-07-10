@@ -75,28 +75,33 @@ dates_accepted = np.array(dates_accepted)
 dates_pending = np.array(dates_pending)
 dates_returned = np.array(dates_returned)
 
-plt.fill_between(range(delta_today+1), dates_accepted, color="green", alpha=0.5, linewidth=0, label="accepted")
-plt.fill_between(range(delta_today+1), dates_pending, color="orange", alpha=0.5, linewidth=0, label="pending")
-plt.fill_between(range(delta_today+1), dates_returned, color="red", alpha=0.5, linewidth=0, label="returned")
+# # derivative
+# plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_accepted[:-1]), dates_accepted)], color="green", linewidth=2)
+# plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_pending[:-1]), dates_pending)], color="orange", linewidth=2)
+# plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_returned[:-1]), dates_returned)], color="red", linewidth=2)
+
+plt.plot(range(delta_today+1), dates_accepted, color="green", linewidth=2)
+plt.plot(range(delta_today+1), dates_pending, color="orange", linewidth=2)
+plt.plot(range(delta_today+1), dates_returned, color="red", linewidth=2)
 plt.ylabel("Number of submissions")
 plt.xlabel("Days since 2026-05-01")
 plt.text(
     x=delta_today,
     y=dates_accepted[-1],
     s=f"Accepted: {status_counts['accept']}   ",
-    ha="right", va="top",
+    ha="left", va="center"
 )
 plt.text(
     x=delta_today,
     y=dates_pending[-1],
     s=f"Pending: {status_counts['pending']}   ",
-    ha="right", va="top",
+    ha="left", va="center",
 )
 plt.text(
     x=delta_today,
     y=dates_returned[-1],
     s=f"Returned: {status_counts['return']}   ",
-    ha="right", va="top",
+    ha="left", va="center",
 )
 
 plt.gca().spines[["top", "right"]].set_visible(False)

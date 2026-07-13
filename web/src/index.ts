@@ -12,6 +12,16 @@ $(async () => {
         try {
             const user = await getMe();
             showRoleButtons(user);
+            
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('registered') != null) {
+                const msg = $('<span style="color: #19632e;">Registration successful; please contribute below.</span><br>');
+                $('#role-buttons').prepend(msg);
+                
+                const url = new URL(window.location.href);
+                // url.searchParams.delete('registered');
+                window.history.replaceState({}, document.title, url.toString());
+            }
         } catch {
             $('#auth-error').show();
         }

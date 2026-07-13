@@ -48,15 +48,7 @@ $(async () => {
         try {
             if (isRegistrationMode) {
                 await registerUser({ name, affiliation, email, credit_consent, notification_consent });
-                
-                // Show success message and hide form
-                $('.profile-wrap').html(`
-                    <h2>Registration Successful</h2>
-                    <p class="sub" style="margin-bottom: 0;">Your profile has been created. Please check your email (including spam folder) for login instructions.</p>
-                    <div style="text-align: center; margin-top: 24px;">
-                        <a href="index.html" class="btn btn-success" style="text-decoration: none; display: inline-block;">Return to Home</a>
-                    </div>
-                `);
+                window.location.href = 'index.html?registered=1';
             } else {
                 await updateProfile({ name, affiliation, email, credit_consent, notification_consent });
                 // Redirect back to main page which will route appropriately

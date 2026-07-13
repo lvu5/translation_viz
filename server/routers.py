@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from .auth import get_current_user, require_admin
 from .db import (
@@ -104,7 +104,7 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
 
 
 @router.post("/api/register", status_code=201)
-async def register_user(req: ProfileReq):
+async def register_user(req: ProfileReq, response: Response):
     if not req.name.strip() or not req.email.strip():
         raise HTTPException(status_code=400, detail="Name and email are required")
 
@@ -146,8 +146,6 @@ async def register_user(req: ProfileReq):
         "review_langs": [],
         "last_active": "",
     }
-    await db_create_user(new_user)
-
     # Send registration email directly
     host_public = os.getenv("HOST_PUBLIC") or ""
     host_url = host_public.rstrip("/")
@@ -164,12 +162,22 @@ Let us know if you have any questions or need to increase your quota.
 
 Best regards, the LTB Team"""
 
-    await send_email(
+    email_success = await send_email(
         to_email=req.email,
         subject="Last Translation Benchmark - Login Link",
         body=email_body,
         user_obj=new_user,
     )
+    
+    if not email_success:
+        raise HTTPException(status_code=500, detail="Failed to send registration email. Please try again later.")
+
+    await db_create_user(new_user)
+
+    max_age = 10 * 365 * 24 * 60 * 60
+    import urllib.parse
+    response.set_cookie(key="ltb_user", value=urllib.parse.quote(username), max_age=max_age, path="/", samesite="strict")
+    response.set_cookie(key="ltb_token", value=urllib.parse.quote(new_user['magic_token']), max_age=max_age, path="/", samesite="strict")
 
     return {"ok": True}
 

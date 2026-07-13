@@ -143,6 +143,15 @@ async def create_submission(submission: dict) -> int:
         return new_id
 
 
+async def save_sent_email(to_email: str, subject: str, body: str, date: str) -> None:
+    async with _open_db() as db:
+        await db.execute(
+            "INSERT INTO sent_emails (to_email, subject, body, date) VALUES (?, ?, ?, ?)",
+            (to_email, subject, body, date)
+        )
+        await db.commit()
+
+
 # --- Init ---
 
 
@@ -159,6 +168,9 @@ async def init_db() -> None:
         )
         await db.execute(
             "CREATE TABLE IF NOT EXISTS submissions (id INTEGER PRIMARY KEY, data TEXT NOT NULL)"
+        )
+        await db.execute(
+            "CREATE TABLE IF NOT EXISTS sent_emails (to_email TEXT NOT NULL, subject TEXT NOT NULL, body TEXT NOT NULL, date TEXT NOT NULL)"
         )
         await db.commit()
 

@@ -140,7 +140,11 @@ async def send_email(to_email: str, subject: str, body: str, headers: dict[str, 
             log(f"Failed to send email: {e}")
             return False
 
-    return await asyncio.to_thread(_send)
+    success = await asyncio.to_thread(_send)
+    if success:
+        from .db import save_sent_email
+        await save_sent_email(to_email, subject, body, datetime.datetime.now().isoformat())
+    return success
 
 async def schedule_daily_notifications() -> None:
     from .db import get_user_by_id, get_users, save_user

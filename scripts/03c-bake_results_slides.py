@@ -80,9 +80,9 @@ dates_returned = np.array(dates_returned)
 # plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_pending[:-1]), dates_pending)], color="orange", linewidth=2)
 # plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_returned[:-1]), dates_returned)], color="red", linewidth=2)
 
-plt.plot(range(delta_today+1), dates_accepted, color="green", linewidth=2)
-plt.plot(range(delta_today+1), dates_pending, color="orange", linewidth=2)
-plt.plot(range(delta_today+1), dates_returned, color="red", linewidth=2)
+plt.plot(range(delta_today+1), dates_accepted, color="green", linewidth=2, marker=".")
+plt.plot(range(delta_today+1), dates_pending, color="orange", linewidth=2, marker=".")
+plt.plot(range(delta_today+1), dates_returned, color="red", linewidth=2, marker=".")
 plt.ylabel("Number of submissions")
 plt.xlabel("Days since 2026-05-01")
 plt.text(

@@ -3,6 +3,7 @@ import datetime
 import os
 import shutil
 import tomllib
+import urllib.parse
 from functools import wraps
 from typing import Any
 
@@ -87,7 +88,7 @@ async def send_email(to_email: str, subject: str, body: str, headers: dict[str, 
     if user_obj:
         host_public = os.getenv("HOST_PUBLIC") or ""
         host_url = host_public.rstrip('/')
-        unsubscribe_link = f"{host_url}/api/unsubscribe?user={user_obj['username']}&token={user_obj['magic_token']}"
+        unsubscribe_link = f"{host_url}/api/unsubscribe?user={urllib.parse.quote(str(user_obj['username']))}&token={user_obj['magic_token']}"
         body += f"\n\n---\nTo unsubscribe from these updates, click here:\n{unsubscribe_link}\n"
         if headers is None:
             headers = {}

@@ -346,6 +346,22 @@ async def admin_overview(user=Depends(get_current_user)):
 async def public_dashboard():
     users = await get_users()
     submissions = await db_get_submissions()
+
+    total_submissions = len(submissions)
+    total_authors = len(set(s["user_id"] for s in submissions))
+
+    language_counts = {}
+    for s in submissions:
+        lang_src = s.get("source_lang")
+        if lang_src:
+            language_counts[lang_src] = language_counts.get(lang_src, 0) + 1
+        lang_tgt = s.get("target_lang")
+        if lang_tgt:
+            language_counts[lang_tgt] = language_counts.get(lang_tgt, 0) + 1
+
+    sorted_languages = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
+    formatted_languages = [[lang, count] for lang, count in sorted_languages]
+
     accepted_by_user: dict[int, int] = {}
     for submission in submissions:
         if submission["status"] != "accept":
@@ -395,7 +411,12 @@ async def public_dashboard():
         ),
         reverse=True,
     )
-    return rows
+    return {
+        "rows": rows,
+        "total_submissions": total_submissions,
+        "total_authors": total_authors,
+        "languages": formatted_languages,
+    }
 
 
 @router.delete("/api/admin/users/{uid}", status_code=200)

@@ -65,6 +65,13 @@ export interface PublicDashboardRow {
     accepted_submissions: number;
 }
 
+export interface PublicDashboardData {
+    rows: PublicDashboardRow[];
+    total_submissions: number;
+    total_authors: number;
+    languages: [string, number][];
+}
+
 // ---------- Cookie helpers ----------
 
 function setCookie(name: string, value: string): void {
@@ -176,7 +183,7 @@ export function getSubmissions(
 }
 
 export function getPublicDashboard() {
-    return apiCall<PublicDashboardRow[]>('GET', 'api/public-dashboard');
+    return apiCall<PublicDashboardData>('GET', 'api/public-dashboard');
 }
 
 export function createSubmission(data: {
@@ -335,6 +342,13 @@ export function renderRoleSwitcher(roles: string[]): void {
     profileBtn.style.fontSize = '0.85em';
     profileBtn.href = 'profile';
     container.appendChild(profileBtn);
+
+    const dashboardBtn = document.createElement('a');
+    dashboardBtn.textContent = 'Dashboard';
+    dashboardBtn.className = 'btn-underlined';
+    dashboardBtn.style.fontSize = '0.85em';
+    dashboardBtn.href = 'dashboard';
+    container.appendChild(dashboardBtn);
 
     const logoutBtn = document.createElement('button');
     logoutBtn.textContent = 'Logout';

@@ -47,3 +47,5 @@ authors_export = [{"name": a[0], "affiliation": a[1]} for a in authors_export]
 
 with open("computed/contributors.json", "w") as f:
     json.dump(authors_export, f, indent=2, ensure_ascii=False)
+
+print("Saved to computed/contributors.json")

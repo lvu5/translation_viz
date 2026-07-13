@@ -16,12 +16,21 @@ $(async () => {
     }
 
     try {
-        const rows = await getPublicDashboard();
-        if (!rows.length) {
+        const data = await getPublicDashboard();
+        
+        $('#dashboard-stats').html(`
+            <div style="flex-wrap: wrap; display: flex; gap: 12px; text-align: justify;">
+                <div><strong>Total Submissions:</strong> ${data.total_submissions}</div>
+                <div><strong>Contributors:</strong> ${data.total_authors}</div>
+                <div style="flex-basis: 100%;"><strong>Languages:</strong> ${data.languages.map(x=> escHtml(x[0]).replace(" ", "&nbsp;").replace("(", "").replace(")", "") + ` (${x[1]})`).join(', ')}</div>
+            </div>
+        `);
+
+        if (!data.rows.length) {
             $('#dashboard-body').html('<tr><td colspan="3" class="empty">No accepted submissions yet.</td></tr>');
             return;
         }
-        $('#dashboard-body').html(rows.map((row) => `
+        $('#dashboard-body').html(data.rows.map((row) => `
             <tr>
               <td style="padding:8px 6px; border-bottom:1px solid #f1f5f9;">${escHtml(row.name)}</td>
               <td style="padding:8px 6px; border-bottom:1px solid #f1f5f9;">${escHtml(row.affiliation)}</td>

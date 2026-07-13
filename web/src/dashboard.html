@@ -26,13 +26,14 @@
 
   <div class="container">
     <div class="card">
-      Public contributor dashboard showing preliminary results and updated in real time.
-      <table style="width:100%; border-collapse:collapse; margin-top:20px;">
-        <thead style="border-bottom: 4px solid black;">
+      Public contributor dashboard showing number of accepted submissions and updated in real time.
+      <div id="dashboard-stats" style="margin-top: 30px; margin-bottom: 30px;"></div>
+      <table style="width:100%; border-collapse:collapse; margin-top: 30px;">
+        <thead style="border-top: 4px solid black;">
           <tr>
-            <th style="text-align:left; padding:8px 6px; border-bottom:1px solid #e5e7eb;">Name</th>
-            <th style="text-align:left; padding:8px 6px; border-bottom:1px solid #e5e7eb;">Affiliation</th>
-            <th style="text-align:right; padding:8px 6px; border-bottom:1px solid #e5e7eb;">Accepted submissions</th>
+            <th style="text-align:left; padding: 20px 5px 5px 5px;">Name</th>
+            <th style="text-align:left; padding: 20px 5px 5px 5px;">Affiliation</th>
+            <th style="text-align:right; padding: 20px 5px 5px 5px;">Accepted submissions</th>
           </tr>
         </thead>
         <tbody id="dashboard-body">

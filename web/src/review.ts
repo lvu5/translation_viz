@@ -220,19 +220,19 @@ function populateFilters(): void {
     }
 
     $('#filter-source-lang').html('<option value="">All Source Languages</option>' + mySourceLangsOption +
-        sourceLangs.map(l => `<option value="${l}"${l === sourceLangVal ? ' selected' : ''}>${escHtml(l)}</option>`).join(''));
+        sourceLangs.map(l => `<option value="${escHtml(l)}"${l === sourceLangVal ? ' selected' : ''}>${escHtml(l)}</option>`).join(''));
     $('#filter-target-lang').html('<option value="">All Target Languages</option>' + myTargetLangsOption +
-        targetLangs.map(l => `<option value="${l}"${l === targetLangVal ? ' selected' : ''}>${escHtml(l)}</option>`).join(''));
+        targetLangs.map(l => `<option value="${escHtml(l)}"${l === targetLangVal ? ' selected' : ''}>${escHtml(l)}</option>`).join(''));
     const userDisplay = (u: string) => {
         const existingOption = $(`#filter-user option[value="${u}"]`);
         if (existingOption.length && existingOption.text()) {
             return existingOption.text();
         }
         const sub = allSugs.find(s => s.username === u);
-        return sub?.user_name || u;
+        return sub?.name || u;
     };
     $('#filter-user').html('<option value="">All Users</option>' +
-        users.map(u => `<option value="${u}"${u === userVal ? ' selected' : ''}>${escHtml(userDisplay(u))}</option>`).join(''));
+        users.map(u => `<option value="${escHtml(u)}"${u === userVal ? ' selected' : ''}>${escHtml(userDisplay(u))}</option>`).join(''));
 }
 
 function renderList(): void {
@@ -290,7 +290,7 @@ function renderSug(s: Submission): string {
     }).join('');
 
     return `<div class="sug-item" id="sug-${s.id}">
-        <div class="sug-meta">#${s.id} &middot; <b>${escHtml(s.user_name || s.username)}</b> &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.status, (s.comments?.length ?? 0) > 0)}</div>
+        <div class="sug-meta">#${s.id} &middot; <b>${escHtml(s.name || s.username)}</b> &middot; ${escHtml(s.source_lang)}&rarr;${escHtml(s.target_lang)} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.status, (s.comments?.length ?? 0) > 0)}</div>
         <div class="sug-box" style="margin-bottom:8px"><div class="lbl">INPUT</div>${renderSource(s)}</div>
         <div style="margin-bottom:8px">${trRows}</div>
         <div style="margin-bottom:8px">${ruleRows}</div>

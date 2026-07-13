@@ -46,7 +46,7 @@ export interface Submission {
     id: number;
     user_id: number;
     username: string;
-    user_name?: string;
+    name?: string;
     source_text: string;
     source_media?: string;
     source_instructions?: string;
@@ -266,7 +266,7 @@ export interface ReviewSuggestion {
     source_lang: string;
     target_lang: string;
     username: string;
-    user_name?: string;
+    name?: string;
 }
 
 export interface AdminOverview {

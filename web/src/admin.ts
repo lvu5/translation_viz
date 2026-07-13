@@ -22,7 +22,7 @@ function renderOverview(data: AdminOverview) {
         html += `<ul style="margin-top: 0; margin-bottom: 12px;">`;
         const grouped: Record<string, number[]> = {};
         for (const sub of data.submissions_without_reviewer) {
-            const key = `${esc(sub.source_lang)} &rarr; ${esc(sub.target_lang)} by ${esc(sub.user_name || sub.username)}`;
+            const key = `${esc(sub.source_lang)} &rarr; ${esc(sub.target_lang)} by ${esc(sub.name || sub.username)}`;
             (grouped[key] ||= []).push(sub.id);
         }
         for (const [key, ids] of Object.entries(grouped)) {
@@ -70,7 +70,7 @@ function renderTable(users: AdminUser[]): void {
         if (sugg.length > 0) {
             const groupedSugg: Record<string, number[]> = {};
             for (const s of sugg) {
-                const key = `${esc(s.source_lang)} &rarr; ${esc(s.target_lang)} by ${esc(s.user_name || s.username)}`;
+                const key = `${esc(s.source_lang)} &rarr; ${esc(s.target_lang)} by ${esc(s.name || s.username)}`;
                 (groupedSugg[key] ||= []).push(s.id);
             }
             suggListHtml = `<tr class="sugg-row-${u.id}" style="display:none;">

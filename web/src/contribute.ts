@@ -36,7 +36,7 @@ $(async () => {
         console.error('Failed to load languages', e);
     }
 
-    const langOptions = LANGUAGES.map(name => `<option value="${name}">${name}</option>`).join('');
+    const langOptions = LANGUAGES.map(name => `<option value="${escHtml(name)}">${escHtml(name)}</option>`).join('');
     $('#src-langs').html(langOptions);
     $('#tgt-langs').html(langOptions);
 
@@ -477,7 +477,7 @@ function renderRules() {
 function renderApiResults(): void {
     const $body = $('#api-results-body');
     $body.html(lastResults.map((r, i) => {
-        const trText = r.translation ?? `<em class="tr-error">${escHtml(r.error ?? 'Error')}</em>`;
+        const trText = r.translation !== null ? escHtml(r.translation) : `<em class="tr-error">${escHtml(r.error ?? 'Error')}</em>`;
         const verifyBadge = '';
         return `<div class="translation-result-row">
           <span class="api-name">${escHtml(r.model)}</span>
@@ -537,7 +537,7 @@ function renderMySug(s: Submission): string {
 
     return `<div class="sug-mini">
         <div class="sug-mini-meta" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <span>#${s.id} &middot; ${s.source_lang}&rarr;${s.target_lang} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.status, (s.comments?.length ?? 0) > 0)}</span>
+            <span>#${s.id} &middot; ${escHtml(s.source_lang)}&rarr;${escHtml(s.target_lang)} &middot; ${fmtDate(s.created_at)} &middot; ${scoreBadge(s.status, (s.comments?.length ?? 0) > 0)}</span>
             ${s.status === 'accept' ? '' : `<button class="score-btn edit-btn" data-id="${s.id}">Edit submission</button>`}
         </div>
         

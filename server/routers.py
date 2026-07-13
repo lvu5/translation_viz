@@ -294,7 +294,7 @@ async def admin_overview(user=Depends(get_current_user)):
                     "source_lang": f["source_lang"],
                     "target_lang": f["target_lang"],
                     "username": f["username"],
-                    "user_name": username_to_name.get(f["username"])
+                    "name": username_to_name.get(f["username"])
                 })
                 covered_submissions.add(f["id"])
 
@@ -306,7 +306,7 @@ async def admin_overview(user=Depends(get_current_user)):
                 "source_lang": sub["source_lang"],
                 "target_lang": sub["target_lang"],
                 "username": sub["username"],
-                "user_name": username_to_name.get(sub["username"])
+                "name": username_to_name.get(sub["username"])
             })
 
     user_submissions = {}
@@ -843,7 +843,7 @@ async def list_submissions(
     users = await get_users()
     username_to_name = {u["username"]: u["name"] for u in users}
     for row in rows:
-        row["user_name"] = username_to_name.get(row["username"])
+        row["name"] = username_to_name.get(row["username"])
         if "comments" in row and isinstance(row["comments"], list):
             for comment in row["comments"]:
                 comment["author_name"] = username_to_name.get(comment["author"])

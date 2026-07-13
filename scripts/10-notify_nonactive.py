@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import asyncio
 import urllib.parse
@@ -17,7 +16,7 @@ You can login and contribute using the following link:
 
 {login_link}
 
-Let us know if you have any question.
+Let us know if you have any questions.
 Best, the LTB team
 """
 

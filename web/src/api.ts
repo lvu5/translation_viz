@@ -113,7 +113,7 @@ export function logout(): void {
 
 // ---------- Generic fetch ----------
 
-function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
+function apiCall<T>(method: string, url: string, data?: object, signal?: AbortSignal): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         const settings: JQuery.AjaxSettings = {
             url,
@@ -121,7 +121,11 @@ function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
             contentType: 'application/json',
             dataType: 'json',
             success: (x: T) => resolve(x),
-            error: (xhr: JQuery.jqXHR) => {
+            error: (xhr: JQuery.jqXHR, textStatus) => {
+                if (textStatus === 'abort') {
+                    reject('abort');
+                    return;
+                }
                 let detail = (xhr.responseJSON as any)?.detail;
                 if (detail !== undefined && typeof detail !== 'string') {
                     detail = JSON.stringify(detail);
@@ -130,7 +134,10 @@ function apiCall<T>(method: string, url: string, data?: object): Promise<T> {
             },
         };
         if (data !== undefined) settings.data = JSON.stringify(data);
-        $.ajax(settings);
+        const jqXHR = $.ajax(settings);
+        if (signal) {
+            signal.addEventListener('abort', () => jqXHR.abort());
+        }
     });
 }
 
@@ -169,6 +176,7 @@ export function getSubmissions(
         target_langs?: string[];
         username?: string;
     },
+    signal?: AbortSignal
 ) {
     const query = new URLSearchParams({ mode });
     const status = filters?.status;
@@ -179,7 +187,7 @@ export function getSubmissions(
     if (sourceLangs && sourceLangs.length > 0) sourceLangs.forEach(l => query.append('source_langs', l));
     if (targetLangs && targetLangs.length > 0) targetLangs.forEach(l => query.append('target_langs', l));
     if (username && username.trim() !== '') query.set('username', username);
-    return apiCall<Submission[]>('GET', `api/submissions?${query.toString()}`);
+    return apiCall<Submission[]>('GET', `api/submissions?${query.toString()}`, undefined, signal);
 }
 
 export function getPublicDashboard() {

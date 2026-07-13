@@ -13,6 +13,7 @@ let allSugs: Submission[] = [];
 let curFilter = 'pending';
 let curSort = 'last_updated';
 let currentUser: User | null = null;
+let abortController: AbortController | null = null;
 
 $(async () => {
     $('#instructions-box').html(instructionsHtml);
@@ -173,6 +174,12 @@ $(async () => {
 });
 
 async function loadSubmissions(): Promise<void> {
+    if (abortController) {
+        abortController.abort();
+    }
+    abortController = new AbortController();
+    const signal = abortController.signal;
+
     $('#sen-list').html('<div class="empty">Loading…</div>');
     const sourceLangVal = String($('#filter-source-lang').val() ?? '');
     const targetLangVal = String($('#filter-target-lang').val() ?? '');
@@ -187,10 +194,11 @@ async function loadSubmissions(): Promise<void> {
             source_langs: source_langs,
             target_langs: target_langs,
             username: userFilter,
-        });
+        }, signal);
         populateFilters();
         renderList();
-    } catch {
+    } catch (e) {
+        if (e === 'abort') return;
         $('#sen-list').html('<div class="empty">Failed to load submissions</div>');
     }
 }

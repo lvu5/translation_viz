@@ -1,6 +1,7 @@
 import os
 import asyncio
 import urllib.parse
+import datetime
 
 from last_translation_benchmark.db import get_users, get_submissions, _open_db
 from last_translation_benchmark.utils import send_email
@@ -9,7 +10,7 @@ os.environ["HOST_PUBLIC"] = "https://last-translation-benchmark.vilda.net"
 SUBJECT = "Last Translation Benchmark - Action Required: Returned Submissions"
 BODY_TEMPLATE = """Dear {name},
 
-We noticed that you have made submissions to the Last Translation Benchmark project, but currently all of them have been returned for revisions. 
+We noticed that you have made submissions to the Last Translation Benchmark project, but currently they have been returned for revisions. 
 Please review the feedback left by our reviewers, update your submissions, and submit them again!
 
 You can login and review your returned submissions using the following link:
@@ -20,7 +21,13 @@ Let us know if you have any questions.
 Best, the LTB team
 """
 
-
+def _permissive_strptime(date_str: str) -> datetime.datetime:
+    for f in ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
+        try:
+            return datetime.datetime.strptime(date_str, f)
+        except ValueError:
+            continue
+    raise ValueError(f"Unable to parse date string: {date_str}")
 
 async def has_sent_subject(email: str, subject: str) -> bool:
     async with _open_db() as db:
@@ -55,13 +62,13 @@ async def main():
             continue
             
         subs = user_submissions.get(uid, [])
+        # Only consider returned submissions
+        subs = [s for s in subs if s.get("status") == "return"]
+        # Only consider submissions with last activity being more than 7 days
+        subs = [s for s in subs if (datetime.datetime.now() - _permissive_strptime(s.get("created_at"))).days > 7]
+
         # They must have at least one submission
         if not subs:
-            continue
-            
-        # ALL their submissions must be returned
-        all_returned = all(s.get("status") == "return" for s in subs)
-        if not all_returned:
             continue
             
         # Check notification consent

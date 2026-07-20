@@ -60,7 +60,7 @@ for submission in data_submissions:
     if submission["status"] == "accept":
         for i in range(delta_last+1, delta_today+1): 
             dates_accepted[i] += 1
-        for i in range(delta_first, delta_last+1):
+        for i in range(delta_first, delta_last):
             dates_pending[i] += 1
     elif submission["status"] == "return":
         for i in range(delta_first, delta_last+1):

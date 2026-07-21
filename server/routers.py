@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import inspect
+import json
 import os
 import secrets
 import time
@@ -476,6 +477,30 @@ async def admin_update_review_scope(
     target["review_langs"] = req.review_langs
     await save_user(target)
     return await _admin_user_view(target)
+
+
+@router.get("/api/admin/download-users")
+async def admin_download_users(user=Depends(get_current_user)):
+    require_admin(user)
+    users = await get_users()
+    content = json.dumps(users, indent=2, ensure_ascii=False)
+    return Response(
+        content=content,
+        media_type="application/json",
+        headers={"Content-Disposition": "attachment; filename=users.json"}
+    )
+
+
+@router.get("/api/admin/download-submissions")
+async def admin_download_submissions(user=Depends(get_current_user)):
+    require_admin(user)
+    submissions = await db_get_submissions()
+    content = json.dumps(submissions, indent=2, ensure_ascii=False)
+    return Response(
+        content=content,
+        media_type="application/json",
+        headers={"Content-Disposition": "attachment; filename=submissions.json"}
+    )
 
 
 def _submission_matches_scope(submission: dict, review_langs: set[str]) -> bool:

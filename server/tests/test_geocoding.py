@@ -1,7 +1,6 @@
 import asyncio
 
 import httpx
-
 from last_translation_benchmark.geocoding import geocode_location
 
 

@@ -1,6 +1,5 @@
 import pytest
 from fastapi import HTTPException
-
 from last_translation_benchmark.models import ProfileReq
 from last_translation_benchmark.routers import (
     normalize_profile_affiliation,

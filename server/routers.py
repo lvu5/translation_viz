@@ -31,13 +31,14 @@ from .db import (
     get_user_by_id,
     get_user_by_username,
     get_users,
-    save_submission,
     save_affiliation_location_review,
+    save_submission,
     save_user,
 )
 from .db import (
     get_submissions as db_get_submissions,
 )
+from .geocoding import GeocodingUnavailableError
 from .models import (
     AffiliationLocationGeocodeReq,
     AffiliationLocationUpdateReq,
@@ -58,7 +59,6 @@ from .public_dashboard_source import (
     fetch_public_dashboard_source,
     get_public_dashboard_source_url,
 )
-from .geocoding import GeocodingUnavailableError
 from .ror import RorUnavailableError, search_ror_organizations
 from .services import (
     translate_google,

@@ -8,7 +8,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <style>
     .profile-wrap {
-      max-width: 560px;
+      max-width: 500px;
       margin: 60px auto;
       padding: 32px;
     }
@@ -30,121 +30,6 @@
 
     .form-group {
       margin-bottom: 20px;
-    }
-
-    .affiliation-picker {
-      position: relative;
-    }
-
-    .affiliation-picker input {
-      margin-bottom: 0;
-    }
-
-    .affiliation-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .affiliation-entry {
-      border-top: 1px solid #d4d5d8;
-      padding-top: 14px;
-    }
-
-    .affiliation-entry:first-child {
-      border-top: 0;
-      padding-top: 0;
-    }
-
-    .affiliation-entry-heading {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .affiliation-entry-title {
-      font-size: 0.9rem;
-    }
-
-    .remove-affiliation[hidden] {
-      display: none;
-    }
-
-    .affiliation-mode-select {
-      margin-bottom: 10px;
-      width: 100%;
-    }
-
-    .affiliation-help {
-      color: #707782;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      margin: 5px 0 12px;
-    }
-
-    #add-affiliation {
-      margin-top: 12px;
-    }
-
-    .affiliation-results {
-      position: absolute;
-      z-index: 20;
-      top: calc(100% + 4px);
-      left: 0;
-      right: 0;
-      max-height: 280px;
-      overflow-y: auto;
-      background: white;
-      border: 1px solid #d4d5d8;
-      box-shadow: 0 12px 30px rgba(14, 22, 41, 0.18);
-    }
-
-    .affiliation-option {
-      display: block;
-      width: 100%;
-      padding: 10px 12px;
-      border: 0;
-      border-bottom: 1px solid #f1f1f1;
-      background: white;
-      color: #0e1629;
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .affiliation-option:last-child {
-      border-bottom: 0;
-    }
-
-    .affiliation-option:hover,
-    .affiliation-option[aria-selected="true"] {
-      background: #f1f1f1;
-    }
-
-    .affiliation-option strong,
-    .affiliation-option span,
-    .affiliation-option small {
-      display: block;
-    }
-
-    .affiliation-option span,
-    .affiliation-option small,
-    .affiliation-status {
-      color: #7d838e;
-      font-size: 0.8em;
-    }
-
-    .affiliation-option span {
-      margin-top: 3px;
-    }
-
-    .affiliation-option small {
-      margin-top: 2px;
-    }
-
-    .affiliation-status {
-      min-height: 18px;
-      margin: 6px 0 0;
     }
 
     .check-row {
@@ -222,14 +107,8 @@
       </div>
 
       <div class="form-group">
-        <label>Affiliations</label>
-        <p class="affiliation-help">
-          Each accepted submission is credited to every listed affiliation. Overall submission totals still count it once.
-        </p>
-        <div id="affiliation-list" class="affiliation-list"></div>
-        <button id="add-affiliation" class="btn btn-secondary" type="button">
-          + Add another affiliation
-        </button>
+        <label for="affiliation">Affiliation</label>
+        <input type="text" id="affiliation" placeholder="University / Company">
       </div>
 
       <div class="form-group">

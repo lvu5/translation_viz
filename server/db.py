@@ -23,7 +23,7 @@ def _open_cache_db():
     return aiosqlite.connect(DB_CACHE_PATH)
 
 
-_TABLES = {"users", "submissions", "affiliation_location_reviews"}
+_TABLES = {"users", "submissions"}
 
 
 
@@ -152,36 +152,6 @@ async def save_sent_email(to_email: str, subject: str, body: str, date: str) -> 
         await db.commit()
 
 
-# --- Affiliation location reviews ---
-
-
-async def get_affiliation_location_reviews() -> list[dict]:
-    async with _open_db() as db:
-        async with db.execute(
-            "SELECT data FROM affiliation_location_reviews ORDER BY ror_id"
-        ) as cur:
-            return [json.loads(row[0]) for row in await cur.fetchall()]
-
-
-async def get_affiliation_location_review(ror_id: str) -> dict | None:
-    async with _open_db() as db:
-        async with db.execute(
-            "SELECT data FROM affiliation_location_reviews WHERE ror_id = ?",
-            (ror_id,),
-        ) as cur:
-            row = await cur.fetchone()
-            return json.loads(row[0]) if row else None
-
-
-async def save_affiliation_location_review(review: dict) -> None:
-    async with _open_db() as db:
-        await db.execute(
-            "INSERT OR REPLACE INTO affiliation_location_reviews (ror_id, data) VALUES (?, ?)",
-            (review["ror_id"], json.dumps(review)),
-        )
-        await db.commit()
-
-
 # --- Init ---
 
 
@@ -201,9 +171,6 @@ async def init_db() -> None:
         )
         await db.execute(
             "CREATE TABLE IF NOT EXISTS sent_emails (to_email TEXT NOT NULL, subject TEXT NOT NULL, body TEXT NOT NULL, date TEXT NOT NULL)"
-        )
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS affiliation_location_reviews (ror_id TEXT PRIMARY KEY, data TEXT NOT NULL)"
         )
         await db.commit()
 
@@ -230,7 +197,6 @@ async def init_db() -> None:
                     "quota_used": 0,
                     "name": username.capitalize(),
                     "affiliation": "",
-                    "affiliation_ror_id": None,
                     "email": "",
                     "review_langs": [],
                     "credit_consent": True,

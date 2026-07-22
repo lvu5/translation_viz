@@ -119,6 +119,7 @@ export function initializeAffiliationMap(
     const topAffiliationNames = new Set(
         places
             .flatMap((place) => place.affiliations)
+            .filter((affiliation) => affiliation.name !== 'Other affiliations')
             .sort((left, right) => right.accepted - left.accepted || left.name.localeCompare(right.name))
             .slice(0, 5)
             .map((affiliation) => affiliation.name),
@@ -165,16 +166,12 @@ export function initializeAffiliationMap(
         const size = markerSize(affiliation.accepted);
         const selectedClass = affiliationKey(place, affiliation) === selectedKey ? ' is-selected' : '';
         const isTopFive = topAffiliationNames.has(affiliation.name);
-        const isProvisional = affiliation.location_status === 'pending';
         const image = affiliation.logo_domain
             ? `<img class="affiliation-logo-image" src="${escapeHtml(affiliationLogoUrl(affiliation.logo_domain))}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`
             : '';
         const hiddenFallback = affiliation.logo_domain ? ' hidden' : '';
         const fire = isTopFive ? '<span class="top-five-fire" aria-hidden="true">🔥</span>' : '';
-        const provisional = isProvisional
-            ? '<span class="provisional-location-badge" aria-hidden="true">≈</span>'
-            : '';
-        const accessibleLabel = `${affiliation.name}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}${isProvisional ? ', provisional location pending review' : ''}`;
+        const accessibleLabel = `${affiliation.name}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}`;
 
         return L.divIcon({
             className: 'affiliation-marker-wrap',
@@ -184,7 +181,6 @@ export function initializeAffiliationMap(
                         ${image}
                         <span class="affiliation-logo-fallback"${hiddenFallback}>${escapeHtml(affiliationInitials(affiliation.name))}</span>
                         ${fire}
-                        ${provisional}
                     </span>
                 </span>
             `,
@@ -198,10 +194,8 @@ export function initializeAffiliationMap(
         place: AffiliationMapPlace,
         affiliation: AffiliationMapAffiliation,
     ): string {
-        const precisionNote = affiliation.location_status === 'pending'
-            ? '<small>Provisional location · pending admin review</small>'
-            : affiliation.precision === 'city'
-                ? '<small>Approximate city location · no public street address</small>'
+        const precisionNote = place.precision !== 'exact'
+            ? '<small>Approximate location</small>'
             : '';
         const topFiveNote = topAffiliationNames.has(affiliation.name)
             ? '<small class="top-five-note">🔥 Top 5 affiliation</small>'
@@ -226,13 +220,8 @@ export function initializeAffiliationMap(
         const authors = affiliation.authors
             .map((author) => `${escapeHtml(author.name)} (${number.format(author.accepted)})`)
             .join(' · ');
-        const precisionNote = affiliation.location_status === 'pending'
-            ? '<div class="affiliation-detail-location">Provisional location · pending admin review</div>'
-            : affiliation.precision === 'city'
-                ? '<div class="affiliation-detail-location">Approximate city location · no public street address</div>'
-            : '';
-        const address = affiliation.address
-            ? `<div class="affiliation-detail-location">${escapeHtml(affiliation.address)}</div>`
+        const precisionNote = place.precision !== 'exact'
+            ? '<div class="affiliation-detail-location">Approximate location</div>'
             : '';
         detail.innerHTML = `
             <div class="affiliation-detail-heading">
@@ -240,7 +229,6 @@ export function initializeAffiliationMap(
                 <span>${acceptedLabel(affiliation.accepted)}</span>
             </div>
             <div class="affiliation-detail-location">${escapeHtml(place.city)}, ${escapeHtml(place.country)}</div>
-            ${address}
             ${precisionNote}
             <div class="affiliation-author-list">${authors}</div>
         `;
@@ -303,7 +291,7 @@ export function initializeAffiliationMap(
             (total, place) => total + searchableAffiliations(place).length,
             0,
         );
-        filterStatus.textContent = `${number.format(affiliationCount)} ${affiliationCount === 1 ? 'affiliation' : 'affiliations'} · ${number.format(accepted)} accepted credits`;
+        filterStatus.textContent = `${number.format(affiliationCount)} ${affiliationCount === 1 ? 'affiliation' : 'affiliations'} · ${number.format(accepted)} accepted submissions`;
         return visible;
     }
 

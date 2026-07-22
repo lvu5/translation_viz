@@ -150,25 +150,6 @@
   filter: drop-shadow(0 2px 4px rgba(109, 28, 0, 0.46));
 }
 
-.provisional-location-badge {
-  position: absolute;
-  z-index: 6;
-  right: -2px;
-  bottom: -2px;
-  display: grid;
-  width: 18px;
-  height: 18px;
-  place-items: center;
-  border: 1px dashed var(--map-foreground);
-  border-radius: 50%;
-  color: var(--map-foreground);
-  background: var(--map-surface);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  box-shadow: 0 2px 6px var(--map-shadow);
-}
-
 .leaflet-tooltip.affiliation-location-tooltip {
   display: grid;
   gap: 2px;

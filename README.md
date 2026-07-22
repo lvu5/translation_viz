@@ -49,47 +49,42 @@ python3 server --public-dashboard-source "https://last-translation-benchmark.vil
 Only `/api/public-dashboard` uses the remote data in this mode. Other pages and
 write operations continue to use the local database.
 
-### Affiliation location workflow
+### Affiliation map maintenance
 
-Contributors choose their affiliation from the ROR search in their profile. When
-an accepted, publicly credited contributor has a ROR affiliation that is not in
-the reviewed location registry, the server automatically:
+The website does not call ROR, geocode affiliations, or write location records
+while serving users. Signup and admin workflows are unchanged. Map points,
+aliases, and logo domains come only from
+`server/affiliation_locations.json`, which can be reviewed like any other code
+change.
 
-1. reads the organization's canonical name, website, domain and city coordinates
-   from ROR;
-2. asks OpenStreetMap Nominatim for a more precise address candidate;
-3. saves the candidate in the main SQLite database as `pending`; and
-4. displays it immediately on the public map with a provisional `≈` badge.
+An optional maintenance command compares the current public dashboard with the
+static registry and queries [ROR](https://ror.org/) for affiliations that are
+not yet listed:
 
-The profile also offers **Independent researcher** and **Other / not listed in
-ROR**. Independent profiles are deliberately excluded from institution mapping.
-Other affiliations retain the entered name but have no automatic map location
-until they are matched or reviewed manually.
+```bash
+# Preview unambiguous ROR matches without changing files
+python3 scripts/update_affiliation_locations.py
 
-Contributors can add up to five affiliations. The first remains the primary
-affiliation for compatibility with older clients, while the full ordered list is
-stored in `affiliations`. Every accepted submission is credited in full to each
-listed institution on the map; the dashboard's global submission total still
-counts the submission only once, so institution totals intentionally overlap.
+# Write reviewed matches to the static JSON file
+python3 scripts/update_affiliation_locations.py --write
+```
 
-An admin can open `/admin`, edit the address or coordinates, use **Geocode
-address**, and then choose **Approve exact point**. Approval requires a full
-address and `Exact address` precision. The approved point replaces the
-provisional point automatically; no edit to `affiliation_locations.json` or
-frontend rebuild is needed.
+Only a unique exact match against a ROR display name, alias, or acronym is
+written automatically. For combined values such as `PSL University, INRIA
+Paris`, the script also searches each comma- or semicolon-separated name in
+order and uses the first unique match. The script uses ROR's city coordinates.
+Anything it cannot resolve remains visible automatically under **Other
+affiliations**, so no manual JSON entry is required. Set `ROR_CLIENT_ID` in the
+environment, or pass `--client-id`, if the deployment has one. This maintenance
+command does not need database access and is not part of the live request path.
 
-The deployment therefore needs its normal persistent `DB_PATH`. ROR and
-Nominatim do not require an API key, although `ROR_CLIENT_ID` is recommended for
-identifying this service to ROR. Existing hand-reviewed locations remain in
-`server/affiliation_locations.json`; newly discovered and approved locations are
-stored in the `affiliation_location_reviews` database table.
-
-The public Nominatim endpoint is rate-limited to one serialized request per
-second and candidate results are persisted with the review record. Set
-`NOMINATIM_SEARCH_URL` to switch to a hosted or self-hosted compatible service,
-and set `NOMINATIM_USER_AGENT` to an application name with a monitored contact.
-Deployments using the public endpoint must follow the [Nominatim usage
-policy](https://operations.osmfoundation.org/policies/nominatim/).
+The `Update affiliation locations` GitHub Actions workflow runs this command
+every six hours and can also be started manually from the repository's
+**Actions** page. When ROR produces new matches, the workflow opens or updates a
+reviewable pull request rather than writing directly to `main`. The repository
+must allow GitHub Actions read/write workflow permissions and pull-request
+creation. An optional `ROR_CLIENT_ID` repository secret identifies the updater
+to ROR.
 
 You can specify the `--host`, `--port` and `--host-public` arguments when starting the server. 
 The last is used to show the login URLs.
@@ -105,9 +100,6 @@ Some API services need API keys:
 - `OPENROUTER_API_KEY`: enables real LLM translation and verification
 - `LARA_API_ID` and `LARA_API_SECRET`: enables Lara API-based translation
 - `GOOGLE_TRANSLATE_API_KEY`: enables API-based Google Translate
-- `ROR_CLIENT_ID`: optional client identification for ROR-powered affiliation search
-- `NOMINATIM_SEARCH_URL`: configurable OpenStreetMap-compatible geocoding endpoint
-- `NOMINATIM_USER_AGENT`: geocoder client identity including a monitored contact
 
 
 ### Instructions

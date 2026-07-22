@@ -14,9 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .db import get_users, init_db
-from .geocoding import close_geocoding_client
 from .public_dashboard_source import close_public_dashboard_source_client
-from .ror import close_ror_client
 from .routers import router
 from .utils import schedule_daily_backup, schedule_daily_notifications
 
@@ -43,9 +41,7 @@ async def lifespan(app: FastAPI):
     finally:
         backup_task.cancel()
         notif_task.cancel()
-        await close_geocoding_client()
         await close_public_dashboard_source_client()
-        await close_ror_client()
         try:
             await backup_task
             await notif_task

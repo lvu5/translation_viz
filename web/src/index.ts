@@ -36,11 +36,8 @@ function showRoleButtons(user: User): void {
 
     const container = $('#role-buttons');
     const actions = $('<div class="role-actions"></div>');
-    const affiliationLabel = user.affiliations?.length
-        ? user.affiliations.map((affiliation) => affiliation.name).join(' and ')
-        : user.affiliation;
 
-    container.append(`<span>Hello ${escHtml(user.name)} from ${escHtml(affiliationLabel)}!</span><br><br>`);
+    container.append(`<span>Hello ${escHtml(user.name)} from ${escHtml(user.affiliation)}!</span><br><br>`);
 
     if (user.roles.includes('contributor')) {
         actions.append('<a href="contribute" class="btn btn-success">✍️&nbsp;Contribute</a>');

@@ -2,13 +2,26 @@ import './assets/style.css';
 import $ from 'jquery';
 import {
     getMe, getCookie, getAdminOverview, deleteAdminUser,
-    adjustAdminQuota, updateAdminRoles, updateAdminReviewScope, renderRoleSwitcher, AdminUser, AdminOverview
+    adjustAdminQuota, updateAdminRoles, updateAdminReviewScope, renderRoleSwitcher,
+    getAdminAffiliationLocations, updateAdminAffiliationLocation,
+    geocodeAdminAffiliationLocation, AdminUser, AdminOverview,
+    AffiliationLocationReview, AffiliationLocationUpdate
 } from './api';
 
 import { esc, showToast, accessDenied, renderHeaderStatus } from './utils';
 
 let allUsers: AdminUser[] = [];
 let adminOverview: AdminOverview | null = null;
+let affiliationLocationReviews: AffiliationLocationReview[] = [];
+
+function safeExternalUrl(value: string): string {
+    try {
+        const url = new URL(value);
+        return url.protocol === 'http:' || url.protocol === 'https:' ? url.toString() : '#';
+    } catch {
+        return '#';
+    }
+}
 
 function renderOverview(data: AdminOverview) {
     const statusCounts = Object.entries(data.submissions_total)
@@ -54,6 +67,9 @@ function renderTable(users: AdminUser[]): void {
     let root = window.location.origin + window.location.pathname.split("/").slice(0, -1).join("/");
     const rows = users.map(u => {
         const link = root + '/?user=' + encodeURIComponent(u.username) + '&token=' + encodeURIComponent(u.magic_token);
+        const affiliationLabel = u.affiliations?.length
+            ? u.affiliations.map((affiliation) => affiliation.name).join('; ')
+            : u.affiliation;
         const allRoles = ['admin', 'reviewer', 'contributor'];
         const rolesHtml = allRoles.map(r => {
             const active = u.roles.includes(r);
@@ -88,7 +104,7 @@ function renderTable(users: AdminUser[]): void {
             <td style="width:1%;white-space:nowrap">${rolesHtml}</td>
             <td class="scope-cell" data-uid="${u.id}" title="Click to edit language scope">${u.review_langs && u.review_langs.length ? esc(u.review_langs.join(',')) : '<span class="muted">all</span>'}</td>
             <td class="sugg-cell">${suggHtml}</td>
-            <td class="affil-cell" title="${esc(u.affiliation)}">${u.affiliation ? esc(u.affiliation) : '<span class="muted">—</span>'}</td>
+            <td class="affil-cell" title="${esc(affiliationLabel)}">${affiliationLabel ? esc(affiliationLabel) : '<span class="muted">—</span>'}</td>
             <td class="email-cell" title="${esc(u.email)}"><a href="mailto:${esc(u.email)}">${esc(u.email)}</a></td>
             <td style="text-align:right;white-space:nowrap">${u.quota_used}&nbsp;/&nbsp;<button class="act-btn act-quota" data-uid="${u.id}" title="Adjust quota">${u.quota}</button></td>
             <td style="text-align:right">${u.total_accepted}&nbsp;/&nbsp;${u.total_submitted}</td>
@@ -175,6 +191,179 @@ function renderTable(users: AdminUser[]): void {
     });
 }
 
+function replaceLocationReview(updated: AffiliationLocationReview): void {
+    const index = affiliationLocationReviews.findIndex(
+        (review) => review.ror_id === updated.ror_id,
+    );
+    if (index >= 0) affiliationLocationReviews[index] = updated;
+    else affiliationLocationReviews.push(updated);
+}
+
+function renderAffiliationLocations(): void {
+    const pendingCount = affiliationLocationReviews.filter(
+        (review) => review.status === 'pending',
+    ).length;
+    $('#affiliation-location-count').text(
+        `${pendingCount} pending · ${affiliationLocationReviews.length} total`,
+    );
+
+    if (!affiliationLocationReviews.length) {
+        $('#affiliation-location-list').html(
+            '<div class="empty">No ROR-based locations are awaiting review.</div>',
+        );
+        return;
+    }
+
+    const reviews = [...affiliationLocationReviews].sort((left, right) =>
+        Number(left.status === 'approved') - Number(right.status === 'approved')
+        || left.affiliation_name.localeCompare(right.affiliation_name),
+    );
+    $('#affiliation-location-list').html(reviews.map((review) => {
+        const rorKey = review.ror_id.split('/').pop() ?? '';
+        const sourceLabel = review.source === 'nominatim'
+            ? 'Address candidate found automatically'
+            : review.source === 'ror'
+                ? 'ROR city-level fallback'
+                : review.source === 'reviewed_registry'
+                    ? 'Matched reviewed registry'
+                    : 'Edited by administrator';
+        return `
+            <article class="affiliation-location-review" data-ror-id="${esc(review.ror_id)}">
+                <div class="affiliation-location-review-heading">
+                    <div>
+                        <strong>${esc(review.affiliation_name)}</strong>
+                        <span class="location-review-status location-review-${review.status}">${review.status === 'pending' ? 'Pending review' : 'Approved'}</span>
+                    </div>
+                    <small>${esc(sourceLabel)}</small>
+                </div>
+                <div class="affiliation-location-review-grid">
+                    <label>Affiliation name
+                        <input data-location-field="affiliation_name" value="${esc(review.affiliation_name)}">
+                    </label>
+                    <label>Official address
+                        <input data-location-field="address" value="${esc(review.address)}" placeholder="Street, building, postal code">
+                    </label>
+                    <label>City
+                        <input data-location-field="city" value="${esc(review.city)}">
+                    </label>
+                    <label>Country
+                        <input data-location-field="country" value="${esc(review.country)}">
+                    </label>
+                    <label>Latitude
+                        <input data-location-field="lat" type="number" min="-90" max="90" step="any" value="${review.lat}">
+                    </label>
+                    <label>Longitude
+                        <input data-location-field="lng" type="number" min="-180" max="180" step="any" value="${review.lng}">
+                    </label>
+                    <label>Logo domain
+                        <input data-location-field="logo_domain" value="${esc(review.logo_domain)}" placeholder="example.edu">
+                    </label>
+                    <label>Official website
+                        <input data-location-field="website" value="${esc(review.website)}" placeholder="https://…">
+                    </label>
+                    <label>Precision
+                        <select data-location-field="precision">
+                            <option value="city"${review.precision === 'city' ? ' selected' : ''}>Approximate city</option>
+                            <option value="exact"${review.precision === 'exact' ? ' selected' : ''}>Exact address</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="affiliation-location-review-meta">
+                    <a href="${esc(review.ror_id)}" target="_blank" rel="noopener">ROR ${esc(rorKey)}</a>
+                    ${review.website ? `<a href="${esc(safeExternalUrl(review.website))}" target="_blank" rel="noopener">Official website</a>` : ''}
+                    ${review.aliases.length ? `<span>Submitted as: ${review.aliases.map(esc).join(' · ')}</span>` : ''}
+                </div>
+                <div class="affiliation-location-review-actions">
+                    <button class="btn btn-secondary location-geocode" type="button">Geocode address</button>
+                    <button class="btn btn-secondary location-save" type="button">Save as pending</button>
+                    <button class="btn btn-success location-approve" type="button">Approve exact point</button>
+                </div>
+            </article>
+        `;
+    }).join(''));
+
+    function recordFromButton(button: HTMLElement): {
+        card: HTMLElement;
+        review: AffiliationLocationReview;
+    } | null {
+        const card = button.closest<HTMLElement>('.affiliation-location-review');
+        const rorId = card?.dataset.rorId;
+        const review = affiliationLocationReviews.find((item) => item.ror_id === rorId);
+        return card && review ? { card, review } : null;
+    }
+
+    function field(card: HTMLElement, name: string): string {
+        return card.querySelector<HTMLInputElement | HTMLSelectElement>(
+            `[data-location-field="${name}"]`,
+        )?.value.trim() ?? '';
+    }
+
+    function updateFromCard(
+        card: HTMLElement,
+        status: 'pending' | 'approved',
+    ): AffiliationLocationUpdate {
+        return {
+            affiliation_name: field(card, 'affiliation_name'),
+            address: field(card, 'address'),
+            city: field(card, 'city'),
+            country: field(card, 'country'),
+            lat: Number(field(card, 'lat')),
+            lng: Number(field(card, 'lng')),
+            logo_domain: field(card, 'logo_domain'),
+            website: field(card, 'website'),
+            precision: status === 'approved'
+                ? 'exact'
+                : field(card, 'precision') as 'city' | 'exact',
+            status,
+        };
+    }
+
+    $('.location-geocode').on('click', async function () {
+        const target = recordFromButton(this);
+        if (!target) return;
+        const button = this as HTMLButtonElement;
+        button.disabled = true;
+        try {
+            const updated = await geocodeAdminAffiliationLocation(
+                target.review.ror_id,
+                {
+                    address: field(target.card, 'address'),
+                    city: field(target.card, 'city'),
+                    country: field(target.card, 'country'),
+                },
+            );
+            replaceLocationReview(updated);
+            renderAffiliationLocations();
+            showToast('Address candidate updated');
+        } catch (error) {
+            alert(error);
+            button.disabled = false;
+        }
+    });
+
+    $('.location-save, .location-approve').on('click', async function () {
+        const target = recordFromButton(this);
+        if (!target) return;
+        const button = this as HTMLButtonElement;
+        const status = button.classList.contains('location-approve')
+            ? 'approved'
+            : 'pending';
+        button.disabled = true;
+        try {
+            const updated = await updateAdminAffiliationLocation(
+                target.review.ror_id,
+                updateFromCard(target.card, status),
+            );
+            replaceLocationReview(updated);
+            renderAffiliationLocations();
+            showToast(status === 'approved' ? 'Exact point approved' : 'Draft saved');
+        } catch (error) {
+            alert(error);
+            button.disabled = false;
+        }
+    });
+}
+
 function applyFilter(): void {
     const q = ($('#filter-input').val() as string).toLowerCase().trim();
     const role = $('#role-filter').val() as string;
@@ -196,8 +385,11 @@ $(async () => {
         renderRoleSwitcher(user.roles);
         if (!user.roles.includes('admin')) { accessDenied(user.roles, 'admin'); return; }
         adminOverview = await getAdminOverview();
+        const locationResponse = await getAdminAffiliationLocations();
         allUsers = adminOverview.users;
+        affiliationLocationReviews = locationResponse.items;
         renderOverview(adminOverview);
+        renderAffiliationLocations();
         applyFilter();
     } catch { window.location.href = 'index.html'; }
 

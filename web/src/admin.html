@@ -196,6 +196,91 @@
       cursor: pointer;
       color: #475569;
     }
+
+    .affiliation-location-review {
+      padding: 18px 0;
+      border-top: 1px solid #d4d5d8;
+    }
+
+    .affiliation-location-review:first-child {
+      border-top: 0;
+    }
+
+    .affiliation-location-review-heading,
+    .affiliation-location-review-actions,
+    .affiliation-location-review-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .affiliation-location-review-heading {
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .affiliation-location-review-heading > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .affiliation-location-review-heading small,
+    .affiliation-location-review-meta {
+      color: #7d838e;
+    }
+
+    .location-review-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72em;
+      font-weight: 700;
+    }
+
+    .location-review-pending {
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    .location-review-approved {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .affiliation-location-review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px 14px;
+    }
+
+    .affiliation-location-review-grid label {
+      margin: 0;
+      font-size: 0.8em;
+    }
+
+    .affiliation-location-review-grid input,
+    .affiliation-location-review-grid select {
+      margin: 4px 0 0;
+      border: 1px solid #d4d5d8;
+      background: #fff;
+    }
+
+    .affiliation-location-review-meta {
+      margin: 10px 0;
+      font-size: 0.8em;
+    }
+
+    .affiliation-location-review-actions {
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 900px) {
+      .affiliation-location-review-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
   </style>
 </head>
 
@@ -221,6 +306,19 @@
     <div class="card" style="margin-bottom: 20px;" id="overview-card">
       <h2 style="margin:0; margin-bottom:12px;">Submission overview</h2>
       <div id="overview-content" style="font-size: 0.9em; line-height: 1.5;">Loading...</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 20px;" id="affiliation-location-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px;">
+        <div>
+          <h2 style="margin:0">Affiliation locations</h2>
+          <p style="margin:4px 0 0; color:#7d838e; font-size:0.85em;">Verify the official address, geocode it, then approve the exact map point.</p>
+        </div>
+        <span id="affiliation-location-count" style="color:#7d838e; font-size:0.85em; white-space:nowrap;">Loading…</span>
+      </div>
+      <div id="affiliation-location-list">
+        <div class="empty">Loading…</div>
+      </div>
     </div>
 
     <hr style="border: 0; border-top: 4px solid black; margin: 24px 0;">

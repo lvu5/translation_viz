@@ -2,6 +2,7 @@ import asyncio
 import functools
 import inspect
 import os
+import re
 import secrets
 import time
 from datetime import datetime
@@ -9,6 +10,11 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
+from .affiliation_location_service import (
+    build_dashboard_affiliation_map,
+    discover_affiliation_location,
+    geocode_affiliation_review,
+)
 from .auth import get_current_user, require_admin
 from .db import (
     create_submission as db_create_submission,
@@ -19,17 +25,22 @@ from .db import (
 from .db import (
     delete_submission,
     delete_user,
+    get_affiliation_location_review,
+    get_affiliation_location_reviews,
     get_submission_by_id,
     get_user_by_id,
     get_user_by_username,
     get_users,
     save_submission,
+    save_affiliation_location_review,
     save_user,
 )
 from .db import (
     get_submissions as db_get_submissions,
 )
 from .models import (
+    AffiliationLocationGeocodeReq,
+    AffiliationLocationUpdateReq,
     CommentReq,
     NotificationActionReq,
     ProfileReq,
@@ -42,6 +53,13 @@ from .models import (
     TranslateReq,
     VerifyReq,
 )
+from .public_dashboard_source import (
+    PublicDashboardSourceError,
+    fetch_public_dashboard_source,
+    get_public_dashboard_source_url,
+)
+from .geocoding import GeocodingUnavailableError
+from .ror import RorUnavailableError, search_ror_organizations
 from .services import (
     translate_google,
     translate_lara,
@@ -53,6 +71,101 @@ from .utils import CONTRIBUTOR_QUOTA_DEFAULT, send_email
 router = APIRouter()
 
 # --- Users ---
+
+
+def user_affiliations(user: dict) -> list[dict[str, str | None]]:
+    stored = user.get("affiliations")
+    if isinstance(stored, list) and stored:
+        affiliations = []
+        for item in stored:
+            if not isinstance(item, dict) or not str(item.get("name", "")).strip():
+                continue
+            affiliations.append(
+                {
+                    "name": str(item["name"]).strip(),
+                    "ror_id": item.get("ror_id"),
+                    "kind": str(item.get("kind", "ror" if item.get("ror_id") else "other")),
+                }
+            )
+        if affiliations:
+            return affiliations
+
+    name = str(user.get("affiliation", "")).strip()
+    if not name:
+        return []
+    ror_id = user.get("affiliation_ror_id")
+    kind = (
+        "independent"
+        if name.casefold() in {"independent", "independent researcher"}
+        else "ror"
+        if ror_id
+        else "other"
+    )
+    return [{"name": name, "ror_id": ror_id, "kind": kind}]
+
+
+def normalize_profile_affiliations(
+    req: ProfileReq,
+) -> list[dict[str, str | None]]:
+    if req.affiliations is None:
+        candidates = [
+            {
+                "name": req.affiliation,
+                "ror_id": req.affiliation_ror_id,
+                "kind": (
+                    "independent"
+                    if req.affiliation.strip().casefold()
+                    in {"independent", "independent researcher"}
+                    else "ror"
+                    if req.affiliation_ror_id
+                    else "other"
+                ),
+            }
+        ]
+    else:
+        candidates = [item.model_dump() for item in req.affiliations]
+
+    affiliations: list[dict[str, str | None]] = []
+    seen: set[str] = set()
+    for item in candidates:
+        name = str(item.get("name", "")).strip()
+        kind = str(item.get("kind", ""))
+        ror_id = item.get("ror_id")
+        if not name:
+            raise HTTPException(status_code=400, detail="Affiliation names are required")
+        if kind == "independent":
+            name = "Independent researcher"
+            ror_id = None
+        elif kind == "ror":
+            if not ror_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Choose {name} from the ROR search results",
+                )
+        elif kind == "other":
+            ror_id = None
+        else:
+            raise HTTPException(status_code=400, detail="Invalid affiliation type")
+
+        deduplication_key = str(ror_id or name.casefold())
+        if deduplication_key in seen:
+            raise HTTPException(status_code=400, detail="Duplicate affiliation")
+        seen.add(deduplication_key)
+        affiliations.append({"name": name, "ror_id": ror_id, "kind": kind})
+
+    if any(item["kind"] == "independent" for item in affiliations) and len(
+        affiliations
+    ) != 1:
+        raise HTTPException(
+            status_code=400,
+            detail="Independent researcher cannot be combined with other affiliations",
+        )
+    return affiliations
+
+
+def normalize_profile_affiliation(req: ProfileReq) -> tuple[str, str | None]:
+    primary = normalize_profile_affiliations(req)[0]
+    return str(primary["name"]), primary["ror_id"]
 
 
 @router.get("/api/me")
@@ -68,6 +181,8 @@ async def me(user=Depends(get_current_user)):
         "total_submitted": len(submissions),
         "name": user["name"],
         "affiliation": user["affiliation"],
+        "affiliation_ror_id": user.get("affiliation_ror_id"),
+        "affiliations": user_affiliations(user),
         "email": user["email"],
         "credit_consent": user["credit_consent"],
         "notification_consent": user["notification_consent"],
@@ -80,6 +195,8 @@ async def me(user=Depends(get_current_user)):
 async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
     if not req.name.strip() or not req.email.strip():
         raise HTTPException(status_code=400, detail="Name and email are required")
+    affiliations = normalize_profile_affiliations(req)
+    primary_affiliation = affiliations[0]
     new_email = req.email.strip().lower()
     if new_email != user["email"].strip().lower():
         users = await get_users()
@@ -93,7 +210,9 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
     user.update(
         {
             "name": req.name,
-            "affiliation": req.affiliation,
+            "affiliation": primary_affiliation["name"],
+            "affiliation_ror_id": primary_affiliation["ror_id"],
+            "affiliations": affiliations,
             "email": req.email,
             "credit_consent": req.credit_consent,
             "notification_consent": req.notification_consent,
@@ -107,6 +226,8 @@ async def update_profile(req: ProfileReq, user=Depends(get_current_user)):
 async def register_user(req: ProfileReq, response: Response):
     if not req.name.strip() or not req.email.strip():
         raise HTTPException(status_code=400, detail="Name and email are required")
+    affiliations = normalize_profile_affiliations(req)
+    primary_affiliation = affiliations[0]
 
     users = await get_users()
 
@@ -138,7 +259,9 @@ async def register_user(req: ProfileReq, response: Response):
         "quota": CONTRIBUTOR_QUOTA_DEFAULT,
         "quota_used": 0,
         "name": req.name,
-        "affiliation": req.affiliation,
+        "affiliation": primary_affiliation["name"],
+        "affiliation_ror_id": primary_affiliation["ror_id"],
+        "affiliations": affiliations,
         "email": req.email,
         "credit_consent": req.credit_consent,
         "notification_consent": req.notification_consent,
@@ -180,6 +303,19 @@ Best regards, the LTB Team"""
     response.set_cookie(key="ltb_token", value=urllib.parse.quote(new_user['magic_token']), max_age=max_age, path="/", samesite="strict")
 
     return {"ok": True}
+
+
+@router.get("/api/affiliations/search")
+async def search_affiliations(
+    q: str = Query(min_length=2, max_length=100),
+):
+    query = " ".join(q.split())
+    if len(query) < 2:
+        raise HTTPException(status_code=422, detail="Enter at least 2 characters")
+    try:
+        return {"items": await search_ror_organizations(query)}
+    except RorUnavailableError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 
 @router.post("/api/recover-link")
@@ -232,6 +368,8 @@ async def _admin_user_view(u: dict) -> dict:
         "magic_token": u["magic_token"],
         "name": u["name"],
         "affiliation": u["affiliation"],
+        "affiliation_ror_id": u.get("affiliation_ror_id"),
+        "affiliations": user_affiliations(u),
         "email": u["email"],
         "credit_consent": u["credit_consent"],
         "quota": u["quota"],
@@ -324,6 +462,8 @@ async def admin_overview(user=Depends(get_current_user)):
             "magic_token": u["magic_token"],
             "name": u["name"],
             "affiliation": u["affiliation"],
+            "affiliation_ror_id": u.get("affiliation_ror_id"),
+            "affiliations": user_affiliations(u),
             "email": u["email"],
             "credit_consent": u["credit_consent"],
             "quota": u["quota"],
@@ -352,6 +492,24 @@ async def admin_overview(user=Depends(get_current_user)):
 
 @router.get("/api/public-dashboard")
 async def public_dashboard():
+    source_url = get_public_dashboard_source_url()
+    if source_url:
+        try:
+            dashboard = await fetch_public_dashboard_source(source_url)
+        except PublicDashboardSourceError as exc:
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+        # Always rebuild the map with this checkout's reviewed and provisional data.
+        affiliation_map = await build_dashboard_affiliation_map(dashboard)
+        dashboard["affiliation_places"] = affiliation_map["places"]
+        dashboard["affiliation_map_meta"] = {
+            "mapped_authors": affiliation_map["mapped_authors"],
+            "mapped_accepted": affiliation_map["mapped_accepted"],
+            "omitted": affiliation_map["omitted"],
+        }
+        dashboard["data_source"] = "live_public_dashboard"
+        return dashboard
+
     users = await get_users()
     submissions = await db_get_submissions()
 
@@ -390,10 +548,15 @@ async def public_dashboard():
         credit_consent = user["credit_consent"] if user else False
 
         if credit_consent and user:
+            affiliations = user_affiliations(user)
+            affiliation_names = [str(item["name"]) for item in affiliations]
+            primary = affiliations[0] if affiliations else {}
             rows.append(
                 {
                     "name": user["name"],
-                    "affiliation": user["affiliation"],
+                    "affiliation": "; ".join(affiliation_names),
+                    "affiliation_ror_id": primary.get("ror_id"),
+                    "affiliations": affiliations,
                     "accepted_submissions": accepted,
                 }
             )
@@ -401,13 +564,17 @@ async def public_dashboard():
             anonymous_submissions += accepted
             anonymous_users.add(user_id)
             if user:
-                anonymous_affiliations.add(user["affiliation"])
+                anonymous_affiliations.update(
+                    str(item["name"]) for item in user_affiliations(user)
+                )
 
     if anonymous_submissions > 0:
         rows.append(
             {
                 "name": f"Anonymous ({len(anonymous_users)} users)",
                 "affiliation": f"Multiple affiliations ({len(anonymous_affiliations)})",
+                "affiliation_ror_id": None,
+                "affiliations": [],
                 "accepted_submissions": anonymous_submissions,
             }
         )
@@ -419,12 +586,81 @@ async def public_dashboard():
         ),
         reverse=True,
     )
-    return {
+    dashboard = {
         "rows": rows,
         "total_submissions": total_submissions,
         "total_authors": total_authors,
         "languages": formatted_languages,
     }
+    affiliation_map = await build_dashboard_affiliation_map(dashboard)
+    dashboard["affiliation_places"] = affiliation_map["places"]
+    dashboard["affiliation_map_meta"] = {
+        "mapped_authors": affiliation_map["mapped_authors"],
+        "mapped_accepted": affiliation_map["mapped_accepted"],
+        "omitted": affiliation_map["omitted"],
+    }
+    return dashboard
+
+
+def _ror_id_from_key(ror_key: str) -> str:
+    if not re.fullmatch(r"0[0-9a-z]{8}", ror_key):
+        raise HTTPException(status_code=422, detail="Invalid ROR organization ID")
+    return f"https://ror.org/{ror_key}"
+
+
+@router.get("/api/admin/affiliation-locations")
+async def admin_affiliation_locations(user=Depends(get_current_user)):
+    require_admin(user)
+    return {"items": await get_affiliation_location_reviews()}
+
+
+@router.put("/api/admin/affiliation-locations/{ror_key}")
+async def admin_update_affiliation_location(
+    ror_key: str,
+    req: AffiliationLocationUpdateReq,
+    user=Depends(get_current_user),
+):
+    require_admin(user)
+    ror_id = _ror_id_from_key(ror_key)
+    review = await get_affiliation_location_review(ror_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Affiliation review not found")
+    if req.status == "approved" and (
+        req.precision != "exact" or not req.address.strip()
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Approved locations require an exact precision and official address",
+        )
+
+    review.update(req.model_dump())
+    review["source"] = "admin"
+    review["updated_at"] = datetime.now().astimezone().isoformat(timespec="seconds")
+    review["reviewed_by"] = user["username"] if req.status == "approved" else ""
+    await save_affiliation_location_review(review)
+    return review
+
+
+@router.post("/api/admin/affiliation-locations/{ror_key}/geocode")
+async def admin_geocode_affiliation_location(
+    ror_key: str,
+    req: AffiliationLocationGeocodeReq,
+    user=Depends(get_current_user),
+):
+    require_admin(user)
+    ror_id = _ror_id_from_key(ror_key)
+    review = await get_affiliation_location_review(ror_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Affiliation review not found")
+    try:
+        return await geocode_affiliation_review(
+            review,
+            req.address.strip(),
+            req.city.strip(),
+            req.country.strip(),
+        )
+    except GeocodingUnavailableError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 
 @router.delete("/api/admin/users/{uid}", status_code=200)
@@ -890,6 +1126,7 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
         }
     )
 
+    author = None
     if req.action in ("accept", "return"):
         author = await get_user_by_id(submission["user_id"])
         if author:
@@ -912,6 +1149,15 @@ async def score_submission(sid: int, req: ScoreReq, user=Depends(get_current_use
             await save_user(author)
 
     await save_submission(submission)
+    if req.action == "accept" and author and author.get("credit_consent"):
+        for affiliation in user_affiliations(author):
+            if affiliation.get("ror_id"):
+                asyncio.create_task(
+                    discover_affiliation_location(
+                        str(affiliation["name"]),
+                        str(affiliation["ror_id"]),
+                    )
+                )
     return {"ok": True}
 
 

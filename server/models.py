@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -45,9 +45,30 @@ class ScoreReq(BaseModel):
     action: str  # "return" | "accept" | "pending"
     comment: Optional[str] = None
 
+
+class ProfileAffiliationReq(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    ror_id: Optional[str] = Field(
+        default=None,
+        max_length=100,
+        pattern=r"^https://ror\.org/0[0-9a-z]{8}$",
+    )
+    kind: Literal["ror", "independent", "other"]
+
+
 class ProfileReq(BaseModel):
     name: str = Field(max_length=50)
-    affiliation: str = Field(max_length=100)
+    affiliation: str = Field(max_length=200)
+    affiliation_ror_id: Optional[str] = Field(
+        default=None,
+        max_length=100,
+        pattern=r"^https://ror\.org/0[0-9a-z]{8}$",
+    )
+    affiliations: Optional[list[ProfileAffiliationReq]] = Field(
+        default=None,
+        min_length=1,
+        max_length=5,
+    )
     email: str = Field(max_length=100)
     credit_consent: bool
     notification_consent: bool
@@ -69,3 +90,22 @@ class ReviewScopeReq(BaseModel):
 
 class NotificationActionReq(BaseModel):
     action: str  # "view" | "clear"
+
+
+class AffiliationLocationUpdateReq(BaseModel):
+    affiliation_name: str = Field(min_length=1, max_length=200)
+    address: str = Field(default="", max_length=500)
+    city: str = Field(min_length=1, max_length=100)
+    country: str = Field(min_length=1, max_length=100)
+    lat: float = Field(ge=-90, le=90)
+    lng: float = Field(ge=-180, le=180)
+    logo_domain: str = Field(default="", max_length=200)
+    website: str = Field(default="", max_length=500)
+    precision: Literal["city", "exact"] = "city"
+    status: Literal["pending", "approved"] = "pending"
+
+
+class AffiliationLocationGeocodeReq(BaseModel):
+    address: str = Field(default="", max_length=500)
+    city: str = Field(default="", max_length=100)
+    country: str = Field(default="", max_length=100)

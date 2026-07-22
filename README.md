@@ -37,6 +37,59 @@ python3 server
 
 The `server/` contains source code for the server.
 The `web/` is the frontend code (TypeScript) which, when built, goes to `server/static/` to be served by the server.
+The public dashboard map combines live accepted-submission data with the reviewed locations in `server/affiliation_locations.json`.
+
+To test the integrated dashboard against the live website's read-only public data,
+start the local server with:
+
+```bash
+python3 server --public-dashboard-source "https://last-translation-benchmark.vilda.net/api/public-dashboard"
+```
+
+Only `/api/public-dashboard` uses the remote data in this mode. Other pages and
+write operations continue to use the local database.
+
+### Affiliation location workflow
+
+Contributors choose their affiliation from the ROR search in their profile. When
+an accepted, publicly credited contributor has a ROR affiliation that is not in
+the reviewed location registry, the server automatically:
+
+1. reads the organization's canonical name, website, domain and city coordinates
+   from ROR;
+2. asks OpenStreetMap Nominatim for a more precise address candidate;
+3. saves the candidate in the main SQLite database as `pending`; and
+4. displays it immediately on the public map with a provisional `≈` badge.
+
+The profile also offers **Independent researcher** and **Other / not listed in
+ROR**. Independent profiles are deliberately excluded from institution mapping.
+Other affiliations retain the entered name but have no automatic map location
+until they are matched or reviewed manually.
+
+Contributors can add up to five affiliations. The first remains the primary
+affiliation for compatibility with older clients, while the full ordered list is
+stored in `affiliations`. Every accepted submission is credited in full to each
+listed institution on the map; the dashboard's global submission total still
+counts the submission only once, so institution totals intentionally overlap.
+
+An admin can open `/admin`, edit the address or coordinates, use **Geocode
+address**, and then choose **Approve exact point**. Approval requires a full
+address and `Exact address` precision. The approved point replaces the
+provisional point automatically; no edit to `affiliation_locations.json` or
+frontend rebuild is needed.
+
+The deployment therefore needs its normal persistent `DB_PATH`. ROR and
+Nominatim do not require an API key, although `ROR_CLIENT_ID` is recommended for
+identifying this service to ROR. Existing hand-reviewed locations remain in
+`server/affiliation_locations.json`; newly discovered and approved locations are
+stored in the `affiliation_location_reviews` database table.
+
+The public Nominatim endpoint is rate-limited to one serialized request per
+second and candidate results are persisted with the review record. Set
+`NOMINATIM_SEARCH_URL` to switch to a hosted or self-hosted compatible service,
+and set `NOMINATIM_USER_AGENT` to an application name with a monitored contact.
+Deployments using the public endpoint must follow the [Nominatim usage
+policy](https://operations.osmfoundation.org/policies/nominatim/).
 
 You can specify the `--host`, `--port` and `--host-public` arguments when starting the server. 
 The last is used to show the login URLs.
@@ -52,6 +105,9 @@ Some API services need API keys:
 - `OPENROUTER_API_KEY`: enables real LLM translation and verification
 - `LARA_API_ID` and `LARA_API_SECRET`: enables Lara API-based translation
 - `GOOGLE_TRANSLATE_API_KEY`: enables API-based Google Translate
+- `ROR_CLIENT_ID`: optional client identification for ROR-powered affiliation search
+- `NOMINATIM_SEARCH_URL`: configurable OpenStreetMap-compatible geocoding endpoint
+- `NOMINATIM_USER_AGENT`: geocoder client identity including a monitored contact
 
 
 ### Instructions

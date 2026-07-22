@@ -9,6 +9,12 @@ export interface Notification {
     content: string;
 }
 
+export interface ProfileAffiliation {
+    name: string;
+    ror_id: string | null;
+    kind: 'ror' | 'independent' | 'other';
+}
+
 export interface User {
     username: string;
     roles: string[];
@@ -18,6 +24,8 @@ export interface User {
     total_submitted: number;
     name: string;
     affiliation: string;
+    affiliation_ror_id?: string | null;
+    affiliations?: ProfileAffiliation[];
     email: string;
     credit_consent: boolean;
     notification_consent: boolean;
@@ -62,7 +70,63 @@ export interface Submission {
 export interface PublicDashboardRow {
     name: string;
     affiliation: string;
+    affiliation_ror_id?: string | null;
+    affiliations?: ProfileAffiliation[];
     accepted_submissions: number;
+}
+
+export interface AffiliationMapAuthor {
+    name: string;
+    accepted: number;
+}
+
+export interface AffiliationMapAffiliation {
+    name: string;
+    search_terms: string[];
+    logo_domain: string;
+    accepted: number;
+    authors: AffiliationMapAuthor[];
+    location_status: 'pending' | 'approved';
+    precision: 'exact' | 'city';
+    address: string;
+    website: string;
+    ror_id: string;
+}
+
+export interface AffiliationMapPlace {
+    lat: number;
+    lng: number;
+    city: string;
+    country: string;
+    precision: 'exact' | 'city';
+    accepted: number;
+    affiliations: AffiliationMapAffiliation[];
+}
+
+export interface AffiliationMapMeta {
+    mapped_authors: number;
+    mapped_accepted: number;
+    omitted: Array<{
+        affiliation: string;
+        affiliation_ror_id?: string | null;
+        author: string;
+        accepted: number;
+    }>;
+}
+
+export interface RorOrganization {
+    ror_id: string;
+    name: string;
+    name_variants: string[];
+    locations: Array<{
+        city: string;
+        country: string;
+        lat?: number;
+        lng?: number;
+    }>;
+    organization_types: string[];
+    domains: string[];
+    website: string;
 }
 
 export interface PublicDashboardData {
@@ -70,6 +134,9 @@ export interface PublicDashboardData {
     total_submissions: number;
     total_authors: number;
     languages: [string, number][];
+    affiliation_places: AffiliationMapPlace[];
+    affiliation_map_meta: AffiliationMapMeta;
+    data_source?: 'live_public_dashboard';
 }
 
 // ---------- Cookie helpers ----------
@@ -194,6 +261,13 @@ export function getPublicDashboard() {
     return apiCall<PublicDashboardData>('GET', 'api/public-dashboard');
 }
 
+export function searchAffiliations(query: string, signal?: AbortSignal) {
+    const params = new URLSearchParams({ q: query });
+    return apiCall<{ items: RorOrganization[] }>(
+        'GET', `api/affiliations/search?${params.toString()}`, undefined, signal
+    );
+}
+
 export function createSubmission(data: {
     source_text: string;
     source_media?: string;
@@ -227,23 +301,21 @@ export function scoreSubmission(id: number, action: 'return' | 'accept' | 'pendi
     return apiCall<{ ok: boolean }>('POST', `api/submissions/${id}/score`, { action });
 }
 
-export function updateProfile(data: {
+export interface ProfileUpdateData {
     name: string;
     affiliation: string;
+    affiliation_ror_id: string | null;
+    affiliations: ProfileAffiliation[];
     email: string;
     credit_consent: boolean;
     notification_consent: boolean;
-}) {
+}
+
+export function updateProfile(data: ProfileUpdateData) {
     return apiCall<{ ok: boolean }>('PUT', 'api/profile', data);
 }
 
-export function registerUser(data: {
-    name: string;
-    affiliation: string;
-    email: string;
-    credit_consent: boolean;
-    notification_consent: boolean;
-}) {
+export function registerUser(data: ProfileUpdateData) {
     return apiCall<{ ok: boolean }>('POST', 'api/register', data);
 }
 
@@ -258,6 +330,8 @@ export interface AdminUser {
     magic_token: string;
     name: string;
     affiliation: string;
+    affiliation_ror_id?: string | null;
+    affiliations?: ProfileAffiliation[];
     email: string;
     credit_consent: boolean;
     quota: number;
@@ -284,8 +358,74 @@ export interface AdminOverview {
     pending_languages: Record<string, number>;
 }
 
+export interface AffiliationLocationReview {
+    ror_id: string;
+    affiliation_name: string;
+    aliases: string[];
+    address: string;
+    city: string;
+    country: string;
+    lat: number;
+    lng: number;
+    logo_domain: string;
+    website: string;
+    precision: 'city' | 'exact';
+    status: 'pending' | 'approved';
+    source: string;
+    created_at: string;
+    updated_at: string;
+    reviewed_by: string;
+}
+
+export type AffiliationLocationUpdate = Pick<
+    AffiliationLocationReview,
+    | 'affiliation_name'
+    | 'address'
+    | 'city'
+    | 'country'
+    | 'lat'
+    | 'lng'
+    | 'logo_domain'
+    | 'website'
+    | 'precision'
+    | 'status'
+>;
+
 export function getAdminOverview() {
     return apiCall<AdminOverview>('GET', 'api/admin');
+}
+
+export function getAdminAffiliationLocations() {
+    return apiCall<{ items: AffiliationLocationReview[] }>(
+        'GET',
+        'api/admin/affiliation-locations',
+    );
+}
+
+function rorKey(rorId: string): string {
+    return rorId.split('/').pop() ?? '';
+}
+
+export function updateAdminAffiliationLocation(
+    rorId: string,
+    data: AffiliationLocationUpdate,
+) {
+    return apiCall<AffiliationLocationReview>(
+        'PUT',
+        `api/admin/affiliation-locations/${rorKey(rorId)}`,
+        data,
+    );
+}
+
+export function geocodeAdminAffiliationLocation(
+    rorId: string,
+    data: { address: string; city: string; country: string },
+) {
+    return apiCall<AffiliationLocationReview>(
+        'POST',
+        `api/admin/affiliation-locations/${rorKey(rorId)}/geocode`,
+        data,
+    );
 }
 
 export function deleteAdminUser(uid: number) {

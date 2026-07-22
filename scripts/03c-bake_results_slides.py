@@ -80,6 +80,7 @@ dates_returned = np.array(dates_returned)
 # plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_pending[:-1]), dates_pending)], color="orange", linewidth=2)
 # plt.plot(range(delta_today+1), [x2-x1 for x1, x2 in zip([0]+list(dates_returned[:-1]), dates_returned)], color="red", linewidth=2)
 
+plt.figure(figsize=(4, 2.5))
 plt.plot(range(delta_today+1), dates_accepted, color="green", linewidth=2, marker=".")
 plt.plot(range(delta_today+1), dates_pending, color="orange", linewidth=2, marker=".")
 plt.plot(range(delta_today+1), dates_returned, color="red", linewidth=2, marker=".")
@@ -95,7 +96,7 @@ plt.text(
 plt.text(
     x=delta_today,
     y=dates_pending[-1],
-    s=f" Pending: {status_counts['pending']}",
+    s=f"\n Pending: {status_counts['pending']}",
     ha="left", va="center",
 )
 plt.text(
@@ -112,8 +113,10 @@ plt.text(
 )
 
 plt.gca().spines[["top", "right"]].set_visible(False)
-plt.tight_layout(pad=1)
-
+plt.tight_layout(pad=0.5)
+plt.gca().patch.set_alpha(0)
+plt.gcf().patch.set_alpha(0)
+plt.savefig("computed/collection_progress.svg")
 plt.show()
 
 data_out["status_counts"] = dict(status_counts.most_common())

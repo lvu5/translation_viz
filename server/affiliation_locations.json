@@ -84,7 +84,10 @@
     "Weizmann Institute of Science": "www.weizmann.ac.il",
     "Wroclaw University of Science and Technology": "pwr.edu.pl",
     "Samsung Electronics (South Korea)": "samsung.com",
-    "University of Washington": "washington.edu"
+    "University of Washington": "washington.edu",
+    "King Saud University": "ksu.edu.sa",
+    "University of Bonn": "uni-bonn.de",
+    "University of Sheffield": "sheffield.ac.uk"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
@@ -412,6 +415,34 @@
       "lng": -122.33207,
       "city": "Seattle",
       "country": "United States",
+      "precision": "city"
+    },
+    "King Saud University": {
+      "lat": 24.68773,
+      "lng": 46.72185,
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "precision": "city"
+    },
+    "University of Bonn": {
+      "lat": 50.73438,
+      "lng": 7.09549,
+      "city": "Bonn",
+      "country": "Germany",
+      "precision": "city"
+    },
+    "University of Cincinnati": {
+      "lat": 39.12711,
+      "lng": -84.51439,
+      "city": "Cincinnati",
+      "country": "United States",
+      "precision": "city"
+    },
+    "University of Sheffield": {
+      "lat": 53.38297,
+      "lng": -1.4659,
+      "city": "Sheffield",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

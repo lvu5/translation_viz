@@ -29,7 +29,9 @@
     "UZH": "University of Zurich",
     "UZH Zurich": "University of Zurich",
     "Weizmann": "Weizmann Institute of Science",
-    "Samsung Electronics": "Samsung Electronics (South Korea)"
+    "Samsung Electronics": "Samsung Electronics (South Korea)",
+    "INSA Lyon, CNRS, Lyon 1 Université, LIRIS, UMR5205": "Institut National des Sciences Appliquées de Lyon",
+    "Universidad del País Vasco": "University of the Basque Country"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -84,7 +86,11 @@
     "Weizmann Institute of Science": "www.weizmann.ac.il",
     "Wroclaw University of Science and Technology": "pwr.edu.pl",
     "Samsung Electronics (South Korea)": "samsung.com",
-    "University of Washington": "washington.edu"
+    "University of Washington": "washington.edu",
+    "King Saud University": "ksu.edu.sa",
+    "University of the Basque Country": "ehu.eus",
+    "University of Bonn": "uni-bonn.de",
+    "University of Sheffield": "sheffield.ac.uk"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
@@ -412,6 +418,48 @@
       "lng": -122.33207,
       "city": "Seattle",
       "country": "United States",
+      "precision": "city"
+    },
+    "Institut National des Sciences Appliquées de Lyon": {
+      "lat": 45.74906,
+      "lng": 4.84789,
+      "city": "Lyon",
+      "country": "France",
+      "precision": "city"
+    },
+    "King Saud University": {
+      "lat": 24.68773,
+      "lng": 46.72185,
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "precision": "city"
+    },
+    "University of the Basque Country": {
+      "lat": 43.32686,
+      "lng": -2.98884,
+      "city": "Leioa",
+      "country": "Spain",
+      "precision": "city"
+    },
+    "University of Bonn": {
+      "lat": 50.73438,
+      "lng": 7.09549,
+      "city": "Bonn",
+      "country": "Germany",
+      "precision": "city"
+    },
+    "University of Cincinnati": {
+      "lat": 39.12711,
+      "lng": -84.51439,
+      "city": "Cincinnati",
+      "country": "United States",
+      "precision": "city"
+    },
+    "University of Sheffield": {
+      "lat": 53.38297,
+      "lng": -1.4659,
+      "city": "Sheffield",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

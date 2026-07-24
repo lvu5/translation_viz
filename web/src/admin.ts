@@ -18,7 +18,7 @@ function renderOverview(data: AdminOverview) {
     let html = `<p style="margin-top:0;"><strong>Total Submissions:</strong> ${statusCounts}. `;
     
     if (data.submissions_without_reviewer.length > 0) {
-        html += `<p style="font-weight: bold; margin-bottom: 4px;">Pending submissions with no elligible reviewers (${data.submissions_without_reviewer.length}):</p>`;
+        html += `<p style="font-weight: bold; margin-bottom: 4px;">Pending submissions with no eligible reviewers (${data.submissions_without_reviewer.length}):</p>`;
         html += `<ul style="margin-top: 0; margin-bottom: 12px;">`;
         const grouped: Record<string, number[]> = {};
         for (const sub of data.submissions_without_reviewer) {

@@ -2,7 +2,6 @@ import asyncio
 
 import httpx
 import pytest
-
 from last_translation_benchmark.public_dashboard_source import (
     PublicDashboardSourceError,
     fetch_public_dashboard_source,

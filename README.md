@@ -80,11 +80,11 @@ command does not need database access and is not part of the live request path.
 
 The `Update affiliation locations` GitHub Actions workflow runs this command
 every six hours and can also be started manually from the repository's
-**Actions** page. When ROR produces new matches, the workflow opens or updates a
-reviewable pull request rather than writing directly to `main`. The repository
-must allow GitHub Actions read/write workflow permissions and pull-request
-creation. An optional `ROR_CLIENT_ID` repository secret identifies the updater
-to ROR.
+**Actions** page. When ROR produces new matches, the workflow commits the static
+JSON update directly to the repository's default branch. The repository must
+give GitHub Actions read/write workflow permissions, and its branch protection
+rules must allow this workflow to push. An optional `ROR_CLIENT_ID` repository
+secret identifies the updater to ROR.
 
 You can specify the `--host`, `--port` and `--host-public` arguments when starting the server. 
 The last is used to show the login URLs.

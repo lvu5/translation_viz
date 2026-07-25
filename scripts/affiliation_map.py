@@ -3,7 +3,9 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-AFFILIATION_LOCATIONS_PATH = Path(__file__).with_name("affiliation_locations.json")
+AFFILIATION_LOCATIONS_PATH = (
+    Path(__file__).resolve().parents[1] / "data" / "affiliation_locations.json"
+)
 OTHER_AFFILIATION_NAME = "Other affiliations"
 OTHER_AFFILIATION_LOCATION = {
     "lat": 45.0,

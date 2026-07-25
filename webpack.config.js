@@ -6,11 +6,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => ({
   entry: {
-    site: './src/pages-dashboard.ts',
+    site: './src/main.ts',
   },
   output: {
     filename: '[name].[contenthash:8].js',
-    path: path.resolve(__dirname, '../site'),
+    path: path.resolve(__dirname, 'site'),
     publicPath: 'auto',
     clean: true,
   },
@@ -33,7 +33,7 @@ module.exports = (env, argv) => ({
   plugins: [
     new MiniCssExtractPlugin({ filename: '[name].[contenthash:8].css' }),
     new HtmlWebpackPlugin({
-      template: './src/pages-dashboard.html',
+      template: './src/index.html',
       filename: 'index.html',
       chunks: ['site'],
       hash: true,

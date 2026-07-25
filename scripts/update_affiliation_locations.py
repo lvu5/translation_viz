@@ -14,7 +14,9 @@ import httpx
 DEFAULT_SOURCE = (
     "https://last-translation-benchmark.vilda.net/api/public-dashboard"
 )
-DEFAULT_LOCATIONS = Path(__file__).parents[1] / "server" / "affiliation_locations.json"
+DEFAULT_LOCATIONS = (
+    Path(__file__).parents[1] / "data" / "affiliation_locations.json"
+)
 ROR_API_URL = "https://api.ror.org/v2/organizations"
 
 
@@ -106,7 +108,7 @@ def main() -> None:
     logo_domains = config.setdefault("logo_domains", {})
     covered = set(locations) | set(aliases)
 
-    headers = {"User-Agent": "last-translation-benchmark-affiliation-updater/1.0"}
+    headers = {"User-Agent": "translation-affiliation-map-updater/1.0"}
     if args.client_id:
         headers["Client-Id"] = args.client_id
 

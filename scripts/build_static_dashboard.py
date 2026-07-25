@@ -3,7 +3,6 @@
 
 import argparse
 import json
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -11,15 +10,13 @@ from typing import Any
 import httpx
 
 ROOT = Path(__file__).resolve().parents[1]
-SERVER_DIR = ROOT / "server"
 DEFAULT_SOURCE = (
     "https://last-translation-benchmark.vilda.net/api/public-dashboard"
 )
-DEFAULT_LOCATIONS = SERVER_DIR / "affiliation_locations.json"
+DEFAULT_LOCATIONS = ROOT / "data" / "affiliation_locations.json"
 DEFAULT_OUTPUT = ROOT / "site" / "data" / "dashboard.json"
 
-sys.path.insert(0, str(SERVER_DIR))
-from affiliation_map import build_affiliation_map  # noqa: E402
+from affiliation_map import build_affiliation_map
 
 
 def parse_args() -> argparse.Namespace:

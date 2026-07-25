@@ -1,4 +1,4 @@
-import type { AffiliationMapPlace } from './api';
+import type { AffiliationMapPlace } from './types';
 import { initializeAffiliationMap } from './affiliation-map';
 
 import './assets/pages-dashboard.css';

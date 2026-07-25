@@ -43,12 +43,12 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          npm install --prefix web
-          python -m pip install "httpx>=0.27"
+          npm ci
+          python -m pip install -r requirements.txt
 
       - name: Build map website
         run: |
-          npm run build:pages --prefix web
+          npm run build
           python scripts/build_static_dashboard.py
 
       - name: Configure GitHub Pages

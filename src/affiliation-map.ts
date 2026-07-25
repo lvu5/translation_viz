@@ -3,7 +3,7 @@ import L, { Marker } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './assets/affiliation-map.css';
 
-import type { AffiliationMapAffiliation, AffiliationMapPlace } from './api';
+import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 
 const number = new Intl.NumberFormat('en');
 const europeCenter: L.LatLngExpression = [52, 14];

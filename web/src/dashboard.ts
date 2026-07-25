@@ -22,9 +22,6 @@ $(async () => {
             <div style="flex-wrap: wrap; display: flex; gap: 12px; text-align: justify;">
                 <div><strong>Total Submissions:</strong> ${data.total_submissions}</div>
                 <div><strong>Contributors:</strong> ${data.total_authors}</div>
-                ${data.data_source === 'live_public_dashboard'
-                    ? '<div><strong>Data source:</strong> Live public dashboard</div>'
-                    : ''}
                 <div style="flex-basis: 100%;"><strong>Languages:</strong> ${data.languages.map(x=> escHtml(x[0]).replace(" ", "&nbsp;").replace("(", "").replace(")", "") + ` (${x[1]})`).join(', ')}</div>
             </div>
         `);

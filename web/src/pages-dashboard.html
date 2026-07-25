@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive map of contributor affiliations in the Last Translation Benchmark.">
+  <title>Affiliation map · Last Translation Benchmark</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="https://last-translation-benchmark.vilda.net/" target="_blank" rel="noreferrer">
+      <img src="assets/favicon.svg" alt="">
+      <span>Last Translation Benchmark</span>
+    </a>
+    <a class="site-link" href="https://last-translation-benchmark.vilda.net/dashboard" target="_blank" rel="noreferrer">
+      Public dashboard
+    </a>
+  </header>
+
+  <main class="site-shell">
+    <section class="affiliation-map-section" aria-labelledby="affiliation-map-heading">
+      <div class="affiliation-map-header">
+        <div>
+          <p class="map-kicker">Global contributor network</p>
+          <h1 id="affiliation-map-heading">Contributor affiliations</h1>
+          <p class="map-introduction">Explore where accepted submissions come from.</p>
+        </div>
+        <span class="affiliation-map-legend">🔥 Top 5 affiliations</span>
+      </div>
+
+      <div class="affiliation-map-stage">
+        <div
+          id="affiliation-map"
+          role="application"
+          aria-label="Interactive map of contributor affiliation locations, initially showing Europe"
+        ></div>
+
+        <details class="affiliation-map-toolbox" open>
+          <summary>
+            <span>Explore</span>
+            <span id="map-filter-status"></span>
+          </summary>
+          <div class="affiliation-map-toolbox-content">
+            <dl class="affiliation-map-stats" aria-label="Public dashboard totals">
+              <div>
+                <dt>Total submissions</dt>
+                <dd id="map-total-submissions">—</dd>
+              </div>
+              <div>
+                <dt>Contributors</dt>
+                <dd id="map-contributor-count">—</dd>
+              </div>
+            </dl>
+            <label for="map-affiliation-filter">
+              Affiliation
+              <input id="map-affiliation-filter" type="search" list="map-affiliation-options" placeholder="Search or select" autocomplete="off">
+              <datalist id="map-affiliation-options"></datalist>
+            </label>
+            <label for="map-country-filter">
+              Country
+              <select id="map-country-filter">
+                <option value="">All countries</option>
+              </select>
+            </label>
+            <div class="affiliation-map-actions">
+              <button class="affiliation-map-reset" type="button" id="map-reset" aria-label="Reset filters and map view">↺</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="affiliation-map-loading" id="affiliation-map-loading" role="status">
+          Loading dashboard data…
+        </div>
+      </div>
+
+      <div class="affiliation-map-detail" id="affiliation-map-detail" aria-live="polite">
+        Select an institution logo to inspect its contributors.
+      </div>
+
+      <footer class="map-footer">
+        <span id="snapshot-status">Preparing public dashboard snapshot…</span>
+        <span>Location precision depends on available ROR data.</span>
+      </footer>
+    </section>
+  </main>
+</body>
+
+</html>

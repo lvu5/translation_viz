@@ -39,15 +39,57 @@ The `server/` contains source code for the server.
 The `web/` is the frontend code (TypeScript) which, when built, goes to `server/static/` to be served by the server.
 The public dashboard map combines live accepted-submission data with the reviewed locations in `server/affiliation_locations.json`.
 
-To test the integrated dashboard against the live website's read-only public data,
-start the local server with:
+### Standalone affiliation map
+
+The map can be hosted independently on GitHub Pages and embedded in the main
+website. GitHub Pages serves static files, so the hosted map does not run
+FastAPI, `uvicorn`, or a database. A GitHub Actions build fetches the live
+read-only public dashboard, combines it with the location registry, and writes a
+same-origin snapshot for the browser.
+
+Build and preview the Pages site locally:
 
 ```bash
-python3 server --public-dashboard-source "https://last-translation-benchmark.vilda.net/api/public-dashboard"
+python3 -m venv .venv
+.venv/bin/python -m pip install "httpx>=0.27"
+npm install --prefix web
+npm run build:pages --prefix web
+.venv/bin/python scripts/build_static_dashboard.py
+python3 -m http.server 8080 --directory site
 ```
 
-Only `/api/public-dashboard` uses the remote data in this mode. Other pages and
-write operations continue to use the local database.
+Open [http://localhost:8080](http://localhost:8080). The generated `site/`
+directory is intentionally ignored by Git; GitHub Actions rebuilds it for every
+deployment.
+
+To publish:
+
+1. Push `main` to GitHub.
+2. In the repository, open **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Open the `Deploy affiliation map to GitHub Pages` workflow to follow the
+   first deployment.
+
+For `lvu5/translation_viz`, the default Pages URL is:
+
+```text
+https://lvu5.github.io/translation_viz/
+```
+
+The project lead can embed the map-only layout with:
+
+```html
+<iframe
+  src="https://lvu5.github.io/translation_viz/?embed=1"
+  title="Last Translation Benchmark contributor affiliation map"
+  loading="lazy"
+  style="width:100%;height:760px;border:0"
+></iframe>
+```
+
+The Pages workflow runs after the six-hour affiliation update, so
+accepted-submission totals and contributors refresh without database access. A
+normal push to `main` deploys immediately as well.
 
 ### Affiliation map maintenance
 
@@ -78,13 +120,14 @@ affiliations**, so no manual JSON entry is required. Set `ROR_CLIENT_ID` in the
 environment, or pass `--client-id`, if the deployment has one. This maintenance
 command does not need database access and is not part of the live request path.
 
-The `Update affiliation locations` GitHub Actions workflow runs this command
-every six hours and can also be started manually from the repository's
-**Actions** page. When ROR produces new matches, the workflow commits the static
-JSON update directly to the repository's default branch. The repository must
-give GitHub Actions read/write workflow permissions, and its branch protection
-rules must allow this workflow to push. An optional `ROR_CLIENT_ID` repository
-secret identifies the updater to ROR.
+The `Update affiliation locations` workflow runs this command every six hours
+and can also be started manually from the repository's **Actions** page. When
+ROR produces new matches, it commits the registry update to the default branch.
+After the updater completes successfully, the Pages workflow creates a fresh
+data snapshot and deploys it. Unresolved names continue to appear under **Other
+affiliations**. The repository must give GitHub Actions read/write workflow
+permissions, and its branch protection rules must allow this workflow to push.
+An optional `ROR_CLIENT_ID` repository secret identifies the updater to ROR.
 
 You can specify the `--host`, `--port` and `--host-public` arguments when starting the server. 
 The last is used to show the login URLs.

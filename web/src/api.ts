@@ -105,7 +105,6 @@ export interface PublicDashboardData {
     languages: [string, number][];
     affiliation_places: AffiliationMapPlace[];
     affiliation_map_meta: AffiliationMapMeta;
-    data_source?: 'live_public_dashboard';
 }
 
 // ---------- Cookie helpers ----------

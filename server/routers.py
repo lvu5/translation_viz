@@ -44,11 +44,6 @@ from .models import (
     TranslateReq,
     VerifyReq,
 )
-from .public_dashboard_source import (
-    PublicDashboardSourceError,
-    fetch_public_dashboard_source,
-    get_public_dashboard_source_url,
-)
 from .services import (
     translate_google,
     translate_lara,
@@ -359,23 +354,6 @@ async def admin_overview(user=Depends(get_current_user)):
 
 @router.get("/api/public-dashboard")
 async def public_dashboard():
-    source_url = get_public_dashboard_source_url()
-    if source_url:
-        try:
-            dashboard = await fetch_public_dashboard_source(source_url)
-        except PublicDashboardSourceError as exc:
-            raise HTTPException(status_code=502, detail=str(exc)) from exc
-
-        affiliation_map = build_affiliation_map(dashboard)
-        dashboard["affiliation_places"] = affiliation_map["places"]
-        dashboard["affiliation_map_meta"] = {
-            "mapped_authors": affiliation_map["mapped_authors"],
-            "mapped_accepted": affiliation_map["mapped_accepted"],
-            "omitted": affiliation_map["omitted"],
-        }
-        dashboard["data_source"] = "live_public_dashboard"
-        return dashboard
-
     users = await get_users()
     submissions = await db_get_submissions()
 

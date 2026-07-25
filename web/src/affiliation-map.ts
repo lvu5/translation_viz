@@ -3,12 +3,17 @@ import L, { Marker } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './assets/affiliation-map.css';
 
-import { AffiliationMapAffiliation, AffiliationMapPlace } from './api';
-import { esc as escapeHtml } from './utils';
+import type { AffiliationMapAffiliation, AffiliationMapPlace } from './api';
 
 const number = new Intl.NumberFormat('en');
 const europeCenter: L.LatLngExpression = [52, 14];
 const europeZoom = 4;
+
+function escapeHtml(value: string): string {
+    const element = document.createElement('span');
+    element.textContent = value;
+    return element.innerHTML;
+}
 
 interface MarkerOffset {
     x: number;

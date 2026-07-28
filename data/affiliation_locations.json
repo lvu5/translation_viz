@@ -93,7 +93,9 @@
     "University of Bonn": "uni-bonn.de",
     "University of Sheffield": "sheffield.ac.uk",
     "King Abdullah University of Science and Technology": "kaust.edu.sa",
-    "University of Mons": "umons.ac.be"
+    "University of Mons": "umons.ac.be",
+    "University of Maryland, Baltimore County": "umbc.edu",
+    "University of Southern California": "usc.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -474,6 +476,20 @@
       "lng": 3.95229,
       "city": "Mons",
       "country": "Belgium",
+      "precision": "city"
+    },
+    "University of Maryland, Baltimore County": {
+      "lat": 39.29038,
+      "lng": -76.61219,
+      "city": "Baltimore",
+      "country": "United States",
+      "precision": "city"
+    },
+    "University of Southern California": {
+      "lat": 34.05223,
+      "lng": -118.24368,
+      "city": "Los Angeles",
+      "country": "United States",
       "precision": "city"
     }
   }

@@ -92,11 +92,12 @@
     "King Saud University": "ksu.edu.sa",
     "University of Bonn": "uni-bonn.de",
     "University of Sheffield": "sheffield.ac.uk",
-    "King Abdullah University of Science and Technology": "kaust.edu.sa"
+    "King Abdullah University of Science and Technology": "kaust.edu.sa",
+    "University of Mons": "umons.ac.be"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
-    "Research Center for Linguistics at NOVA University Lisbon":"assets/logos/ClUNL_logo-540x305.png"
+    "Research Center for Linguistics at NOVA University Lisbon": "assets/logos/ClUNL_logo-540x305.png"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
@@ -459,6 +460,20 @@
       "lng": 39.18624,
       "city": "Jeddah",
       "country": "Saudi Arabia",
+      "precision": "city"
+    },
+    "The Ohio State University": {
+      "lat": 39.96118,
+      "lng": -82.99879,
+      "city": "Columbus",
+      "country": "United States",
+      "precision": "city"
+    },
+    "University of Mons": {
+      "lat": 50.45413,
+      "lng": 3.95229,
+      "city": "Mons",
+      "country": "Belgium",
       "precision": "city"
     }
   }

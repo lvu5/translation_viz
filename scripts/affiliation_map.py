@@ -29,6 +29,7 @@ def build_affiliation_map(
     config = location_config or load_affiliation_locations()
     aliases = config.get("aliases", {})
     logo_domains = config.get("logo_domains", {})
+    logo_files = config.get("logo_files", {})
     locations = config.get("locations", {})
 
     search_terms_by_name: dict[str, list[str]] = {}
@@ -54,6 +55,7 @@ def build_affiliation_map(
                 "name": canonical_name,
                 "search_terms": search_terms_by_name.get(canonical_name, []),
                 "logo_domain": logo_domains.get(canonical_name, ""),
+                "logo_file": logo_files.get(canonical_name, ""),
                 **location,
                 "accepted": 0,
                 "authors": [],
@@ -94,6 +96,7 @@ def build_affiliation_map(
                 "name": affiliation["name"],
                 "search_terms": affiliation["search_terms"],
                 "logo_domain": affiliation["logo_domain"],
+                "logo_file": affiliation["logo_file"],
                 "accepted": affiliation["accepted"],
                 "authors": affiliation["authors"],
             }

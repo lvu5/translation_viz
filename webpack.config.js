@@ -41,6 +41,7 @@ module.exports = (env, argv) => ({
     new CopyWebpackPlugin({
       patterns: [
         { from: 'src/assets/favicon.svg', to: 'assets/favicon.svg' },
+        { from: 'src/assets/logos', to: 'assets/logos', noErrorOnMissing: true },
       ],
     }),
   ],

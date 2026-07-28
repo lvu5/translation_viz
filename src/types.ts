@@ -7,6 +7,7 @@ export interface AffiliationMapAffiliation {
     name: string;
     search_terms: string[];
     logo_domain: string;
+    logo_file: string;
     accepted: number;
     authors: AffiliationMapAuthor[];
 }

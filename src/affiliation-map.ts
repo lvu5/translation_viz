@@ -229,10 +229,12 @@ export function initializeAffiliationMap(
         const size = markerSize(affiliation.accepted);
         const selectedClass = affiliationKey(place, affiliation) === selectedKey ? ' is-selected' : '';
         const isTopFive = topAffiliationNames.has(affiliation.name);
-        const image = affiliation.logo_domain
-            ? `<img class="affiliation-logo-image" src="${escapeHtml(affiliationLogoUrl(affiliation.logo_domain))}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`
+        const logoUrl = affiliation.logo_file
+            || (affiliation.logo_domain ? affiliationLogoUrl(affiliation.logo_domain) : '');
+        const image = logoUrl
+            ? `<img class="affiliation-logo-image" src="${escapeHtml(logoUrl)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`
             : '';
-        const hiddenFallback = affiliation.logo_domain ? ' hidden' : '';
+        const hiddenFallback = logoUrl ? ' hidden' : '';
         const fire = isTopFive ? '<span class="top-five-fire" aria-hidden="true">🔥</span>' : '';
         const accessibleLabel = `${affiliation.name}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}`;
 

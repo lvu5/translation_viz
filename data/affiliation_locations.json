@@ -93,6 +93,10 @@
     "University of Sheffield": "sheffield.ac.uk",
     "King Abdullah University of Science and Technology": "kaust.edu.sa"
   },
+  "logo_files": {
+    "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
+    "Research Center for Linguistics at NOVA University Lisbon":"assets/logos/ClUNL_logo-540x305.png"
+  },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
     "multi_campus_rule": "Use the primary campus unless the public affiliation text names a specific campus.",

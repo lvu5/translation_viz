@@ -42,6 +42,7 @@ module.exports = (env, argv) => ({
       patterns: [
         { from: 'src/assets/favicon.svg', to: 'assets/favicon.svg' },
         { from: 'src/assets/logos', to: 'assets/logos', noErrorOnMissing: true },
+        { from: 'src/assets/social-preview.png', to: 'assets/social-preview.png' }
       ],
     }),
   ],

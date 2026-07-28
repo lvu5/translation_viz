@@ -20,6 +20,13 @@ interface MarkerOffset {
     y: number;
 }
 
+interface MarkerPlacement extends MarkerOffset {
+    lat: number;
+    lng: number;
+    groupSize: number;
+    order: number;
+}
+
 function requiredElement<T extends HTMLElement>(selector: string): T {
     const element = document.querySelector<T>(selector);
     if (!element) throw new Error(`Missing map element: ${selector}`);
@@ -55,6 +62,10 @@ function affiliationKey(
     affiliation: AffiliationMapAffiliation,
 ): string {
     return `${placeKey(place)}::${affiliation.name}`;
+}
+
+function cityKey(place: AffiliationMapPlace): string {
+    return `${place.city.trim().toLocaleLowerCase()}::${place.country.trim().toLocaleLowerCase()}`;
 }
 
 function affiliationInitials(name: string): string {
@@ -152,16 +163,63 @@ export function initializeAffiliationMap(
         return Math.round(32 + ratio * 16);
     }
 
-    function affiliationOffsets(affiliations: AffiliationMapAffiliation[]): MarkerOffset[] {
-        if (affiliations.length === 1) return [{ x: 0, y: 0 }];
-        const largestSize = Math.max(...affiliations.map((affiliation) => markerSize(affiliation.accepted)));
-        const step = Math.ceil(largestSize * 1.05);
-        const y = -Math.ceil(largestSize * 0.72);
-        return affiliations.map((_, index) => ({
-            x: Math.round((index - (affiliations.length - 1) / 2) * step),
-            y,
-        }));
+    function buildMarkerPlacements(): Map<string, MarkerPlacement> {
+        const groups = new Map<
+            string,
+            Array<{ place: AffiliationMapPlace; affiliation: AffiliationMapAffiliation }>
+        >();
+
+        places.forEach((place) => {
+            const group = groups.get(cityKey(place)) ?? [];
+            place.affiliations.forEach((affiliation) => group.push({ place, affiliation }));
+            groups.set(cityKey(place), group);
+        });
+
+        const placements = new Map<string, MarkerPlacement>();
+        groups.forEach((group) => {
+            group.sort((left, right) =>
+                right.affiliation.accepted - left.affiliation.accepted
+                || left.affiliation.name.localeCompare(right.affiliation.name),
+            );
+
+            if (group.length === 1) {
+                const [{ place, affiliation }] = group;
+                placements.set(affiliationKey(place, affiliation), {
+                    lat: place.lat,
+                    lng: place.lng,
+                    x: 0,
+                    y: 0,
+                    groupSize: 1,
+                    order: 0,
+                });
+                return;
+            }
+
+            const centerLat = group.reduce((total, item) => total + item.place.lat, 0) / group.length;
+            const centerLng = group.reduce((total, item) => total + item.place.lng, 0) / group.length;
+            const largestSize = Math.max(
+                ...group.map(({ affiliation }) => markerSize(affiliation.accepted)),
+            );
+            const radius = Math.ceil(
+                (largestSize + 10) / (2 * Math.sin(Math.PI / group.length)),
+            );
+
+            group.forEach(({ place, affiliation }, index) => {
+                const angle = -Math.PI / 2 + (index * Math.PI * 2) / group.length;
+                placements.set(affiliationKey(place, affiliation), {
+                    lat: centerLat,
+                    lng: centerLng,
+                    x: Math.round(Math.cos(angle) * radius),
+                    y: Math.round(Math.sin(angle) * radius),
+                    groupSize: group.length,
+                    order: index,
+                });
+            });
+        });
+        return placements;
     }
+
+    const markerPlacements = buildMarkerPlacements();
 
     function markerIcon(
         place: AffiliationMapPlace,
@@ -199,9 +257,6 @@ export function initializeAffiliationMap(
         place: AffiliationMapPlace,
         affiliation: AffiliationMapAffiliation,
     ): string {
-        const precisionNote = place.precision !== 'exact'
-            ? '<small>Approximate location</small>'
-            : '';
         const topFiveNote = topAffiliationNames.has(affiliation.name)
             ? '<small class="top-five-note">🔥 Top 5 affiliation</small>'
             : '';
@@ -209,7 +264,6 @@ export function initializeAffiliationMap(
             <strong>${escapeHtml(affiliation.name)}</strong>
             <span>${escapeHtml(place.city)}, ${escapeHtml(place.country)}</span>
             <small>${acceptedLabel(affiliation.accepted)}</small>
-            ${precisionNote}
             ${topFiveNote}
         `;
     }
@@ -225,16 +279,12 @@ export function initializeAffiliationMap(
         const authors = affiliation.authors
             .map((author) => `${escapeHtml(author.name)} (${number.format(author.accepted)})`)
             .join(' · ');
-        const precisionNote = place.precision !== 'exact'
-            ? '<div class="affiliation-detail-location">Approximate location</div>'
-            : '';
         detail.innerHTML = `
             <div class="affiliation-detail-heading">
                 <strong>${escapeHtml(affiliation.name)}</strong>
                 <span>${acceptedLabel(affiliation.accepted)}</span>
             </div>
             <div class="affiliation-detail-location">${escapeHtml(place.city)}, ${escapeHtml(place.country)}</div>
-            ${precisionNote}
             <div class="affiliation-author-list">${authors}</div>
         `;
     }
@@ -261,15 +311,24 @@ export function initializeAffiliationMap(
         markerLayer.clearLayers();
         visible.forEach((place) => {
             const affiliations = searchableAffiliations(place);
-            const offsets = affiliationOffsets(affiliations);
-            affiliations.forEach((affiliation, index) => {
+            affiliations.forEach((affiliation) => {
                 const isTopFive = topAffiliationNames.has(affiliation.name);
-                const marker = L.marker([place.lat, place.lng], {
-                    icon: markerIcon(place, affiliation, offsets[index]),
+                const placement = markerPlacements.get(affiliationKey(place, affiliation)) ?? {
+                    lat: place.lat,
+                    lng: place.lng,
+                    x: 0,
+                    y: 0,
+                    groupSize: 1,
+                    order: 0,
+                };
+                const marker = L.marker([placement.lat, placement.lng], {
+                    icon: markerIcon(place, affiliation, placement),
                     keyboard: true,
                     alt: `${affiliation.name}, ${place.city}, ${place.country}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}`,
                     riseOnHover: true,
-                    zIndexOffset: affiliations.length > 1 ? 1000 + affiliations.length - index : 0,
+                    zIndexOffset: placement.groupSize > 1
+                        ? 1000 + placement.groupSize - placement.order
+                        : 0,
                 });
                 marker.bindTooltip(tooltipContent(place, affiliation), {
                     className: 'affiliation-location-tooltip',

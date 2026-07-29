@@ -184,6 +184,13 @@
       "country": "China",
       "precision": "exact"
     },
+    "German Research Centre for Artificial Intelligence": {
+      "lat": 52.5194251,
+      "lng": 13.3228823,
+      "city": "Berlin",
+      "country": "Germany",
+      "precision": "exact"
+    },
     "Council for Ligurian Linguistic Heritage": {
       "lat": 44.40478,
       "lng": 8.94439,

@@ -222,6 +222,13 @@
       "city": "Hanoi",
       "country": "Vietnam"
     },
+    "Google": {
+      "lat": 37.422131,
+      "lng": -122.084801,
+      "city": "Mountain View",
+      "country": "United States",
+      "precision": "exact"
+    },
     "Ghent University": {
       "lat": 51.0471689,
       "lng": 3.7282075,

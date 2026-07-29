@@ -153,13 +153,17 @@
 .leaflet-tooltip.affiliation-location-tooltip {
   display: grid;
   gap: 2px;
-  max-width: 280px;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 32px));
   padding: 8px 10px;
   border: 1px solid var(--map-border);
   border-radius: 9px;
   color: var(--map-foreground);
   background: var(--map-surface);
   box-shadow: 0 12px 32px var(--map-shadow);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .leaflet-tooltip.affiliation-location-tooltip::before {
@@ -295,6 +299,8 @@
 }
 
 .affiliation-map-detail {
+  width: 100%;
+  max-width: 100%;
   min-height: 48px;
   margin-top: 12px;
   padding: 14px 16px;
@@ -302,6 +308,7 @@
   border-radius: 12px;
   color: var(--map-muted);
   background: var(--map-surface-strong);
+  overflow-wrap: anywhere;
 }
 
 .affiliation-detail-heading {
@@ -313,15 +320,30 @@
   color: var(--map-foreground);
 }
 
+.affiliation-detail-heading > strong {
+  flex: 1 1 18rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.affiliation-detail-heading > span {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
 .affiliation-detail-location {
   margin-top: 6px;
   color: var(--map-foreground);
+  overflow-wrap: anywhere;
 }
 
 .affiliation-author-list {
   margin-top: 3px;
   color: var(--map-muted);
   font-size: 0.82em;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 850px) {

@@ -39,7 +39,8 @@
     "DFKI Berlin": "German Research Centre for Artificial Intelligence",
     "DFKI": "German Research Centre for Artificial Intelligence",
     "IIT Kharagpur": "Indian Institute of Technology Kharagpur",
-    "INSAIT, Sofia University \"St Kliment Ohridski\"": "Sofia University \"St. Kliment Ohridski\""
+    "INSAIT, Sofia University \"St Kliment Ohridski\"": "Sofia University \"St. Kliment Ohridski\"",
+    "Google LLC": "Google"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -108,7 +109,8 @@
     "The Ohio State University": "www.osu.edu",
     "German Research Centre for Artificial Intelligence": "www.dfki.de",
     "Emory University": "emory.edu",
-    "University of Copenhagen": "ku.dk"
+    "University of Copenhagen": "ku.dk",
+    "Google": "www.google.com"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -219,6 +221,13 @@
       "lng": 105.5252615,
       "city": "Hanoi",
       "country": "Vietnam"
+    },
+    "Google": {
+      "lat": 37.422131,
+      "lng": -122.084801,
+      "city": "Mountain View",
+      "country": "United States",
+      "precision": "exact"
     },
     "Ghent University": {
       "lat": 51.0471689,

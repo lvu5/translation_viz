@@ -35,7 +35,9 @@
     "Institute of Automation，Chinese Academy of Sciences": "Chinese Academy of Sciences",
     "Universidad del País Vasco": "University of the Basque Country",
     "KAUST": "King Abdullah University of Science and Technology",
-    "Supertext": "Supertext AG"
+    "Supertext": "Supertext AG",
+    "DFKI Berlin": "German Research Centre for Artificial Intelligence",
+    "DFKI": "German Research Centre for Artificial Intelligence"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -48,7 +50,7 @@
     "CISPA Helmholtz Center for Information Security": "www.cispa.de",
     "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP": "cihac.org.pa",
     "Charles University": "www.cuni.cz",
-    "Chinese Academy of Sciences": "english.cas.cn",
+    "Chinese Academy of Sciences": "www.cas.cn",
     "Council for Ligurian Linguistic Heritage": "conseggio-ligure.org",
     "ETH Zurich": "www.ethz.ch",
     "Fondazione Bruno Kessler": "www.fbk.eu",
@@ -101,7 +103,8 @@
     "University of Maryland, Baltimore County": "umbc.edu",
     "University of Southern California": "usc.edu",
     "University of Cincinnati": "www.uc.edu",
-    "The Ohio State University": "www.osu.edu"
+    "The Ohio State University": "www.osu.edu",
+    "German Research Centre for Artificial Intelligence": "www.dfki.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",

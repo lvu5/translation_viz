@@ -37,7 +37,9 @@
     "KAUST": "King Abdullah University of Science and Technology",
     "Supertext": "Supertext AG",
     "DFKI Berlin": "German Research Centre for Artificial Intelligence",
-    "DFKI": "German Research Centre for Artificial Intelligence"
+    "DFKI": "German Research Centre for Artificial Intelligence",
+    "IIT Kharagpur": "Indian Institute of Technology Kharagpur",
+    "INSAIT, Sofia University \"St Kliment Ohridski\"": "Sofia University \"St. Kliment Ohridski\""
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -104,7 +106,9 @@
     "University of Southern California": "usc.edu",
     "University of Cincinnati": "www.uc.edu",
     "The Ohio State University": "www.osu.edu",
-    "German Research Centre for Artificial Intelligence": "www.dfki.de"
+    "German Research Centre for Artificial Intelligence": "www.dfki.de",
+    "Emory University": "emory.edu",
+    "University of Copenhagen": "ku.dk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -520,6 +524,34 @@
       "lng": -118.24368,
       "city": "Los Angeles",
       "country": "United States",
+      "precision": "city"
+    },
+    "Emory University": {
+      "lat": 33.749,
+      "lng": -84.38798,
+      "city": "Atlanta",
+      "country": "United States",
+      "precision": "city"
+    },
+    "Indian Institute of Technology Kharagpur": {
+      "lat": 22.33971,
+      "lng": 87.32501,
+      "city": "Kharagpur",
+      "country": "India",
+      "precision": "city"
+    },
+    "Sofia University \"St. Kliment Ohridski\"": {
+      "lat": 42.69751,
+      "lng": 23.32415,
+      "city": "Sofia",
+      "country": "Bulgaria",
+      "precision": "city"
+    },
+    "University of Copenhagen": {
+      "lat": 55.67594,
+      "lng": 12.56553,
+      "city": "Copenhagen",
+      "country": "Denmark",
       "precision": "city"
     }
   }

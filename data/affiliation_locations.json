@@ -31,6 +31,7 @@
     "Weizmann": "Weizmann Institute of Science",
     "Samsung Electronics": "Samsung Electronics (South Korea)",
     "INSA Lyon, CNRS, Lyon 1 Université, LIRIS, UMR5205": "Institut National des Sciences Appliquées de Lyon",
+    "Institute of Automation, Chinese Academy of Sciences": "Chinese Academy of Sciences",
     "Universidad del País Vasco": "University of the Basque Country",
     "KAUST": "King Abdullah University of Science and Technology",
     "Supertext": "Supertext AG"
@@ -46,6 +47,7 @@
     "CISPA Helmholtz Center for Information Security": "www.cispa.de",
     "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP": "cihac.org.pa",
     "Charles University": "www.cuni.cz",
+    "Chinese Academy of Sciences": "english.cas.cn",
     "Council for Ligurian Linguistic Heritage": "conseggio-ligure.org",
     "ETH Zurich": "www.ethz.ch",
     "Fondazione Bruno Kessler": "www.fbk.eu",
@@ -74,6 +76,7 @@
     "Technical University of Munich": "www.tum.de",
     "The Chinese University of Hong Kong": "www.cuhk.edu.hk",
     "University of Amsterdam": "www.uva.nl",
+    "University of the Basque Country": "www.ehu.eus",
     "University of Edinburgh": "www.ed.ac.uk",
     "University of Groningen": "www.rug.nl",
     "University of Helsinki": "www.helsinki.fi",
@@ -169,6 +172,13 @@
       "lng": 14.4237142,
       "city": "Prague",
       "country": "Czechia"
+    },
+    "Chinese Academy of Sciences": {
+      "lat": 39.9093367,
+      "lng": 116.3297146,
+      "city": "Beijing",
+      "country": "China",
+      "precision": "exact"
     },
     "Council for Ligurian Linguistic Heritage": {
       "lat": 44.40478,
@@ -444,6 +454,13 @@
       "city": "Bonn",
       "country": "Germany",
       "precision": "city"
+    },
+    "University of the Basque Country": {
+      "lat": 43.3313743,
+      "lng": -2.9704582,
+      "city": "Leioa",
+      "country": "Spain",
+      "precision": "exact"
     },
     "University of Cincinnati": {
       "lat": 39.12711,

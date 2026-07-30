@@ -42,7 +42,8 @@
     "IIT Kharagpur": "Indian Institute of Technology Kharagpur",
     "INSAIT, Sofia University \"St Kliment Ohridski\"": "Sofia University \"St. Kliment Ohridski\"",
     "Google LLC": "Google",
-    "Technische Universität Nürnberg": "University of Technology Nuremberg"
+    "Technische Universität Nürnberg": "University of Technology Nuremberg",
+    "INSA Lyon": "Institut National des Sciences Appliquées de Lyon"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -582,6 +583,13 @@
       "lng": 2.15899,
       "city": "Barcelona",
       "country": "Spain",
+      "precision": "city"
+    },
+    "Institut National des Sciences Appliquées de Lyon": {
+      "lat": 45.74906,
+      "lng": 4.84789,
+      "city": "Lyon",
+      "country": "France",
       "precision": "city"
     }
   }

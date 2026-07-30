@@ -108,6 +108,7 @@ export function initializeAffiliationMap(
     const resetButton = requiredElement<HTMLButtonElement>('#map-reset');
     const totalSubmissionsElement = requiredElement<HTMLElement>('#map-total-submissions');
     const contributorCountElement = requiredElement<HTMLElement>('#map-contributor-count');
+    const leaderboard = requiredElement<HTMLOListElement>('#affiliation-leaderboard-list');
 
     const map = L.map('affiliation-map', {
         zoomControl: false,
@@ -132,14 +133,41 @@ export function initializeAffiliationMap(
         ...places.flatMap((place) => place.affiliations.map((affiliation) => affiliation.accepted)),
         1,
     );
-    const topAffiliationNames = new Set(
-        places
-            .flatMap((place) => place.affiliations)
-            .filter((affiliation) => affiliation.name !== 'Other affiliations')
-            .sort((left, right) => right.accepted - left.accepted || left.name.localeCompare(right.name))
-            .slice(0, 5)
-            .map((affiliation) => affiliation.name),
-    );
+    const topAffiliations = places
+        .flatMap((place) =>
+            place.affiliations.map((affiliation) => ({ place, affiliation })),
+        )
+        .filter(({ affiliation }) => affiliation.name !== 'Other affiliations')
+        .sort(({ affiliation: left }, { affiliation: right }) =>
+            right.accepted - left.accepted || left.name.localeCompare(right.name),
+        )
+        .slice(0, 5);
+
+    function renderLeaderboard(): void {
+        leaderboard.innerHTML = topAffiliations
+            .map(({ place, affiliation }, index) => {
+                const logoUrl = affiliation.logo_file
+                    || (affiliation.logo_domain ? affiliationLogoUrl(affiliation.logo_domain) : '');
+                const image = logoUrl
+                    ? `<img class="affiliation-leaderboard-logo-image" src="${escapeHtml(logoUrl)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`
+                    : '';
+                const hiddenFallback = logoUrl ? ' hidden' : '';
+                return `
+                    <li>
+                        <span class="affiliation-leaderboard-rank">${index + 1}</span>
+                        <span class="affiliation-leaderboard-logo" aria-hidden="true">
+                            ${image}
+                            <span class="affiliation-leaderboard-logo-fallback"${hiddenFallback}>${escapeHtml(affiliationInitials(affiliation.name))}</span>
+                        </span>
+                        <span class="affiliation-leaderboard-identity">
+                            <strong>${escapeHtml(affiliation.name)}</strong>
+                            <small>${acceptedLabel(affiliation.accepted)} · ${escapeHtml(place.city)}, ${escapeHtml(place.country)}</small>
+                        </span>
+                    </li>
+                `;
+            })
+            .join('');
+    }
 
     function searchableAffiliations(place: AffiliationMapPlace): AffiliationMapAffiliation[] {
         const query = affiliationInput.value.trim().toLocaleLowerCase();
@@ -228,24 +256,21 @@ export function initializeAffiliationMap(
     ): L.DivIcon {
         const size = markerSize(affiliation.accepted);
         const selectedClass = affiliationKey(place, affiliation) === selectedKey ? ' is-selected' : '';
-        const isTopFive = topAffiliationNames.has(affiliation.name);
         const logoUrl = affiliation.logo_file
             || (affiliation.logo_domain ? affiliationLogoUrl(affiliation.logo_domain) : '');
         const image = logoUrl
             ? `<img class="affiliation-logo-image" src="${escapeHtml(logoUrl)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">`
             : '';
         const hiddenFallback = logoUrl ? ' hidden' : '';
-        const fire = isTopFive ? '<span class="top-five-fire" aria-hidden="true">🔥</span>' : '';
-        const accessibleLabel = `${affiliation.name}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}`;
+        const accessibleLabel = `${affiliation.name}, ${acceptedLabel(affiliation.accepted)}`;
 
         return L.divIcon({
             className: 'affiliation-marker-wrap',
             html: `
                 <span class="affiliation-logo-marker${selectedClass}" style="--logo-size:${size}px" role="img" aria-label="${escapeHtml(accessibleLabel)}">
-                    <span class="affiliation-logo${isTopFive ? ' is-top-five' : ''}">
+                    <span class="affiliation-logo">
                         ${image}
                         <span class="affiliation-logo-fallback"${hiddenFallback}>${escapeHtml(affiliationInitials(affiliation.name))}</span>
-                        ${fire}
                     </span>
                 </span>
             `,
@@ -259,14 +284,10 @@ export function initializeAffiliationMap(
         place: AffiliationMapPlace,
         affiliation: AffiliationMapAffiliation,
     ): string {
-        const topFiveNote = topAffiliationNames.has(affiliation.name)
-            ? '<small class="top-five-note">🔥 Top 5 affiliation</small>'
-            : '';
         return `
             <strong>${escapeHtml(affiliation.name)}</strong>
             <span>${escapeHtml(place.city)}, ${escapeHtml(place.country)}</span>
             <small>${acceptedLabel(affiliation.accepted)}</small>
-            ${topFiveNote}
         `;
     }
 
@@ -314,7 +335,6 @@ export function initializeAffiliationMap(
         visible.forEach((place) => {
             const affiliations = searchableAffiliations(place);
             affiliations.forEach((affiliation) => {
-                const isTopFive = topAffiliationNames.has(affiliation.name);
                 const placement = markerPlacements.get(affiliationKey(place, affiliation)) ?? {
                     lat: place.lat,
                     lng: place.lng,
@@ -326,7 +346,7 @@ export function initializeAffiliationMap(
                 const marker = L.marker([placement.lat, placement.lng], {
                     icon: markerIcon(place, affiliation, placement),
                     keyboard: true,
-                    alt: `${affiliation.name}, ${place.city}, ${place.country}, ${acceptedLabel(affiliation.accepted)}${isTopFive ? ', top-five affiliation' : ''}`,
+                    alt: `${affiliation.name}, ${place.city}, ${place.country}, ${acceptedLabel(affiliation.accepted)}`,
                     riseOnHover: true,
                     zIndexOffset: placement.groupSize > 1
                         ? 1000 + placement.groupSize - placement.order
@@ -423,6 +443,7 @@ export function initializeAffiliationMap(
 
     animateCounter(totalSubmissionsElement, totalSubmissions);
     animateCounter(contributorCountElement, totalAuthors);
+    renderLeaderboard();
     renderMarkers();
     map.setView(europeCenter, europeZoom);
     loading.hidden = true;

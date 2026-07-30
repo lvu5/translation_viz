@@ -10,29 +10,6 @@
   color: var(--map-foreground);
 }
 
-.affiliation-map-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 12px;
-}
-
-.affiliation-map-header h2 {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  color: var(--map-foreground);
-  font-size: 1.25em;
-  font-weight: 600;
-}
-
-.affiliation-map-legend {
-  color: var(--map-muted);
-  font-size: 0.8em;
-  white-space: nowrap;
-}
-
 .affiliation-map-stage {
   position: relative;
   height: clamp(520px, 62vw, 700px);
@@ -139,17 +116,6 @@
   text-shadow: 0 2px 6px var(--map-shadow);
 }
 
-.top-five-fire {
-  position: absolute;
-  z-index: 5;
-  top: -7px;
-  right: -1px;
-  font-size: clamp(15px, calc(var(--logo-size) * 0.44), 21px);
-  line-height: 1;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(109, 28, 0, 0.46));
-}
-
 .leaflet-tooltip.affiliation-location-tooltip {
   display: grid;
   gap: 2px;
@@ -196,14 +162,35 @@
 .affiliation-map-toolbox summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
+  list-style: none;
   color: var(--map-foreground);
   font-weight: 600;
   cursor: pointer;
 }
 
+.affiliation-map-toolbox summary::-webkit-details-marker {
+  display: none;
+}
+
+.affiliation-map-toolbox summary::after {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  margin: -5px 3px 0 0;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.affiliation-map-toolbox[open] summary::after {
+  margin-top: 3px;
+  transform: rotate(225deg);
+}
+
 #map-filter-status {
+  margin-left: auto;
   color: var(--map-muted);
   font-size: 0.74em;
   font-weight: 400;
@@ -298,6 +285,104 @@
   display: none;
 }
 
+.affiliation-leaderboard {
+  margin-top: 12px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--map-border);
+  border-radius: 12px;
+  background: var(--map-surface);
+}
+
+.affiliation-leaderboard-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.affiliation-leaderboard-heading h2 {
+  margin: 0;
+  color: var(--map-foreground);
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.affiliation-leaderboard-heading span {
+  color: var(--map-muted);
+  font-size: 0.76em;
+}
+
+.affiliation-leaderboard-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 12px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--map-border);
+  list-style: none;
+}
+
+.affiliation-leaderboard-list li {
+  display: grid;
+  grid-template-columns: 24px 36px minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 10px 4px;
+  align-items: center;
+}
+
+.affiliation-leaderboard-list li + li {
+  border-left: 1px solid var(--map-border);
+}
+
+.affiliation-leaderboard-rank {
+  color: var(--map-muted);
+  font-size: 0.8em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.affiliation-leaderboard-logo {
+  position: relative;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+}
+
+.affiliation-leaderboard-logo-image {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+
+.affiliation-leaderboard-logo-fallback {
+  color: var(--map-foreground);
+  font-size: 0.66em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.affiliation-leaderboard-identity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.affiliation-leaderboard-identity strong {
+  color: var(--map-foreground);
+  font-size: 0.82em;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.affiliation-leaderboard-identity small {
+  color: var(--map-muted);
+  font-size: 0.69em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
 .affiliation-map-detail {
   width: 100%;
   max-width: 100%;
@@ -357,10 +442,24 @@
     bottom: 8px;
     width: calc(100% - 16px);
   }
+
+  .affiliation-leaderboard-list {
+    grid-template-columns: 1fr;
+  }
+
+  .affiliation-leaderboard-list li {
+    padding: 10px 4px;
+  }
+
+  .affiliation-leaderboard-list li + li {
+    border-top: 1px solid var(--map-border);
+    border-left: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .affiliation-logo-marker {
+  .affiliation-logo-marker,
+  .affiliation-map-toolbox summary::after {
     transition: none;
   }
 }

@@ -79,20 +79,6 @@ select {
   margin-top: 32px;
 }
 
-.site-shell .affiliation-map-header {
-  align-items: end;
-  margin-bottom: 16px;
-}
-
-.site-shell .affiliation-map-header h1 {
-  margin: 0;
-  color: #0e1629;
-  font-size: clamp(1.8rem, 3.6vw, 3.7rem);
-  font-weight: 600;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
-}
-
 .map-kicker {
   margin: 0 0 8px;
   color: #7d838e;
@@ -133,7 +119,6 @@ select {
 }
 
 .is-embedded .site-header,
-.is-embedded .affiliation-map-header,
 .is-embedded .map-footer {
   display: none;
 }
@@ -148,8 +133,14 @@ select {
 }
 
 .is-embedded .site-shell .affiliation-map-stage {
-  height: calc(100vh - 74px);
+  height: calc(100vh - 210px);
   min-height: 460px;
+  border-radius: 0;
+}
+
+.is-embedded .affiliation-leaderboard {
+  margin: 0;
+  border-width: 1px 0 0;
   border-radius: 0;
 }
 
@@ -175,12 +166,6 @@ select {
 
   .site-shell .affiliation-map-section {
     margin-top: 22px;
-  }
-
-  .site-shell .affiliation-map-header {
-    align-items: start;
-    flex-direction: column;
-    gap: 8px;
   }
 
   .site-shell .affiliation-map-stage {

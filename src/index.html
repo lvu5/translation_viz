@@ -39,11 +39,7 @@
   </header>
 
   <main class="site-shell">
-    <section class="affiliation-map-section" aria-labelledby="affiliation-map-heading">
-      <div class="affiliation-map-header">
-        <span class="affiliation-map-legend">🔥 Top 5 affiliations</span>
-      </div>
-
+    <section class="affiliation-map-section" aria-label="Contributor affiliation map">
       <div class="affiliation-map-stage">
         <div
           id="affiliation-map"
@@ -51,7 +47,7 @@
           aria-label="Interactive map of contributor affiliation locations, initially showing Europe"
         ></div>
 
-        <details class="affiliation-map-toolbox" open>
+        <details class="affiliation-map-toolbox">
           <summary>
             <span>Explore</span>
             <span id="map-filter-status"></span>
@@ -89,9 +85,18 @@
         </div>
       </div>
 
+
       <div class="affiliation-map-detail" id="affiliation-map-detail" aria-live="polite">
         Select an institution logo to inspect its contributors.
       </div>
+
+      <section class="affiliation-leaderboard" aria-labelledby="affiliation-leaderboard-heading">
+        <div class="affiliation-leaderboard-heading">
+          <h2 id="affiliation-leaderboard-heading">Top affiliations</h2>
+          <span>By accepted submissions</span>
+        </div>
+        <ol class="affiliation-leaderboard-list" id="affiliation-leaderboard-list"></ol>
+      </section>
 
       <footer class="map-footer">
         <span id="snapshot-status">Preparing public dashboard snapshot…</span>

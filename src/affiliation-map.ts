@@ -8,23 +8,17 @@ import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 const number = new Intl.NumberFormat('en');
 const europeCenter: L.LatLngExpression = [52, 14];
 const europeZoom = 4;
-
-function escapeHtml(value: string): string {
-    const element = document.createElement('span');
-    element.textContent = value;
-    return element.innerHTML;
-}
+const samePlaceOffsetRadius = 6;
 
 interface MarkerOffset {
     x: number;
     y: number;
 }
 
-interface MarkerPlacement extends MarkerOffset {
-    lat: number;
-    lng: number;
-    groupSize: number;
-    order: number;
+function escapeHtml(value: string): string {
+    const element = document.createElement('span');
+    element.textContent = value;
+    return element.innerHTML;
 }
 
 function requiredElement<T extends HTMLElement>(selector: string): T {
@@ -188,66 +182,50 @@ export function initializeAffiliationMap(
 
     function markerSize(accepted: number): number {
         const ratio = Math.sqrt(accepted / maximumAccepted);
-        return Math.round(32 + ratio * 16);
+        const normalSize = 32 + ratio * 16;
+        const currentZoom = map.getZoom();
+        const zoom = Number.isFinite(currentZoom) ? currentZoom : europeZoom;
+        const zoomScale = Math.min(1, Math.max(0.45, 0.45 + (zoom - 2) * 0.14));
+        return Math.max(24, Math.round(normalSize * zoomScale));
     }
 
-    function buildMarkerPlacements(): Map<string, MarkerPlacement> {
+    function samePlaceOffset(index: number, total: number): MarkerOffset {
+        if (total <= 1) return { x: 0, y: 0 };
+        const angle = -Math.PI / 2 + (index * Math.PI * 2) / total;
+        return {
+            x: Math.round(Math.cos(angle) * samePlaceOffsetRadius),
+            y: Math.round(Math.sin(angle) * samePlaceOffsetRadius),
+        };
+    }
+
+    function buildSamePlaceOffsets(visible: AffiliationMapPlace[]): Map<string, MarkerOffset> {
         const groups = new Map<
             string,
             Array<{ place: AffiliationMapPlace; affiliation: AffiliationMapAffiliation }>
         >();
-
-        places.forEach((place) => {
+        visible.forEach((place) => {
             const group = groups.get(cityKey(place)) ?? [];
-            place.affiliations.forEach((affiliation) => group.push({ place, affiliation }));
+            searchableAffiliations(place).forEach((affiliation) => {
+                group.push({ place, affiliation });
+            });
             groups.set(cityKey(place), group);
         });
 
-        const placements = new Map<string, MarkerPlacement>();
+        const offsets = new Map<string, MarkerOffset>();
         groups.forEach((group) => {
             group.sort((left, right) =>
                 right.affiliation.accepted - left.affiliation.accepted
                 || left.affiliation.name.localeCompare(right.affiliation.name),
             );
-
-            if (group.length === 1) {
-                const [{ place, affiliation }] = group;
-                placements.set(affiliationKey(place, affiliation), {
-                    lat: place.lat,
-                    lng: place.lng,
-                    x: 0,
-                    y: 0,
-                    groupSize: 1,
-                    order: 0,
-                });
-                return;
-            }
-
-            const centerLat = group.reduce((total, item) => total + item.place.lat, 0) / group.length;
-            const centerLng = group.reduce((total, item) => total + item.place.lng, 0) / group.length;
-            const largestSize = Math.max(
-                ...group.map(({ affiliation }) => markerSize(affiliation.accepted)),
-            );
-            const radius = Math.ceil(
-                (largestSize + 10) / (2 * Math.sin(Math.PI / group.length)),
-            );
-
             group.forEach(({ place, affiliation }, index) => {
-                const angle = -Math.PI / 2 + (index * Math.PI * 2) / group.length;
-                placements.set(affiliationKey(place, affiliation), {
-                    lat: centerLat,
-                    lng: centerLng,
-                    x: Math.round(Math.cos(angle) * radius),
-                    y: Math.round(Math.sin(angle) * radius),
-                    groupSize: group.length,
-                    order: index,
-                });
+                offsets.set(
+                    affiliationKey(place, affiliation),
+                    samePlaceOffset(index, group.length),
+                );
             });
         });
-        return placements;
+        return offsets;
     }
-
-    const markerPlacements = buildMarkerPlacements();
 
     function markerIcon(
         place: AffiliationMapPlace,
@@ -332,25 +310,17 @@ export function initializeAffiliationMap(
         }
 
         markerLayer.clearLayers();
+        const samePlaceOffsets = buildSamePlaceOffsets(visible);
         visible.forEach((place) => {
             const affiliations = searchableAffiliations(place);
             affiliations.forEach((affiliation) => {
-                const placement = markerPlacements.get(affiliationKey(place, affiliation)) ?? {
-                    lat: place.lat,
-                    lng: place.lng,
-                    x: 0,
-                    y: 0,
-                    groupSize: 1,
-                    order: 0,
-                };
-                const marker = L.marker([placement.lat, placement.lng], {
-                    icon: markerIcon(place, affiliation, placement),
+                const offset = samePlaceOffsets.get(affiliationKey(place, affiliation))
+                    ?? { x: 0, y: 0 };
+                const marker = L.marker([place.lat, place.lng], {
+                    icon: markerIcon(place, affiliation, offset),
                     keyboard: true,
                     alt: `${affiliation.name}, ${place.city}, ${place.country}, ${acceptedLabel(affiliation.accepted)}`,
                     riseOnHover: true,
-                    zIndexOffset: placement.groupSize > 1
-                        ? 1000 + placement.groupSize - placement.order
-                        : 0,
                 });
                 marker.bindTooltip(tooltipContent(place, affiliation), {
                     className: 'affiliation-location-tooltip',
@@ -444,7 +414,8 @@ export function initializeAffiliationMap(
     animateCounter(totalSubmissionsElement, totalSubmissions);
     animateCounter(contributorCountElement, totalAuthors);
     renderLeaderboard();
-    renderMarkers();
     map.setView(europeCenter, europeZoom);
+    renderMarkers();
+    map.on('zoomend', renderMarkers);
     loading.hidden = true;
 }

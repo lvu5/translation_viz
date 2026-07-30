@@ -8,8 +8,10 @@ AFFILIATION_LOCATIONS_PATH = (
 )
 OTHER_AFFILIATION_NAME = "Other affiliations"
 OTHER_AFFILIATION_LOCATION = {
-    "lat": 45.0,
-    "lng": -12.0,
+    "lat": 50.09,
+    "lng": -27.41,
+    # 50.08688734563165, -27.408694577373268
+    #
     "city": "Location unavailable",
     "country": "Other",
     "precision": "country",

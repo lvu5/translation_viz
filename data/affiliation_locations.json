@@ -113,7 +113,8 @@
     "University of Copenhagen": "ku.dk",
     "Google": "www.google.com",
     "University of Technology Nuremberg": "utn.de",
-    "Sofia University \"St. Kliment Ohridski\"": "www.uni-sofia.bg"
+    "Sofia University \"St. Kliment Ohridski\"": "www.uni-sofia.bg",
+    "Universitat Oberta de Catalunya": "uoc.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -571,6 +572,13 @@
       "lng": 11.07752,
       "city": "Nuremberg",
       "country": "Germany",
+      "precision": "city"
+    },
+    "Universitat Oberta de Catalunya": {
+      "lat": 41.38879,
+      "lng": 2.15899,
+      "city": "Barcelona",
+      "country": "Spain",
       "precision": "city"
     }
   }

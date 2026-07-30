@@ -104,7 +104,7 @@
     "University of Bonn": "uni-bonn.de",
     "University of Sheffield": "sheffield.ac.uk",
     "King Abdullah University of Science and Technology": "kaust.edu.sa",
-    "University of Mons": "umons.ac.be",
+    "University of Mons": "web.umons.ac.be",
     "University of Maryland, Baltimore County": "umbc.edu",
     "University of Southern California": "usc.edu",
     "University of Cincinnati": "www.uc.edu",
@@ -120,7 +120,8 @@
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
-    "Research Center for Linguistics at NOVA University Lisbon": "assets/logos/ClUNL_logo-540x305.png"
+    "Research Center for Linguistics at NOVA University Lisbon": "assets/logos/ClUNL_logo-540x305.png",
+    "Wroclaw University of Science and Technology": "assets/logos/znak-pwr_pion-cmyk-pl.jpg"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",

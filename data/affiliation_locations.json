@@ -118,7 +118,8 @@
     "Sofia University \"St. Kliment Ohridski\"": "www.uni-sofia.bg",
     "Universitat Oberta de Catalunya": "uoc.edu",
     "Indian Institute of Technology Kharagpur": "www.iitkgp.ac.in",
-    "Institut National des Sciences Appliquées de Lyon": "www.insa-lyon.fr"
+    "Institut National des Sciences Appliquées de Lyon": "www.insa-lyon.fr",
+    "Georgia Institute of Technology": "gatech.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -591,6 +592,13 @@
       "lng": 4.84789,
       "city": "Lyon",
       "country": "France",
+      "precision": "city"
+    },
+    "Georgia Institute of Technology": {
+      "lat": 33.749,
+      "lng": -84.38798,
+      "city": "Atlanta",
+      "country": "United States",
       "precision": "city"
     }
   }

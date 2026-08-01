@@ -43,7 +43,8 @@
     "INSAIT, Sofia University \"St Kliment Ohridski\"": "Sofia University \"St. Kliment Ohridski\"",
     "Google LLC": "Google",
     "Technische Universität Nürnberg": "University of Technology Nuremberg",
-    "INSA Lyon": "Institut National des Sciences Appliquées de Lyon"
+    "INSA Lyon": "Institut National des Sciences Appliquées de Lyon",
+    "UMass Amherst": "University of Massachusetts Amherst"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -119,7 +120,9 @@
     "Universitat Oberta de Catalunya": "uoc.edu",
     "Indian Institute of Technology Kharagpur": "www.iitkgp.ac.in",
     "Institut National des Sciences Appliquées de Lyon": "www.insa-lyon.fr",
-    "Georgia Institute of Technology": "gatech.edu"
+    "Georgia Institute of Technology": "gatech.edu",
+    "Peking University": "pku.edu.cn",
+    "University of Massachusetts Amherst": "umass.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -598,6 +601,20 @@
       "lat": 33.749,
       "lng": -84.38798,
       "city": "Atlanta",
+      "country": "United States",
+      "precision": "city"
+    },
+    "Peking University": {
+      "lat": 39.9075,
+      "lng": 116.39723,
+      "city": "Beijing",
+      "country": "China",
+      "precision": "city"
+    },
+    "University of Massachusetts Amherst": {
+      "lat": 42.37537,
+      "lng": -72.51925,
+      "city": "Amherst Center",
       "country": "United States",
       "precision": "city"
     }

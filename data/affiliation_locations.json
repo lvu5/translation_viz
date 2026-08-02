@@ -45,7 +45,8 @@
     "Technische Universität Nürnberg": "University of Technology Nuremberg",
     "INSA Lyon": "Institut National des Sciences Appliquées de Lyon",
     "UMass Amherst": "University of Massachusetts Amherst",
-    "Ha Noi University": "Hanoi University"
+    "Ha Noi University": "Hanoi University",
+    "IBM": "IBM (United States)"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -124,7 +125,8 @@
     "Georgia Institute of Technology": "gatech.edu",
     "Peking University": "pku.edu.cn",
     "University of Massachusetts Amherst": "umass.edu",
-    "Hanoi University": "hanu.edu.vn"
+    "Hanoi University": "hanu.edu.vn",
+    "IBM (United States)": "www.ibm.com"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -624,6 +626,13 @@
       "lat": 42.37537,
       "lng": -72.51925,
       "city": "Amherst Center",
+      "country": "United States",
+      "precision": "city"
+    },
+    "IBM (United States)": {
+      "lat": 41.12648,
+      "lng": -73.71402,
+      "city": "Armonk",
       "country": "United States",
       "precision": "city"
     }

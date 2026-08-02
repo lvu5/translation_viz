@@ -44,7 +44,8 @@
     "Google LLC": "Google",
     "Technische Universität Nürnberg": "University of Technology Nuremberg",
     "INSA Lyon": "Institut National des Sciences Appliquées de Lyon",
-    "UMass Amherst": "University of Massachusetts Amherst"
+    "UMass Amherst": "University of Massachusetts Amherst",
+    "Ha Noi University": "Hanoi University"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -122,7 +123,8 @@
     "Institut National des Sciences Appliquées de Lyon": "www.insa-lyon.fr",
     "Georgia Institute of Technology": "gatech.edu",
     "Peking University": "pku.edu.cn",
-    "University of Massachusetts Amherst": "umass.edu"
+    "University of Massachusetts Amherst": "umass.edu",
+    "Hanoi University": "hanu.edu.vn"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -234,6 +236,13 @@
       "lng": 105.5252615,
       "city": "Hanoi",
       "country": "Vietnam"
+    },
+    "Hanoi University": {
+      "lat": 21.0245,
+      "lng": 105.84117,
+      "city": "Hanoi",
+      "country": "Vietnam",
+      "precision": "city"
     },
     "Google": {
       "lat": 37.422131,

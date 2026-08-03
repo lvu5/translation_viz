@@ -46,7 +46,8 @@
     "INSA Lyon": "Institut National des Sciences Appliquées de Lyon",
     "UMass Amherst": "University of Massachusetts Amherst",
     "Ha Noi University": "Hanoi University",
-    "IBM": "IBM (United States)"
+    "IBM": "IBM (United States)",
+    "The University of Hong Kong": "The University of Hong Kong"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -126,7 +127,8 @@
     "Peking University": "english.pku.edu.cn",
     "University of Massachusetts Amherst": "umass.edu",
     "Hanoi University": "hanu.edu.vn",
-    "IBM (United States)": "www.ibm.com"
+    "IBM (United States)": "www.ibm.com",
+    "The University of Hong Kong": "www.hku.hk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -635,6 +637,13 @@
       "city": "Armonk",
       "country": "United States",
       "precision": "city"
+    },
+    "The University of Hong Kong": {
+      "lat": 22.28309,
+      "lng": 114.13660,
+      "city": "Hong Kong",
+      "country": "Hong Kong",
+      "precision": "exact"
     }
   }
 }

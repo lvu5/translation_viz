@@ -130,7 +130,8 @@
     "IBM (United States)": "www.ibm.com",
     "The University of Hong Kong": "www.hku.hk",
     "Stony Brook University": "stonybrook.edu",
-    "Heidelberg Institute for Theoretical Studies": "h-its.org"
+    "Heidelberg Institute for Theoretical Studies": "h-its.org",
+    "Universidad Autónoma de Bucaramanga": "unab.edu.co"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -666,6 +667,13 @@
       "lng": 8.69079,
       "city": "Heidelberg",
       "country": "Germany",
+      "precision": "city"
+    },
+    "Universidad Autónoma de Bucaramanga": {
+      "lat": 7.12539,
+      "lng": -73.1198,
+      "city": "Bucaramanga",
+      "country": "Colombia",
       "precision": "city"
     }
   }

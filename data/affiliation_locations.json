@@ -51,7 +51,8 @@
     "The University of Hong Kong": "The University of Hong Kong",
     "Amazon.com Inc": "Amazon",
     "Alconost Inc.": "Alconost",
-    "University of Potsdam": "University of Potsdam"
+    "University of Potsdam": "University of Potsdam",
+    "PSL University, INRIA Paris": "Paris Sciences et Lettres"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -137,7 +138,8 @@
     "Heidelberg Institute for Theoretical Studies": "h-its.org",
     "Universidad Autónoma de Bucaramanga": "unab.edu.co",
     "Alconost": "alconost.com",
-    "University of Potsdam": "www.uni-potsdam.de"
+    "University of Potsdam": "www.uni-potsdam.de",
+    "Paris Sciences et Lettres": "psl.eu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -687,6 +689,13 @@
       "lng": -77.04155,
       "city": "Alexandria",
       "country": "United States",
+      "precision": "exact"
+    },
+    "Paris Sciences et Lettres": {
+      "lat": 48.85464,
+      "lng": 2.33767,
+      "city": "Paris",
+      "country": "France",
       "precision": "exact"
     }
   }

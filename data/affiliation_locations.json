@@ -50,7 +50,8 @@
     "IBM": "IBM (United States)",
     "The University of Hong Kong": "The University of Hong Kong",
     "Amazon.com Inc": "Amazon",
-    "Alconost Inc.": "Alconost"
+    "Alconost Inc.": "Alconost",
+    "University of Potsdam": "University of Potsdam"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -135,7 +136,8 @@
     "Stony Brook University": "stonybrook.edu",
     "Heidelberg Institute for Theoretical Studies": "h-its.org",
     "Universidad Autónoma de Bucaramanga": "unab.edu.co",
-    "Alconost": "alconost.com"
+    "Alconost": "alconost.com",
+    "University of Potsdam": "www.uni-potsdam.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",

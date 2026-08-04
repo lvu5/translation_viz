@@ -129,7 +129,8 @@
     "Hanoi University": "hanu.edu.vn",
     "IBM (United States)": "www.ibm.com",
     "The University of Hong Kong": "www.hku.hk",
-    "Stony Brook University": "stonybrook.edu"
+    "Stony Brook University": "stonybrook.edu",
+    "Heidelberg Institute for Theoretical Studies": "h-its.org"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -657,6 +658,13 @@
       "lat": 52.39886,
       "lng": 13.06566,
       "city": "Potsdam",
+      "country": "Germany",
+      "precision": "city"
+    },
+    "Heidelberg Institute for Theoretical Studies": {
+      "lat": 49.40768,
+      "lng": 8.69079,
+      "city": "Heidelberg",
       "country": "Germany",
       "precision": "city"
     }

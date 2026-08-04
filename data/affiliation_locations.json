@@ -139,7 +139,8 @@
     "Universidad Autónoma de Bucaramanga": "unab.edu.co",
     "Alconost": "alconost.com",
     "University of Potsdam": "www.uni-potsdam.de",
-    "Paris Sciences et Lettres": "www.psl.eu"
+    "Paris Sciences et Lettres": "www.psl.eu",
+    "Politecnico di Torino": "polito.it"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -697,6 +698,13 @@
       "city": "Paris",
       "country": "France",
       "precision": "exact"
+    },
+    "Politecnico di Torino": {
+      "lat": 45.07049,
+      "lng": 7.68682,
+      "city": "Turin",
+      "country": "Italy",
+      "precision": "city"
     }
   }
 }

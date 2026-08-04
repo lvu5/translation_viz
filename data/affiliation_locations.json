@@ -49,7 +49,8 @@
     "Ha Noi University": "Hanoi University",
     "IBM": "IBM (United States)",
     "The University of Hong Kong": "The University of Hong Kong",
-    "Amazon.com Inc": "Amazon"
+    "Amazon.com Inc": "Amazon",
+    "Alconost Inc.": "Alconost"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -133,7 +134,8 @@
     "The University of Hong Kong": "www.hku.hk",
     "Stony Brook University": "stonybrook.edu",
     "Heidelberg Institute for Theoretical Studies": "h-its.org",
-    "Universidad Autónoma de Bucaramanga": "unab.edu.co"
+    "Universidad Autónoma de Bucaramanga": "unab.edu.co",
+    "Alconost": "alconost.com"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -677,6 +679,13 @@
       "city": "Bucaramanga",
       "country": "Colombia",
       "precision": "city"
+    },
+    "Alconost": {
+      "lat": 38.81175,
+      "lng": -77.04155,
+      "city": "Alexandria",
+      "country": "United States",
+      "precision": "exact"
     }
   }
 }

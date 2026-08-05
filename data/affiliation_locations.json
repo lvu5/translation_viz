@@ -140,7 +140,8 @@
     "Alconost": "alconost.com",
     "University of Potsdam": "www.uni-potsdam.de",
     "Paris Sciences et Lettres": "www.psl.eu",
-    "Politecnico di Torino": "www.polito.it"
+    "Politecnico di Torino": "www.polito.it",
+    "Aalto University": "aalto.fi"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -704,6 +705,13 @@
       "lng": 7.68682,
       "city": "Turin",
       "country": "Italy",
+      "precision": "city"
+    },
+    "Aalto University": {
+      "lat": 60.2052,
+      "lng": 24.6522,
+      "city": "Espoo",
+      "country": "Finland",
       "precision": "city"
     }
   }

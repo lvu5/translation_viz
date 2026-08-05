@@ -141,7 +141,9 @@
     "University of Potsdam": "www.uni-potsdam.de",
     "Paris Sciences et Lettres": "www.psl.eu",
     "Politecnico di Torino": "www.polito.it",
-    "Aalto University": "aalto.fi"
+    "Aalto University": "aalto.fi",
+    "The University of Sydney": "sydney.edu.au",
+    "University of Technology Sydney": "uts.edu.au"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -712,6 +714,20 @@
       "lng": 24.6522,
       "city": "Espoo",
       "country": "Finland",
+      "precision": "city"
+    },
+    "The University of Sydney": {
+      "lat": -33.86785,
+      "lng": 151.20732,
+      "city": "Sydney",
+      "country": "Australia",
+      "precision": "city"
+    },
+    "University of Technology Sydney": {
+      "lat": -33.86785,
+      "lng": 151.20732,
+      "city": "Sydney",
+      "country": "Australia",
       "precision": "city"
     }
   }

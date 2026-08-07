@@ -53,7 +53,8 @@
     "Alconost Inc.": "Alconost",
     "University of Potsdam": "University of Potsdam",
     "PSL University, INRIA Paris": "Paris Sciences et Lettres",
-    "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga"
+    "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga",
+    "Universitas Indonesia": "University of Indonesia"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -729,6 +730,13 @@
       "lng": 151.20732,
       "city": "Sydney",
       "country": "Australia",
+      "precision": "city"
+    },
+    "University of Indonesia": {
+      "lat": -6.4,
+      "lng": 106.81861,
+      "city": "Depok",
+      "country": "Indonesia",
       "precision": "city"
     }
   }

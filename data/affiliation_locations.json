@@ -54,7 +54,8 @@
     "University of Potsdam": "University of Potsdam",
     "PSL University, INRIA Paris": "Paris Sciences et Lettres",
     "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga",
-    "Universitas Indonesia": "University of Indonesia"
+    "Universitas Indonesia": "University of Indonesia",
+    "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India": "Manipal Academy of Higher Education"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -737,6 +738,13 @@
       "lng": 106.81861,
       "city": "Depok",
       "country": "Indonesia",
+      "precision": "city"
+    },
+    "Manipal Academy of Higher Education": {
+      "lat": 13.35,
+      "lng": 74.78333,
+      "city": "Manipal",
+      "country": "India",
       "precision": "city"
     }
   }

@@ -54,7 +54,8 @@
     "University of Potsdam": "University of Potsdam",
     "PSL University, INRIA Paris": "Paris Sciences et Lettres",
     "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga",
-    "Universitas Indonesia": "University of Indonesia"
+    "Universitas Indonesia": "University of Indonesia",
+    "MIT Manipal": "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -145,7 +146,8 @@
     "Politecnico di Torino": "www.polito.it",
     "Aalto University": "aalto.fi",
     "The University of Sydney": "sydney.edu.au",
-    "University of Technology Sydney": "uts.edu.au"
+    "University of Technology Sydney": "uts.edu.au",
+    "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India": "www.manipal.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -737,6 +739,13 @@
       "lng": 106.81861,
       "city": "Depok",
       "country": "Indonesia",
+      "precision": "city"
+    },
+    "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India": {
+      "lat": 13.3525,
+      "lng": 74.7928,
+      "city": "Manipal",
+      "country": "India",
       "precision": "city"
     }
   }

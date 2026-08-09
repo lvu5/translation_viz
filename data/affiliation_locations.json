@@ -55,7 +55,7 @@
     "PSL University, INRIA Paris": "Paris Sciences et Lettres",
     "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga",
     "Universitas Indonesia": "University of Indonesia",
-    "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India": "Manipal Academy of Higher Education"
+    "Manipal Academy of Higher Education, Manipal": "Manipal Academy of Higher Education"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -147,7 +147,7 @@
     "Aalto University": "aalto.fi",
     "The University of Sydney": "sydney.edu.au",
     "University of Technology Sydney": "uts.edu.au",
-    "Manipal Institute of Technology, Manipal Academy of Higher Education, Manipal, India": "manipal.edu"
+    "Manipal Academy of Higher Education": "manipal.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",

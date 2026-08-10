@@ -56,7 +56,8 @@
     "Universidad autónoma de Bucaramanga": "Universidad Autónoma de Bucaramanga",
     "Universitas Indonesia": "University of Indonesia",
     "Manipal Academy of Higher Education, Manipal": "Manipal Academy of Higher Education",
-    "TCS Research, IIIT Hyderabad": "International Institute of Information Technology, Hyderabad"
+    "TCS Research, IIIT Hyderabad": "International Institute of Information Technology, Hyderabad",
+    "Northwest University, Kano": "Maitama Sule University Kano"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -762,6 +763,13 @@
       "lng": 78.45636,
       "city": "Hyderabad",
       "country": "India",
+      "precision": "city"
+    },
+    "Maitama Sule University Kano": {
+      "lat": 12.00012,
+      "lng": 8.51672,
+      "city": "Kano",
+      "country": "Nigeria",
       "precision": "city"
     }
   }

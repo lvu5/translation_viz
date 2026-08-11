@@ -57,7 +57,8 @@
     "Universitas Indonesia": "University of Indonesia",
     "Manipal Academy of Higher Education, Manipal": "Manipal Academy of Higher Education",
     "TCS Research, IIIT Hyderabad": "International Institute of Information Technology, Hyderabad",
-    "Northwest University, Kano": "Maitama Sule University Kano"
+    "Northwest University, Kano": "Maitama Sule University Kano",
+    "Cohere": "Cohere (Canada)"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -150,7 +151,8 @@
     "The University of Sydney": "sydney.edu.au",
     "University of Technology Sydney": "uts.edu.au",
     "Manipal Academy of Higher Education": "manipal.edu",
-    "International Institute of Information Technology, Hyderabad": "iiit.ac.in"
+    "International Institute of Information Technology, Hyderabad": "iiit.ac.in",
+    "Cohere (Canada)": "cohere.com"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -770,6 +772,13 @@
       "lng": 8.51672,
       "city": "Kano",
       "country": "Nigeria",
+      "precision": "city"
+    },
+    "Cohere (Canada)": {
+      "lat": 37.77493,
+      "lng": -122.41942,
+      "city": "San Francisco",
+      "country": "United States",
       "precision": "city"
     }
   }

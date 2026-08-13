@@ -60,7 +60,8 @@
     "Northwest University, Kano": "Maitama Sule University Kano",
     "Cohere": "Cohere (Canada)",
     "DFKI and BSC-CNS": "German Research Centre for Artificial Intelligence",
-    "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest"
+    "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest",
+    "Ergon Informatik AG": "Ergon Informatik AG (Switzerland)"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -158,7 +159,8 @@
     "Cohere (Canada)": "cohere.com",
     "Maitama Sule University Kano": "www.nwu.edu.ng",
     "University of Indonesia": "www.international.eng.ui.ac.id",
-    "National University of Science and Technology POLITEHNICA Bucharest": "www.upb.ro"
+    "National University of Science and Technology POLITEHNICA Bucharest": "www.upb.ro",
+    "Ergon Informatik AG (Switzerland)": "ergon.ch"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -800,6 +802,20 @@
       "city": "Bucharest",
       "country": "Romania",
       "precision": "exact"
+    },
+    "Ergon Informatik AG (Switzerland)": {
+      "lat": 47.36667,
+      "lng": 8.55,
+      "city": "Zurich",
+      "country": "Switzerland",
+      "precision": "city"
+    },
+    "Università della Svizzera italiana": {
+      "lat": 46.01008,
+      "lng": 8.96004,
+      "city": "Lugano",
+      "country": "Switzerland",
+      "precision": "city"
     }
   }
 }

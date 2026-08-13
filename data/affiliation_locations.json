@@ -140,6 +140,7 @@
     "University of Massachusetts Amherst": "umass.edu",
     "Hanoi University": "hanu.edu.vn",
     "IBM (United States)": "www.ibm.com",
+    "Oracle": "www.oracle.com",
     "The University of Hong Kong": "www.hku.hk",
     "Stony Brook University": "stonybrook.edu",
     "Heidelberg Institute for Theoretical Studies": "h-its.org",
@@ -664,6 +665,13 @@
       "city": "Armonk",
       "country": "United States",
       "precision": "city"
+    },
+    "Oracle": {
+      "lat": 47.6077056,
+      "lng": -122.3382374,
+      "city": "Seattle",
+      "country": "United States",
+      "precision": "exact"
     },
     "The University of Hong Kong": {
       "lat": 22.28309,

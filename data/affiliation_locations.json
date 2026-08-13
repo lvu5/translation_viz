@@ -59,7 +59,8 @@
     "TCS Research, IIIT Hyderabad": "International Institute of Information Technology, Hyderabad",
     "Northwest University, Kano": "Maitama Sule University Kano",
     "Cohere": "Cohere (Canada)",
-    "DFKI and BSC-CNS": "German Research Centre for Artificial Intelligence"
+    "DFKI and BSC-CNS": "German Research Centre for Artificial Intelligence",
+    "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -156,7 +157,8 @@
     "International Institute of Information Technology, Hyderabad": "iiit.ac.in",
     "Cohere (Canada)": "cohere.com",
     "Maitama Sule University Kano": "www.nwu.edu.ng",
-    "University of Indonesia": "www.international.eng.ui.ac.id"
+    "University of Indonesia": "www.international.eng.ui.ac.id",
+    "National University of Science and Technology POLITEHNICA Bucharest": "www.upb.ro"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -791,6 +793,13 @@
       "city": "San Francisco",
       "country": "United States",
       "precision": "city"
+    },
+    "National University of Science and Technology POLITEHNICA Bucharest": {
+      "lat": 44.4393317,
+      "lng": 26.0505729,
+      "city": "Bucharest",
+      "country": "Romania",
+      "precision": "exact"
     }
   }
 }

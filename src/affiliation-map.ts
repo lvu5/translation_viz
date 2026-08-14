@@ -6,7 +6,7 @@ import './assets/affiliation-map.css';
 import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 
 const number = new Intl.NumberFormat('en');
-const europeCenter: L.LatLngExpression = [0, 0];
+const europeCenter: L.LatLngExpression = [10, 0];
 // const worldCenter: L.LatLngExpression = [0, 0];
 const europeZoom = 0;
 const samePlaceOffsetRadius = 6;

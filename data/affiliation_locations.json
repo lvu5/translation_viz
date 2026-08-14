@@ -61,7 +61,8 @@
     "Cohere": "Cohere (Canada)",
     "DFKI and BSC-CNS": "German Research Centre for Artificial Intelligence",
     "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest",
-    "Ergon Informatik AG": "Ergon Informatik AG (Switzerland)"
+    "Ergon Informatik AG": "Ergon Informatik AG (Switzerland)",
+    "University of Social Sciences and Humanities, Vietnam National University Ho Chi Minh City": "Vietnam National University Ho Chi Minh City"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -160,7 +161,8 @@
     "Maitama Sule University Kano": "www.nwu.edu.ng",
     "University of Indonesia": "www.international.eng.ui.ac.id",
     "National University of Science and Technology POLITEHNICA Bucharest": "www.upb.ro",
-    "Ergon Informatik AG (Switzerland)": "ergon.ch"
+    "Ergon Informatik AG (Switzerland)": "ergon.ch",
+    "Vietnam National University Ho Chi Minh City": "vnuhcm.edu.vn"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -815,6 +817,13 @@
       "lng": 8.96004,
       "city": "Lugano",
       "country": "Switzerland",
+      "precision": "city"
+    },
+    "Vietnam National University Ho Chi Minh City": {
+      "lat": 10.82302,
+      "lng": 106.62965,
+      "city": "Ho Chi Minh City",
+      "country": "Vietnam",
       "precision": "city"
     }
   }

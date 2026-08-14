@@ -6,8 +6,8 @@ import './assets/affiliation-map.css';
 import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 
 const number = new Intl.NumberFormat('en');
-const worldCenter: L.LatLngExpression = [20, 10];
-const worldZoom = 2;
+const europeCenter: L.LatLngExpression = [52, 14];
+const europeZoom = 4;
 const samePlaceOffsetRadius = 6;
 
 interface MarkerOffset {
@@ -106,7 +106,7 @@ export function initializeAffiliationMap(
 
     const map = L.map('affiliation-map', {
         zoomControl: false,
-        minZoom: 0,
+        minZoom: 2,
         maxZoom: 18,
         worldCopyJump: true,
         maxBoundsViscosity: 0.8,
@@ -184,7 +184,7 @@ export function initializeAffiliationMap(
         const ratio = Math.sqrt(accepted / maximumAccepted);
         const normalSize = 32 + ratio * 16;
         const currentZoom = map.getZoom();
-        const zoom = Number.isFinite(currentZoom) ? currentZoom : worldZoom;
+        const zoom = Number.isFinite(currentZoom) ? currentZoom : europeZoom;
         const zoomScale = Math.min(1, Math.max(0.45, 0.45 + (zoom - 2) * 0.14));
         return Math.max(24, Math.round(normalSize * zoomScale));
     }
@@ -373,22 +373,7 @@ export function initializeAffiliationMap(
         selectedKey = null;
         renderDetail(null, null);
         renderMarkers();
-        fitAllPlaces(true);
-    }
-
-    function fitAllPlaces(animated: boolean): void {
-        if (!places.length) {
-            map.setView(worldCenter, worldZoom);
-            return;
-        }
-        const bounds = L.latLngBounds(places.map((place) => [place.lat, place.lng]));
-        const options: L.FitBoundsOptions = {
-            padding: [24, 24],
-            maxZoom: worldZoom,
-            animate: animated,
-            duration: animated ? 0.65 : 0,
-        };
-        map.fitBounds(bounds, options);
+        map.flyTo(europeCenter, europeZoom, { duration: 0.65 });
     }
 
     const affiliationNames = Array.from(
@@ -429,9 +414,8 @@ export function initializeAffiliationMap(
     animateCounter(totalSubmissionsElement, totalSubmissions);
     animateCounter(contributorCountElement, totalAuthors);
     renderLeaderboard();
-    map.setView(worldCenter, worldZoom);
+    map.setView(europeCenter, europeZoom);
     renderMarkers();
-    fitAllPlaces(false);
     map.on('zoomend', renderMarkers);
     loading.hidden = true;
 }

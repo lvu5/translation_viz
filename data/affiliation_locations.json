@@ -167,7 +167,8 @@
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
     "Research Center for Linguistics at NOVA University Lisbon": "assets/logos/ClUNL_logo-540x305.png",
-    "Wroclaw University of Science and Technology": "assets/logos/znak-pwr_pion-cmyk-pl.jpg"
+    "Wroclaw University of Science and Technology": "assets/logos/znak-pwr_pion-cmyk-pl.jpg",
+    "University of Indonesia": "assets/logos/University_of_Indonesia_logo.svg"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",

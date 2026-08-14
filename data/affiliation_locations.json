@@ -859,6 +859,13 @@
       "city": "Utrecht",
       "country": "The Netherlands",
       "precision": "city"
+    },
+    "University of Antwerp": {
+      "lat": 51.22047,
+      "lng": 4.40026,
+      "city": "Antwerp",
+      "country": "Belgium",
+      "precision": "city"
     }
   }
 }

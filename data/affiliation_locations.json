@@ -165,7 +165,8 @@
     "Ergon Informatik AG (Switzerland)": "ergon.ch",
     "Vietnam National University Ho Chi Minh City": "vnuhcm.edu.vn",
     "Ateneo de Manila University": "www.ateneo.edu",
-    "Università della Svizzera italiana": "www.usi.ch"
+    "Università della Svizzera italiana": "www.usi.ch",
+    "KU Leuven": "www.kuleuven.be"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -842,6 +843,13 @@
       "lng": -1.89983,
       "city": "Birmingham",
       "country": "United Kingdom",
+      "precision": "city"
+    },
+    "KU Leuven":{
+      "lat": 50.87811,
+      "lng": 4.69972,
+      "city": "Leuven",
+      "country": "Belgium",
       "precision": "city"
     }
   }

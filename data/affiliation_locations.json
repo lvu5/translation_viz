@@ -826,6 +826,13 @@
       "city": "Ho Chi Minh City",
       "country": "Vietnam",
       "precision": "city"
+    },
+    "Ateneo de Manila University": {
+      "lat": 14.6488,
+      "lng": 121.0509,
+      "city": "Quezon City",
+      "country": "Philippines",
+      "precision": "city"
     }
   }
 }

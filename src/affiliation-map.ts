@@ -6,8 +6,9 @@ import './assets/affiliation-map.css';
 import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 
 const number = new Intl.NumberFormat('en');
-const europeCenter: L.LatLngExpression = [52, 14];
-const europeZoom = 4;
+const europeCenter: L.LatLngExpression = [30, 0];
+// const worldCenter: L.LatLngExpression = [0, 0];
+const europeZoom = 0;
 const samePlaceOffsetRadius = 6;
 
 interface MarkerOffset {

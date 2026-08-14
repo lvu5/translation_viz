@@ -835,6 +835,13 @@
       "city": "Quezon City",
       "country": "Philippines",
       "precision": "city"
+    },
+    "University of Birmingham": {
+      "lat": 52.48142,
+      "lng": -1.89983,
+      "city": "Birmingham",
+      "country": "United Kingdom",
+      "precision": "city"
     }
   }
 }

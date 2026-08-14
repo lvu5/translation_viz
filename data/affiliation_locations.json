@@ -166,7 +166,8 @@
     "Vietnam National University Ho Chi Minh City": "vnuhcm.edu.vn",
     "Ateneo de Manila University": "www.ateneo.edu",
     "Università della Svizzera italiana": "www.usi.ch",
-    "KU Leuven": "www.kuleuven.be"
+    "KU Leuven": "www.kuleuven.be",
+    "Utrecht University": "uu.nl"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -845,11 +846,18 @@
       "country": "United Kingdom",
       "precision": "city"
     },
-    "KU Leuven":{
+    "KU Leuven": {
       "lat": 50.87811,
       "lng": 4.69972,
       "city": "Leuven",
       "country": "Belgium",
+      "precision": "city"
+    },
+    "Utrecht University": {
+      "lat": 52.09083,
+      "lng": 5.12222,
+      "city": "Utrecht",
+      "country": "The Netherlands",
       "precision": "city"
     }
   }

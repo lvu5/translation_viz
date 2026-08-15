@@ -63,7 +63,8 @@
     "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest",
     "Ergon Informatik AG": "Ergon Informatik AG (Switzerland)",
     "University of Social Sciences and Humanities, Vietnam National University Ho Chi Minh City": "Vietnam National University Ho Chi Minh City",
-    "KU Leuven / Pleias": "KU Leuven"
+    "KU Leuven / Pleias": "KU Leuven",
+    "The University of Tokyo, ETH Zurich": "The University of Tokyo"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -865,6 +866,13 @@
       "lng": 4.40026,
       "city": "Antwerp",
       "country": "Belgium",
+      "precision": "city"
+    },
+    "The University of Tokyo": {
+      "lat": 35.6895,
+      "lng": 139.69171,
+      "city": "Tokyo",
+      "country": "Japan",
       "precision": "city"
     }
   }

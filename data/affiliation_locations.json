@@ -900,6 +900,13 @@
       "city": "Brisbane",
       "country": "Australia",
       "precision": "city"
+    },
+    "Amirkabir University of Technology": {
+      "lat": 35.69439,
+      "lng": 51.42151,
+      "city": "Tehran",
+      "country": "Iran",
+      "precision": "city"
     }
   }
 }

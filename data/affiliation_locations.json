@@ -173,7 +173,8 @@
     "KU Leuven": "www.kuleuven.be",
     "Utrecht University": "uu.nl",
     "The University of Tokyo": "www.u-tokyo.ac.jp/",
-    "Queensland University of Technology": "qut.edu.au"
+    "Queensland University of Technology": "qut.edu.au",
+    "University of Waterloo": "uwaterloo.ca"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -906,6 +907,13 @@
       "lng": 51.42151,
       "city": "Tehran",
       "country": "Iran",
+      "precision": "city"
+    },
+    "University of Waterloo": {
+      "lat": 43.4668,
+      "lng": -80.51639,
+      "city": "Waterloo",
+      "country": "Canada",
       "precision": "city"
     }
   }

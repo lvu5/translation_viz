@@ -66,7 +66,8 @@
     "University of Social Sciences and Humanities, Vietnam National University Ho Chi Minh City": "Vietnam National University Ho Chi Minh City",
     "KU Leuven / Pleias": "KU Leuven",
     "The University of Tokyo, ETH Zurich": "The University of Tokyo",
-    "University of Luxembourg/ RTL":  "University of Luxembourg"
+    "University of Luxembourg/ RTL": "University of Luxembourg",
+    "IIIT Hyderabad": "International Institute of Information Technology, Hyderabad"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -171,7 +172,8 @@
     "Università della Svizzera italiana": "www.usi.ch",
     "KU Leuven": "www.kuleuven.be",
     "Utrecht University": "uu.nl",
-    "The University of Tokyo": "www.u-tokyo.ac.jp/"
+    "The University of Tokyo": "www.u-tokyo.ac.jp/",
+    "Queensland University of Technology": "qut.edu.au"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -890,6 +892,13 @@
       "lng": 24.02324,
       "city": "Lviv",
       "country": "Ukraine",
+      "precision": "city"
+    },
+    "Queensland University of Technology": {
+      "lat": -27.46794,
+      "lng": 153.02809,
+      "city": "Brisbane",
+      "country": "Australia",
       "precision": "city"
     }
   }

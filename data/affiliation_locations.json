@@ -5,6 +5,8 @@
     "BSC-CNS": "Barcelona Supercomputing Center",
     "CIHAC AIP": "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP",
     "CISPA, Helmholtz Center for Information Security": "CISPA Helmholtz Center for Information Security",
+    "Center for Low-Resource Languages & Cultures (CLRLC)": "Center for Low-Resource Languages and Cultures",
+    "Center for Low-Resource Languages and Cultures (CLRLC)": "Center for Low-Resource Languages and Cultures",
     "Centro de Investigaciones Históricas, Antropológicas y Culturales (CIHAC -AIP)": "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP",
     "DFKI GmbH and BSC-CNS": "Barcelona Supercomputing Center",
     "ETH Zürich": "ETH Zurich",
@@ -23,6 +25,7 @@
     "TU Darmstadt; KU Leuven": "Technical University of Darmstadt",
     "TU Darmstadt": "Technical University of Darmstadt",
     "TU Munich": "Technical University of Munich",
+    "Technival University of Munich": "Technical University of Munich",
     "UK AISI": "AI Security Institute (United Kingdom)",
     "UIC": "University of Illinois Chicago",
     "University of Illinois at Chicago": "University of Illinois Chicago",
@@ -82,6 +85,7 @@
     "Beijing Academy of Artificial Intelligence": "www.baai.ac.cn",
     "Bielefeld University": "www.uni-bielefeld.de",
     "CISPA Helmholtz Center for Information Security": "www.cispa.de",
+    "Center for Low-Resource Languages and Cultures": "www.clrlc.org",
     "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP": "cihac.org.pa",
     "Charles University": "www.cuni.cz",
     "Chinese Academy of Sciences": "www.cas.cn",
@@ -251,6 +255,13 @@
       "lng": 7.0509733,
       "city": "Saarbrücken",
       "country": "Germany"
+    },
+    "Center for Low-Resource Languages and Cultures": {
+      "lat": 7.4824,
+      "lng": 4.5603,
+      "city": "Ile-Ife",
+      "country": "Nigeria",
+      "precision": "city"
     },
     "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP": {
       "lat": 8.9517879,

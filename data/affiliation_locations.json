@@ -189,7 +189,8 @@
     "University of Waterloo": "uwaterloo.ca",
     "University of Birmingham": "www.birmingham.ac.uk",
     "Queen Mary University of London": "www.qmul.ac.uk",
-    "University of Antwerp": "www.uantwerpen.be"
+    "University of Antwerp": "www.uantwerpen.be",
+    "University of Oxford": "ox.ac.uk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -966,6 +967,13 @@
       "lng": -80.51639,
       "city": "Waterloo",
       "country": "Canada",
+      "precision": "city"
+    },
+    "University of Oxford": {
+      "lat": 51.75222,
+      "lng": -1.25596,
+      "city": "Oxford",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

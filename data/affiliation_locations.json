@@ -176,13 +176,16 @@
     "Utrecht University": "uu.nl",
     "The University of Tokyo": "www.u-tokyo.ac.jp/",
     "Queensland University of Technology": "qut.edu.au",
-    "University of Waterloo": "uwaterloo.ca"
+    "University of Waterloo": "uwaterloo.ca",
+    "University of Birmingham": "www.birmingham.ac.uk",
+    "Queen Mary University of London": "www.qmul.ac.uk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
     "Research Center for Linguistics at NOVA University Lisbon": "assets/logos/ClUNL_logo-540x305.png",
     "Wroclaw University of Science and Technology": "assets/logos/znak-pwr_pion-cmyk-pl.jpg",
-    "University of Indonesia": "assets/logos/University_of_Indonesia_logo.svg"
+    "University of Indonesia": "assets/logos/University_of_Indonesia_logo.svg",
+    "Ukrainian Catholic University": "assets/logos/ukrain_catholic_uni.png"
   },
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",

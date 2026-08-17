@@ -23,6 +23,7 @@
     "TU Darmstadt; KU Leuven": "Technical University of Darmstadt",
     "TU Darmstadt": "Technical University of Darmstadt",
     "TU Munich": "Technical University of Munich",
+    "UK AISI": "AI Security Institute (United Kingdom)",
     "UIC": "University of Illinois Chicago",
     "University of Illinois at Chicago": "University of Illinois Chicago",
     "University of Munich": "Ludwig Maximilian University of Munich",
@@ -71,6 +72,7 @@
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
+    "AI Security Institute (United Kingdom)": "www.aisi.gov.uk",
     "Aleph Alpha Research GmbH": "www.aleph-alpha.com",
     "Amazon": "www.amazon.com",
     "AppTek": "www.apptek.ai",
@@ -193,6 +195,13 @@
       "lng": 19.9192221,
       "city": "Kraków",
       "country": "Poland"
+    },
+    "AI Security Institute (United Kingdom)": {
+      "lat": 51.5016151,
+      "lng": -0.1265206,
+      "city": "London",
+      "country": "United Kingdom",
+      "precision": "exact"
     },
     "Aleph Alpha Research GmbH": {
       "lat": 49.3980309,

@@ -79,7 +79,6 @@
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
     "AI Security Institute (United Kingdom)": "www.aisi.gov.uk",
-    "AI Standards Lab": "aistandardslab.org",
     "Aleph Alpha Research GmbH": "www.aleph-alpha.com",
     "Amazon": "www.amazon.com",
     "AppTek": "www.apptek.ai",
@@ -203,7 +202,7 @@
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
     "multi_campus_rule": "Use the primary campus unless the public affiliation text names a specific campus.",
-    "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate. AI Standards Lab is a virtual lab, so its point is country-level based on its currently listed contributor."
+    "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate."
   },
   "locations": {
     "AGH University of Krakow": {
@@ -218,13 +217,6 @@
       "city": "London",
       "country": "United Kingdom",
       "precision": "exact"
-    },
-    "AI Standards Lab": {
-      "lat": 4.5693754,
-      "lng": 102.2656823,
-      "city": "Country-level",
-      "country": "Malaysia",
-      "precision": "country"
     },
     "Aleph Alpha Research GmbH": {
       "lat": 49.3980309,

@@ -66,6 +66,7 @@
     "DFKI and BSC-CNS": "German Research Centre for Artificial Intelligence",
     "BSC and DFKI": "Barcelona Supercomputing Center",
     "National University of Science and Technology Politehnica Bucharest": "National University of Science and Technology POLITEHNICA Bucharest",
+    "University Politehnica of Bucharest": "National University of Science and Technology POLITEHNICA Bucharest",
     "Ergon Informatik AG": "Ergon Informatik AG (Switzerland)",
     "University of Social Sciences and Humanities, Vietnam National University Ho Chi Minh City": "Vietnam National University Ho Chi Minh City",
     "KU Leuven / Pleias": "KU Leuven",
@@ -78,6 +79,7 @@
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
     "AI Security Institute (United Kingdom)": "www.aisi.gov.uk",
+    "AI Standards Lab": "aistandardslab.org",
     "Aleph Alpha Research GmbH": "www.aleph-alpha.com",
     "Amazon": "www.amazon.com",
     "AppTek": "www.apptek.ai",
@@ -89,7 +91,9 @@
     "Centro de Investigaciones Históricas, Antropológicas y Culturales - AIP": "cihac.org.pa",
     "Charles University": "www.cuni.cz",
     "Chinese Academy of Sciences": "www.cas.cn",
+    "Computational Intelligence and Operations Laboratory": "ciol-researchlab.github.io",
     "Council for Ligurian Linguistic Heritage": "conseggio-ligure.org",
+    "Dalle Molle Institute for Artificial Intelligence (IDSIA)": "www.idsia.ch",
     "ETH Zurich": "www.ethz.ch",
     "Fondazione Bruno Kessler": "www.fbk.eu",
     "FPT University": "daihoc.fpt.edu.vn",
@@ -129,6 +133,7 @@
     "University of Notre Dame": "www.nd.edu",
     "University of Strasbourg": "www.unistra.fr",
     "University of Zurich": "www.uzh.ch",
+    "Walmart": "corporate.walmart.com",
     "Weizmann Institute of Science": "www.weizmann.ac.il",
     "Wroclaw University of Science and Technology": "pwr.edu.pl",
     "Samsung Electronics (South Korea)": "samsung.com",
@@ -198,7 +203,7 @@
   "location_policy": {
     "point_definition": "Primary campus or main/rectorate building for universities; headquarters for companies and research institutes.",
     "multi_campus_rule": "Use the primary campus unless the public affiliation text names a specific campus.",
-    "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate."
+    "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate. AI Standards Lab is a virtual lab, so its point is country-level based on its currently listed contributor."
   },
   "locations": {
     "AGH University of Krakow": {
@@ -213,6 +218,13 @@
       "city": "London",
       "country": "United Kingdom",
       "precision": "exact"
+    },
+    "AI Standards Lab": {
+      "lat": 4.5693754,
+      "lng": 102.2656823,
+      "city": "Country-level",
+      "country": "Malaysia",
+      "precision": "country"
     },
     "Aleph Alpha Research GmbH": {
       "lat": 49.3980309,
@@ -281,6 +293,20 @@
       "lng": 116.3297146,
       "city": "Beijing",
       "country": "China",
+      "precision": "exact"
+    },
+    "Computational Intelligence and Operations Laboratory": {
+      "lat": 23.4609839,
+      "lng": 91.1812216,
+      "city": "Cumilla",
+      "country": "Bangladesh",
+      "precision": "city"
+    },
+    "Dalle Molle Institute for Artificial Intelligence (IDSIA)": {
+      "lat": 46.0234241,
+      "lng": 8.917194,
+      "city": "Manno",
+      "country": "Switzerland",
       "precision": "exact"
     },
     "German Research Centre for Artificial Intelligence": {
@@ -550,6 +576,13 @@
       "lng": 17.0625425,
       "city": "Wrocław",
       "country": "Poland"
+    },
+    "Walmart": {
+      "lat": 36.364133,
+      "lng": -94.1911331,
+      "city": "Bentonville",
+      "country": "United States",
+      "precision": "exact"
     },
     "Samsung Electronics (South Korea)": {
       "lat": 37.566,

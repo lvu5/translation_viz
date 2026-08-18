@@ -1008,6 +1008,13 @@
       "city": "Luleå",
       "country": "Sweden",
       "precision": "city"
+    },
+    "University of Cape Town": {
+      "lat": -33.96333,
+      "lng": 18.47639,
+      "city": "Rondebosch",
+      "country": "South Africa",
+      "precision": "city"
     }
   }
 }

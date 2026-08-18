@@ -76,7 +76,8 @@
     "Uantwerpen": "University of Antwerp",
     "The University of Edinburgh": "University of Edinburgh",
     "Universitas Islam Indonesia": "Islamic University of Indonesia",
-    "University of Toronto, Vector Institute": "University of Toronto"
+    "University of Toronto, Vector Institute": "University of Toronto",
+    "Luleå University of Technology, Sweden": "Luleå University of Technology"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -193,7 +194,8 @@
     "Queen Mary University of London": "www.qmul.ac.uk",
     "University of Antwerp": "www.uantwerpen.be",
     "University of Oxford": "ox.ac.uk",
-    "University of Toronto": "utoronto.ca"
+    "University of Toronto": "utoronto.ca",
+    "Luleå University of Technology": "ltu.se"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -998,6 +1000,13 @@
       "lng": 59.60567,
       "city": "Mashhad",
       "country": "Iran",
+      "precision": "city"
+    },
+    "Luleå University of Technology": {
+      "lat": 65.58415,
+      "lng": 22.15465,
+      "city": "Luleå",
+      "country": "Sweden",
       "precision": "city"
     }
   }

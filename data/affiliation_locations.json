@@ -74,7 +74,9 @@
     "University of Luxembourg/ RTL": "University of Luxembourg",
     "IIIT Hyderabad": "International Institute of Information Technology, Hyderabad",
     "Uantwerpen": "University of Antwerp",
-    "The University of Edinburgh": "University of Edinburgh"
+    "The University of Edinburgh": "University of Edinburgh",
+    "Universitas Islam Indonesia": "Islamic University of Indonesia",
+    "University of Toronto, Vector Institute": "University of Toronto"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -190,7 +192,8 @@
     "University of Birmingham": "www.birmingham.ac.uk",
     "Queen Mary University of London": "www.qmul.ac.uk",
     "University of Antwerp": "www.uantwerpen.be",
-    "University of Oxford": "ox.ac.uk"
+    "University of Oxford": "ox.ac.uk",
+    "University of Toronto": "utoronto.ca"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -974,6 +977,20 @@
       "lng": -1.25596,
       "city": "Oxford",
       "country": "United Kingdom",
+      "precision": "city"
+    },
+    "Islamic University of Indonesia": {
+      "lat": -7.80139,
+      "lng": 110.36472,
+      "city": "Yogyakarta",
+      "country": "Indonesia",
+      "precision": "city"
+    },
+    "University of Toronto": {
+      "lat": 43.70643,
+      "lng": -79.39864,
+      "city": "Toronto",
+      "country": "Canada",
       "precision": "city"
     }
   }

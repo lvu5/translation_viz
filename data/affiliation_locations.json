@@ -992,6 +992,13 @@
       "city": "Toronto",
       "country": "Canada",
       "precision": "city"
+    },
+    "Ferdowsi University of Mashhad": {
+      "lat": 36.29807,
+      "lng": 59.60567,
+      "city": "Mashhad",
+      "country": "Iran",
+      "precision": "city"
     }
   }
 }

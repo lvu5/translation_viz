@@ -77,7 +77,8 @@
     "The University of Edinburgh": "University of Edinburgh",
     "Universitas Islam Indonesia": "Islamic University of Indonesia",
     "University of Toronto, Vector Institute": "University of Toronto",
-    "Luleå University of Technology, Sweden": "Luleå University of Technology"
+    "Luleå University of Technology, Sweden": "Luleå University of Technology",
+    "POSTECH": "Pohang University of Science and Technology"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -195,7 +196,8 @@
     "University of Antwerp": "www.uantwerpen.be",
     "University of Oxford": "ox.ac.uk",
     "University of Toronto": "utoronto.ca",
-    "Luleå University of Technology": "ltu.se"
+    "Luleå University of Technology": "ltu.se",
+    "Pohang University of Science and Technology": "postech.ac.kr"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1014,6 +1016,13 @@
       "lng": 18.47639,
       "city": "Rondebosch",
       "country": "South Africa",
+      "precision": "city"
+    },
+    "Pohang University of Science and Technology": {
+      "lat": 36.02917,
+      "lng": 129.36481,
+      "city": "Pohang",
+      "country": "South Korea",
       "precision": "city"
     }
   }

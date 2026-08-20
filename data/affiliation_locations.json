@@ -1084,6 +1084,13 @@
       "city": "Würzburg",
       "country": "Germany",
       "precision": "exact"
+    },
+    "University of Zagreb": {
+      "lat": 45.81444,
+      "lng": 15.97798,
+      "city": "Zagreb",
+      "country": "Croatia",
+      "precision": "city"
     }
   }
 }

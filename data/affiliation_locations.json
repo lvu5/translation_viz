@@ -81,7 +81,12 @@
     "POSTECH": "Pohang University of Science and Technology",
     "FBK": "Fondazione Bruno Kessler",
     "TBD": "Other Affiliations",
-    "The University of Cape Town": "University of Cape Town"
+    "The University of Cape Town": "University of Cape Town",
+    "Intelligent System Laboratory, Brawijaya University": "Brawijaya University",
+    "Université de Montreal & Mila": "University of Montreal",
+    "Nigeria Police Academy Wudil": "Nigeria Police Academy",
+    "Jinesis Lab at the University of Toronto": "University of Toronto",
+    "Universität Würzburg": "University of Würzburg"
   },
   "logo_domains": {
     "Bar-Ilan University": "www.biu.ac.il",
@@ -206,7 +211,11 @@
     "Luleå University of Technology": "ltu.se",
     "Pohang University of Science and Technology": "postech.ac.kr",
     "Aarhus University": "au.dk",
-    "University of Cape Town": "www.uct.ac.za"
+    "University of Cape Town": "www.uct.ac.za",
+    "Brawijaya University": "ub.ac.id",
+    "University of Montreal": "www.umontreal.ca",
+    "Nigeria Police Academy": "polac.edu.ng",
+    "University of Würzburg": "www.uni-wuerzburg.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1047,6 +1056,34 @@
       "city": "Sendai",
       "country": "Japan",
       "precision": "city"
+    },
+    "Brawijaya University": {
+      "lat": -7.9517994,
+      "lng": 112.6138388,
+      "city": "Malang",
+      "country": "Indonesia",
+      "precision": "exact"
+    },
+    "University of Montreal": {
+      "lat": 45.5047577,
+      "lng": -73.6145418,
+      "city": "Montreal",
+      "country": "Canada",
+      "precision": "exact"
+    },
+    "Nigeria Police Academy": {
+      "lat": 11.76688,
+      "lng": 8.8390149,
+      "city": "Wudil",
+      "country": "Nigeria",
+      "precision": "city"
+    },
+    "University of Würzburg": {
+      "lat": 49.7881899,
+      "lng": 9.9352115,
+      "city": "Würzburg",
+      "country": "Germany",
+      "precision": "exact"
     }
   }
 }

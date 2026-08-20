@@ -82,6 +82,9 @@
     "FBK": "Fondazione Bruno Kessler"
   },
   "logo_domains": {
+    "Tohoku University": "www.tohoku.ac.jp",
+    "Islamic University of Indonesia": "www.uii.ac.id",
+    "Ferdowsi University of Mashhad": "www.um.ac.ir",
     "AGH University of Krakow": "www.agh.edu.pl",
     "AI Security Institute (United Kingdom)": "www.aisi.gov.uk",
     "Aleph Alpha Research GmbH": "www.aleph-alpha.com",
@@ -199,7 +202,8 @@
     "University of Toronto": "utoronto.ca",
     "Luleå University of Technology": "ltu.se",
     "Pohang University of Science and Technology": "postech.ac.kr",
-    "Aarhus University": "au.dk"
+    "Aarhus University": "au.dk",
+    "University of Cape Town": "www.uct.ac.za"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",

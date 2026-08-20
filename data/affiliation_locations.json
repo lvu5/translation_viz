@@ -80,7 +80,7 @@
     "Luleå University of Technology, Sweden": "Luleå University of Technology",
     "POSTECH": "Pohang University of Science and Technology",
     "FBK": "Fondazione Bruno Kessler",
-    "TBD": "Thai Binh Duong University"
+    "TBD": "Other Affiliations"
   },
   "logo_domains": {
     "Tohoku University": "www.tohoku.ac.jp",
@@ -205,7 +205,6 @@
     "Pohang University of Science and Technology": "postech.ac.kr",
     "Aarhus University": "au.dk",
     "University of Cape Town": "www.uct.ac.za",
-    "Thai Binh Duong University": "tbd.edu.vn"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1045,13 +1044,6 @@
       "lng": 140.86667,
       "city": "Sendai",
       "country": "Japan",
-      "precision": "city"
-    },
-    "Thai Binh Duong University": {
-      "lat": 12.25458,
-      "lng": 109.16655,
-      "city": "Thành Phố Nha Trang",
-      "country": "Vietnam",
       "precision": "city"
     }
   }

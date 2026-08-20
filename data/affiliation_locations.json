@@ -79,8 +79,7 @@
     "University of Toronto, Vector Institute": "University of Toronto",
     "Luleå University of Technology, Sweden": "Luleå University of Technology",
     "POSTECH": "Pohang University of Science and Technology",
-    "FBK": "Fondazione Bruno Kessler",
-    "TBD": "Thai Binh Duong University"
+    "FBK": "Fondazione Bruno Kessler"
   },
   "logo_domains": {
     "AGH University of Krakow": "www.agh.edu.pl",
@@ -200,8 +199,7 @@
     "University of Toronto": "utoronto.ca",
     "Luleå University of Technology": "ltu.se",
     "Pohang University of Science and Technology": "postech.ac.kr",
-    "Aarhus University": "au.dk",
-    "Thai Binh Duong University": "tbd.edu.vn"
+    "Aarhus University": "au.dk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1034,13 +1032,6 @@
       "lng": 10.21076,
       "city": "Aarhus",
       "country": "Denmark",
-      "precision": "city"
-    },
-    "Thai Binh Duong University": {
-      "lat": 12.25458,
-      "lng": 109.16655,
-      "city": "Thành Phố Nha Trang",
-      "country": "Vietnam",
       "precision": "city"
     },
     "Tohoku University": {

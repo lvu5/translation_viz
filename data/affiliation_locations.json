@@ -1100,6 +1100,13 @@
       "city": "Linköping",
       "country": "Sweden",
       "precision": "city"
+    },
+    "University of Erfurt": {
+      "lat": 50.9787,
+      "lng": 11.03283,
+      "city": "Erfurt",
+      "country": "Germany",
+      "precision": "city"
     }
   }
 }

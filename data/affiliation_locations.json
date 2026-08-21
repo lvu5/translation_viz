@@ -215,7 +215,8 @@
     "Brawijaya University": "ub.ac.id",
     "University of Montreal": "www.umontreal.ca",
     "Nigeria Police Academy": "polac.edu.ng",
-    "University of Würzburg": "www.uni-wuerzburg.de"
+    "University of Würzburg": "www.uni-wuerzburg.de",
+    "Linköping University": "liu.se"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1090,6 +1091,13 @@
       "lng": 15.97798,
       "city": "Zagreb",
       "country": "Croatia",
+      "precision": "city"
+    },
+    "Linköping University": {
+      "lat": 58.41086,
+      "lng": 15.62157,
+      "city": "Linköping",
+      "country": "Sweden",
       "precision": "city"
     }
   }

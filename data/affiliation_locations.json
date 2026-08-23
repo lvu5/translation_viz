@@ -217,7 +217,8 @@
     "Nigeria Police Academy": "polac.edu.ng",
     "University of Würzburg": "www.uni-wuerzburg.de",
     "Linköping University": "liu.se",
-    "University of Zagreb": "www.unizg.hr"
+    "University of Zagreb": "www.unizg.hr",
+    "University of Lausanne": "unil.ch"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/HUJI_LogoEng_only.jpg",
@@ -1106,6 +1107,13 @@
       "lng": 11.03283,
       "city": "Erfurt",
       "country": "Germany",
+      "precision": "city"
+    },
+    "University of Lausanne": {
+      "lat": 46.516,
+      "lng": 6.63282,
+      "city": "Lausanne",
+      "country": "Switzerland",
       "precision": "city"
     }
   }

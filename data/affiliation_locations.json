@@ -1172,6 +1172,13 @@
       "city": "Tartu",
       "country": "Estonia",
       "precision": "city"
+    },
+    "University of Liverpool": {
+      "lat": 53.41058,
+      "lng": -2.97794,
+      "city": "Liverpool",
+      "country": "United Kingdom",
+      "precision": "city"
     }
   }
 }

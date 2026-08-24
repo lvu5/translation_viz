@@ -226,7 +226,8 @@
     "University of Erfurt": "www.uni-erfurt.de",
     "Nanyang Technological University": "ntu.edu.sg",
     "Resolution": "resolution.org",
-    "AI Standards Lab": "aistandardslab.org"
+    "AI Standards Lab": "aistandardslab.org",
+    "University of Tartu": "ut.ee"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1163,6 +1164,13 @@
       "lng": 5.9831637,
       "city": "Challes-les-Eaux",
       "country": "France",
+      "precision": "city"
+    },
+    "University of Tartu": {
+      "lat": 58.38062,
+      "lng": 26.72509,
+      "city": "Tartu",
+      "country": "Estonia",
       "precision": "city"
     }
   }

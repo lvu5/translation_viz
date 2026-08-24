@@ -86,9 +86,11 @@
     "Université de Montreal & Mila": "University of Montreal",
     "Nigeria Police Academy Wudil": "Nigeria Police Academy",
     "Jinesis Lab at the University of Toronto": "University of Toronto",
-    "Universität Würzburg": "University of Würzburg"
+    "Universität Würzburg": "University of Würzburg",
+    "AfricanaAI Technologies/Federal University of Technology Babura": "Federal University of Technology Babura"
   },
   "logo_domains": {
+    "Federal University of Technology Babura": "futb.edu.ng",
     "Bar-Ilan University": "www.biu.ac.il",
     "Tohoku University": "www.tohoku.ac.jp",
     "Islamic University of Indonesia": "www.uii.ac.id",
@@ -234,6 +236,12 @@
     "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate."
   },
   "locations": {
+    "Federal University of Technology Babura": {
+      "lat": 12.74608,
+      "lng": 9.01519,
+      "city": "Babura",
+      "country": "Nigeria"
+    },
     "AGH University of Krakow": {
       "lat": 50.0657583,
       "lng": 19.9192221,

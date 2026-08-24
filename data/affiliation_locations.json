@@ -221,7 +221,8 @@
     "Linköping University": "liu.se",
     "University of Zagreb": "www.unizg.hr",
     "University of Lausanne": "unil.ch",
-    "University of Erfurt": "www.uni-erfurt.de"
+    "University of Erfurt": "www.uni-erfurt.de",
+    "Nanyang Technological University": "ntu.edu.sg"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1123,6 +1124,20 @@
       "lng": 6.63282,
       "city": "Lausanne",
       "country": "Switzerland",
+      "precision": "city"
+    },
+    "Nanyang Technological University": {
+      "lat": 1.28967,
+      "lng": 103.85007,
+      "city": "Singapore",
+      "country": "Singapore",
+      "precision": "city"
+    },
+    "University of Freiburg": {
+      "lat": 47.9959,
+      "lng": 7.85222,
+      "city": "Freiburg im Breisgau",
+      "country": "Germany",
       "precision": "city"
     }
   }

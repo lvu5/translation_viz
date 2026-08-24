@@ -87,7 +87,8 @@
     "Nigeria Police Academy Wudil": "Nigeria Police Academy",
     "Jinesis Lab at the University of Toronto": "University of Toronto",
     "Universität Würzburg": "University of Würzburg",
-    "AfricanaAI Technologies/Federal University of Technology Babura": "Federal University of Technology Babura"
+    "AfricanaAI Technologies/Federal University of Technology Babura": "Federal University of Technology Babura",
+    "Serendipity by Thedim": "Serendipity by Maria Thedim"
   },
   "logo_domains": {
     "University of Freiburg": "www.uni-freiburg.de",
@@ -223,7 +224,9 @@
     "University of Zagreb": "www.unizg.hr",
     "University of Lausanne": "unil.ch",
     "University of Erfurt": "www.uni-erfurt.de",
-    "Nanyang Technological University": "ntu.edu.sg"
+    "Nanyang Technological University": "ntu.edu.sg",
+    "Resolution": "resolution.org",
+    "AI Standards Lab": "aistandardslab.org"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1139,6 +1142,27 @@
       "lng": 7.85222,
       "city": "Freiburg im Breisgau",
       "country": "Germany",
+      "precision": "city"
+    },
+    "Resolution": {
+      "lat": 37.8708393,
+      "lng": -122.272863,
+      "city": "Berkeley",
+      "country": "United States",
+      "precision": "city"
+    },
+    "AI Standards Lab": {
+      "lat": 41.3825802,
+      "lng": 2.177073,
+      "city": "Barcelona",
+      "country": "Spain",
+      "precision": "city"
+    },
+    "Serendipity by Maria Thedim": {
+      "lat": 45.5482519,
+      "lng": 5.9831637,
+      "city": "Challes-les-Eaux",
+      "country": "France",
       "precision": "city"
     }
   }

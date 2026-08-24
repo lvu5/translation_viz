@@ -33,25 +33,30 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Update static affiliation locations
-        id: locations
         env:
           ROR_CLIENT_ID: ${{ secrets.ROR_CLIENT_ID }}
+        run: python scripts/update_affiliation_locations.py --write
+
+      - name: Cache new affiliation logos
+        run: python scripts/cache_affiliation_logos.py
+
+      - name: Check for location or logo updates
+        id: updates
         run: |
-          python scripts/update_affiliation_locations.py --write
-          if git diff --quiet -- data/affiliation_locations.json; then
+          if [[ -z "$(git status --porcelain -- data/affiliation_locations.json src/assets/logos/cache)" ]]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Commit update to the default branch
-        if: steps.locations.outputs.changed == 'true'
+        if: steps.updates.outputs.changed == 'true'
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/affiliation_locations.json
-          git commit -m "Update affiliation locations from ROR"
+          git add data/affiliation_locations.json src/assets/logos/cache
+          git commit -m "Update affiliation locations and cached logos"
           git pull --rebase origin "$DEFAULT_BRANCH"
           git push origin "HEAD:$DEFAULT_BRANCH"

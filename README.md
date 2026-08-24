@@ -24,7 +24,8 @@ scripts/affiliation_map.py            Combines dashboard rows with locations
 scripts/build_static_dashboard.py     Creates the static data snapshot
 scripts/update_affiliation_locations.py
                                       Discovers new affiliations through ROR
-.github/workflows/                    Six-hour update and Pages deployment
+scripts/cache_affiliation_logos.py    Locks automatic logos into local assets
+.github/workflows/                    Scheduled update and Pages deployment
 ```
 
 ## Run locally
@@ -35,6 +36,7 @@ Requirements: Node.js 24+ and Python 3.12+.
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 npm install
+.venv/bin/python scripts/cache_affiliation_logos.py
 npm run build
 .venv/bin/python scripts/build_static_dashboard.py
 python3 -m http.server 8080 --directory site
@@ -65,9 +67,28 @@ semicolon-separated name. Only a unique exact match against a ROR display name,
 alias, or acronym is stored automatically. Unresolved affiliations remain
 visible under **Other affiliations**.
 
-The `Update affiliation locations` workflow runs every six hours. After it
-finishes successfully, `Deploy affiliation map to GitHub Pages` fetches current
-dashboard totals, builds the website, and deploys it.
+Cache every currently configured automatic logo:
+
+```bash
+.venv/bin/python scripts/cache_affiliation_logos.py
+```
+
+Each downloaded image is stored under `src/assets/logos/cache/` and recorded in
+its manifest. Later runs reuse that file, so a website or favicon change cannot
+silently replace the map icon. Existing `logo_files` entries remain higher
+priority and are never overwritten. To intentionally replace one automatic
+cached icon, run:
+
+```bash
+.venv/bin/python scripts/cache_affiliation_logos.py \
+  --affiliation "University of Würzburg" \
+  --refresh
+```
+
+The `Update affiliation locations` workflow also caches icons for newly added
+domains and commits both the locations and local logo assets. After it finishes
+successfully, `Deploy affiliation map to GitHub Pages` fetches current dashboard
+totals, builds the website, and deploys it.
 
 ## Publish on GitHub Pages
 

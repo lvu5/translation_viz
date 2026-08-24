@@ -14,6 +14,9 @@ DEFAULT_SOURCE = (
     "https://last-translation-benchmark.vilda.net/api/public-dashboard"
 )
 DEFAULT_LOCATIONS = ROOT / "data" / "affiliation_locations.json"
+DEFAULT_LOGO_CACHE_MANIFEST = (
+    ROOT / "src" / "assets" / "logos" / "cache" / "manifest.json"
+)
 DEFAULT_OUTPUT = ROOT / "site" / "data" / "dashboard.json"
 
 from affiliation_map import build_affiliation_map
@@ -50,6 +53,17 @@ def build_snapshot(
 ) -> dict[str, Any]:
     with locations_path.open(encoding="utf-8") as locations_file:
         location_config = json.load(locations_file)
+
+    if DEFAULT_LOGO_CACHE_MANIFEST.exists():
+        with DEFAULT_LOGO_CACHE_MANIFEST.open(encoding="utf-8") as cache_file:
+            cached_logo_files = json.load(cache_file)
+        if not isinstance(cached_logo_files, dict):
+            raise ValueError("The affiliation logo cache manifest must be an object.")
+        manual_logo_files = location_config.get("logo_files", {})
+        location_config["logo_files"] = {
+            **cached_logo_files,
+            **manual_logo_files,
+        }
 
     affiliation_map = build_affiliation_map(dashboard, location_config)
     return {

@@ -90,7 +90,8 @@
     "AfricanaAI Technologies/Federal University of Technology Babura": "Federal University of Technology Babura",
     "Serendipity by Thedim": "Serendipity by Maria Thedim",
     "INSAIT, Sofia University “St. Kliment Ohridski”": "Sofia University \"St. Kliment Ohridski\"",
-    "Amity University Noida": "Amity University"
+    "Amity University Noida": "Amity University",
+    "Universitas Brawijaya": "University of Brawijaya"
   },
   "logo_domains": {
     "University of Freiburg": "www.uni-freiburg.de",
@@ -232,7 +233,8 @@
     "University of Tartu": "ut.ee",
     "Amity University": "amity.edu",
     "University of Michigan": "umich.edu",
-    "Columbia University": "columbia.edu"
+    "Columbia University": "columbia.edu",
+    "University of Brawijaya": "ub.ac.id"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1204,6 +1206,13 @@
       "lng": -74.00597,
       "city": "New York",
       "country": "United States",
+      "precision": "city"
+    },
+    "University of Brawijaya": {
+      "lat": -7.9797,
+      "lng": 112.6304,
+      "city": "Malang",
+      "country": "Indonesia",
       "precision": "city"
     }
   }

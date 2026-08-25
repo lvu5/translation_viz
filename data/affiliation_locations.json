@@ -89,7 +89,8 @@
     "Universität Würzburg": "University of Würzburg",
     "AfricanaAI Technologies/Federal University of Technology Babura": "Federal University of Technology Babura",
     "Serendipity by Thedim": "Serendipity by Maria Thedim",
-    "INSAIT, Sofia University “St. Kliment Ohridski”": "Sofia University \"St. Kliment Ohridski\""
+    "INSAIT, Sofia University “St. Kliment Ohridski”": "Sofia University \"St. Kliment Ohridski\"",
+    "Amity University Noida": "Amity University"
   },
   "logo_domains": {
     "University of Freiburg": "www.uni-freiburg.de",
@@ -228,7 +229,8 @@
     "Nanyang Technological University": "ntu.edu.sg",
     "Resolution": "resolution.org",
     "AI Standards Lab": "aistandardslab.org",
-    "University of Tartu": "ut.ee"
+    "University of Tartu": "ut.ee",
+    "Amity University": "amity.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1179,6 +1181,13 @@
       "lng": -2.97794,
       "city": "Liverpool",
       "country": "United Kingdom",
+      "precision": "city"
+    },
+    "Amity University": {
+      "lat": 28.58,
+      "lng": 77.33,
+      "city": "Noida",
+      "country": "India",
       "precision": "city"
     }
   }

@@ -91,7 +91,8 @@
     "Serendipity by Thedim": "Serendipity by Maria Thedim",
     "INSAIT, Sofia University “St. Kliment Ohridski”": "Sofia University \"St. Kliment Ohridski\"",
     "Amity University Noida": "Amity University",
-    "Universitas Brawijaya": "University of Brawijaya"
+    "Universitas Brawijaya": "University of Brawijaya",
+    "ELLIS Alicante, Jinesis Lab": "ELLIS Alicante"
   },
   "logo_domains": {
     "University of Freiburg": "www.uni-freiburg.de",
@@ -1221,6 +1222,13 @@
       "lng": 144.96332,
       "city": "Melbourne",
       "country": "Australia",
+      "precision": "city"
+    },
+    "ELLIS Alicante": {
+      "lat": 38.34517,
+      "lng": -0.48149,
+      "city": "Alicante",
+      "country": "Spain",
       "precision": "city"
     }
   }

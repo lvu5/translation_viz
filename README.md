@@ -37,7 +37,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 npm install
 .venv/bin/python scripts/cache_affiliation_logos.py
-npm run build
+CARTO_BASEMAP_KEY=your-carto-key npm run build
 .venv/bin/python scripts/build_static_dashboard.py
 python3 -m http.server 8080 --directory site
 ```
@@ -92,10 +92,11 @@ totals, builds the website, and deploys it.
 
 ## Publish on GitHub Pages
 
-1. Push `main` to GitHub.
-2. Open **Settings → Pages** in the repository.
-3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-4. Run `Deploy affiliation map to GitHub Pages`, or push another commit.
+1. Add `CARTO_BASEMAP_KEY` under **Settings → Secrets and variables → Actions → Repository secrets**.
+2. Push `main` to GitHub.
+3. Open **Settings → Pages** in the repository.
+4. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+5. Run `Deploy affiliation map to GitHub Pages`, or push another commit.
 
 For `lvu5/translation_viz`, the default URL is:
 

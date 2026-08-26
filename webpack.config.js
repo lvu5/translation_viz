@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -31,6 +32,9 @@ module.exports = (env, argv) => ({
   },
   resolve: { extensions: ['.ts', '.js'] },
   plugins: [
+    new webpack.DefinePlugin({
+      __CARTO_BASEMAP_KEY__: JSON.stringify(process.env.CARTO_BASEMAP_KEY || ''),
+    }),
     new MiniCssExtractPlugin({ filename: '[name].[contenthash:8].css' }),
     new HtmlWebpackPlugin({
       template: './src/index.html',

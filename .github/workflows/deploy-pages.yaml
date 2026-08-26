@@ -47,7 +47,10 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Build map website
+        env:
+          CARTO_BASEMAP_KEY: ${{ secrets.CARTO_BASEMAP_KEY }}
         run: |
+          test -n "$CARTO_BASEMAP_KEY"
           npm run build
           python scripts/build_static_dashboard.py
 

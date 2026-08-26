@@ -5,6 +5,8 @@ import './assets/affiliation-map.css';
 
 import type { AffiliationMapAffiliation, AffiliationMapPlace } from './types';
 
+declare const __CARTO_BASEMAP_KEY__: string;
+
 const number = new Intl.NumberFormat('en');
 const europeCenter: L.LatLngExpression = [10, 0];
 // const worldCenter: L.LatLngExpression = [0, 0];
@@ -113,7 +115,10 @@ export function initializeAffiliationMap(
         maxBoundsViscosity: 0.8,
     }).setMaxBounds([[-85, -190], [85, 190]]);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    const cartoKeyQuery = __CARTO_BASEMAP_KEY__
+        ? `?key=${encodeURIComponent(__CARTO_BASEMAP_KEY__)}`
+        : '';
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png${cartoKeyQuery}`, {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20,

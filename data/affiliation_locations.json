@@ -243,7 +243,8 @@
     "University of Brawijaya": "ub.ac.id",
     "Monash University": "monash.edu",
     "University of Bath": "bath.ac.uk",
-    "Google DeepMind (United Kingdom)": "deepmind.google"
+    "Google DeepMind (United Kingdom)": "deepmind.google",
+    "Maastricht University": "maastrichtuniversity.nl"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1256,6 +1257,13 @@
       "lng": -0.12574,
       "city": "London",
       "country": "United Kingdom",
+      "precision": "city"
+    },
+    "Maastricht University": {
+      "lat": 50.84833,
+      "lng": 5.68889,
+      "city": "Maastricht",
+      "country": "The Netherlands",
       "precision": "city"
     }
   }

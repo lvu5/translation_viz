@@ -236,7 +236,8 @@
     "University of Michigan": "umich.edu",
     "Columbia University": "columbia.edu",
     "University of Brawijaya": "ub.ac.id",
-    "Monash University": "monash.edu"
+    "Monash University": "monash.edu",
+    "University of Bath": "bath.ac.uk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1229,6 +1230,13 @@
       "lng": -0.48149,
       "city": "Alicante",
       "country": "Spain",
+      "precision": "city"
+    },
+    "University of Bath": {
+      "lat": 51.3751,
+      "lng": -2.36172,
+      "city": "Bath",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

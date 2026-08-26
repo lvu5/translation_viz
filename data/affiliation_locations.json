@@ -93,7 +93,8 @@
     "Amity University Noida": "Amity University",
     "Universitas Brawijaya": "University of Brawijaya",
     "ELLIS Alicante, Jinesis Lab": "ELLIS Alicante",
-    "Mekelle University / Niyat Consultancy and IT Solution PLC": "Mekelle University"
+    "Mekelle University / Niyat Consultancy and IT Solution PLC": "Mekelle University",
+    "Google DeepMind": "Google DeepMind (United Kingdom)"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -241,7 +242,8 @@
     "Columbia University": "columbia.edu",
     "University of Brawijaya": "ub.ac.id",
     "Monash University": "monash.edu",
-    "University of Bath": "bath.ac.uk"
+    "University of Bath": "bath.ac.uk",
+    "Google DeepMind (United Kingdom)": "deepmind.google"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -263,7 +265,6 @@
       "city": "Mekelle",
       "country": "Ethiopia"
     },
-
     "Federal University of Technology Babura": {
       "lat": 12.74608,
       "lng": 9.01519,
@@ -1247,6 +1248,13 @@
       "lat": 51.3751,
       "lng": -2.36172,
       "city": "Bath",
+      "country": "United Kingdom",
+      "precision": "city"
+    },
+    "Google DeepMind (United Kingdom)": {
+      "lat": 51.50853,
+      "lng": -0.12574,
+      "city": "London",
       "country": "United Kingdom",
       "precision": "city"
     }

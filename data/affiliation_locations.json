@@ -92,9 +92,11 @@
     "INSAIT, Sofia University “St. Kliment Ohridski”": "Sofia University \"St. Kliment Ohridski\"",
     "Amity University Noida": "Amity University",
     "Universitas Brawijaya": "University of Brawijaya",
-    "ELLIS Alicante, Jinesis Lab": "ELLIS Alicante"
+    "ELLIS Alicante, Jinesis Lab": "ELLIS Alicante",
+    "Mekelle University / Niyat Consultancy and IT Solution PLC": "Mekelle University"
   },
   "logo_domains": {
+    "Mekelle University": "www.mu.edu.et",
     "ELLIS Alicante": "ellisalicante.org",
     "University of Freiburg": "www.uni-freiburg.de",
     "Federal University of Technology Babura": "futb.edu.ng",
@@ -254,6 +256,13 @@
     "exception": "Council for Ligurian Linguistic Heritage publishes Genova but no public street address, so its point remains city-level. CIHAC-AIP publishes its street but no building number, so its point remains street-level and is marked as approximate."
   },
   "locations": {
+    "Mekelle University": {
+      "lat": 13.4967,
+      "lng": 39.4753,
+      "city": "Mekelle",
+      "country": "Ethiopia"
+    },
+
     "Federal University of Technology Babura": {
       "lat": 12.74608,
       "lng": 9.01519,

@@ -234,7 +234,8 @@
     "Amity University": "amity.edu",
     "University of Michigan": "umich.edu",
     "Columbia University": "columbia.edu",
-    "University of Brawijaya": "ub.ac.id"
+    "University of Brawijaya": "ub.ac.id",
+    "Monash University": "monash.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1213,6 +1214,13 @@
       "lng": 112.6304,
       "city": "Malang",
       "country": "Indonesia",
+      "precision": "city"
+    },
+    "Monash University": {
+      "lat": -37.814,
+      "lng": 144.96332,
+      "city": "Melbourne",
+      "country": "Australia",
       "precision": "city"
     }
   }

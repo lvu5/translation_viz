@@ -246,7 +246,8 @@
     "University of Bath": "bath.ac.uk",
     "Google DeepMind (United Kingdom)": "deepmind.google",
     "Maastricht University": "maastrichtuniversity.nl",
-    "Technische Universität Berlin": "tu-berlin.de"
+    "Technische Universität Berlin": "tu-berlin.de",
+    "Pusan National University": "pusan.ac.kr"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1273,6 +1274,13 @@
       "lng": 13.41053,
       "city": "Berlin",
       "country": "Germany",
+      "precision": "city"
+    },
+    "Pusan National University": {
+      "lat": 35.10168,
+      "lng": 129.03004,
+      "city": "Busan",
+      "country": "South Korea",
       "precision": "city"
     }
   }

@@ -94,7 +94,8 @@
     "Universitas Brawijaya": "University of Brawijaya",
     "ELLIS Alicante, Jinesis Lab": "ELLIS Alicante",
     "Mekelle University / Niyat Consultancy and IT Solution PLC": "Mekelle University",
-    "Google DeepMind": "Google DeepMind (United Kingdom)"
+    "Google DeepMind": "Google DeepMind (United Kingdom)",
+    "TU Berlin": "Technische Universität Berlin"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -244,7 +245,8 @@
     "Monash University": "monash.edu",
     "University of Bath": "bath.ac.uk",
     "Google DeepMind (United Kingdom)": "deepmind.google",
-    "Maastricht University": "maastrichtuniversity.nl"
+    "Maastricht University": "maastrichtuniversity.nl",
+    "Technische Universität Berlin": "tu-berlin.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1264,6 +1266,13 @@
       "lng": 5.68889,
       "city": "Maastricht",
       "country": "The Netherlands",
+      "precision": "city"
+    },
+    "Technische Universität Berlin": {
+      "lat": 52.52437,
+      "lng": 13.41053,
+      "city": "Berlin",
+      "country": "Germany",
       "precision": "city"
     }
   }

@@ -11,7 +11,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = (
-    "https://last-translation-benchmark.vilda.net/api/public-dashboard"
+    "https://last-translation-benchmark.vilda.net/api/contributors"
 )
 DEFAULT_LOCATIONS = ROOT / "data" / "affiliation_locations.json"
 DEFAULT_LOGO_CACHE_MANIFEST = (

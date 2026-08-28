@@ -12,7 +12,7 @@ from typing import Any
 import httpx
 
 DEFAULT_SOURCE = (
-    "https://last-translation-benchmark.vilda.net/api/public-dashboard"
+    "https://last-translation-benchmark.vilda.net/api/contributors"
 )
 DEFAULT_LOCATIONS = (
     Path(__file__).parents[1] / "data" / "affiliation_locations.json"

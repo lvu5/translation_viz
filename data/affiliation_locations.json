@@ -248,7 +248,8 @@
     "Google DeepMind (United Kingdom)": "deepmind.google",
     "Maastricht University": "maastrichtuniversity.nl",
     "Technische Universität Berlin": "tu-berlin.de",
-    "Pusan National University": "pusan.ac.kr"
+    "Pusan National University": "pusan.ac.kr",
+    "King's College London": "kcl.ac.uk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1282,6 +1283,13 @@
       "lng": 129.03004,
       "city": "Busan",
       "country": "South Korea",
+      "precision": "city"
+    },
+    "King's College London": {
+      "lat": 51.50853,
+      "lng": -0.12574,
+      "city": "London",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

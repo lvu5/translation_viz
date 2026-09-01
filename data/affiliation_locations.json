@@ -252,7 +252,8 @@
     "Technische Universität Berlin": "tu-berlin.de",
     "Pusan National University": "pusan.ac.kr",
     "King's College London": "kcl.ac.uk",
-    "Technische Universität Darmstadt": "tu-darmstadt.de"
+    "Technische Universität Darmstadt": "tu-darmstadt.de",
+    "Goethe University Frankfurt": "uni-frankfurt.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1299,6 +1300,13 @@
       "lat": 49.87167,
       "lng": 8.65027,
       "city": "Darmstadt",
+      "country": "Germany",
+      "precision": "city"
+    },
+    "Goethe University Frankfurt": {
+      "lat": 50.11552,
+      "lng": 8.68417,
+      "city": "Frankfurt am Main",
       "country": "Germany",
       "precision": "city"
     }

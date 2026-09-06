@@ -254,7 +254,8 @@
     "Pusan National University": "pusan.ac.kr",
     "King's College London": "kcl.ac.uk",
     "Technische Universität Darmstadt": "tu-darmstadt.de",
-    "Goethe University Frankfurt": "uni-frankfurt.de"
+    "Goethe University Frankfurt": "uni-frankfurt.de",
+    "University of Dhaka": "du.ac.bd"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1309,6 +1310,13 @@
       "lng": 8.68417,
       "city": "Frankfurt am Main",
       "country": "Germany",
+      "precision": "city"
+    },
+    "University of Dhaka": {
+      "lat": 23.7104,
+      "lng": 90.40744,
+      "city": "Dhaka",
+      "country": "Bangladesh",
       "precision": "city"
     }
   }

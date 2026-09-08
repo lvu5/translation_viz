@@ -118,9 +118,14 @@ export function initializeAffiliationMap(
     const cartoKeyQuery = __CARTO_BASEMAP_KEY__
         ? `?key=${encodeURIComponent(__CARTO_BASEMAP_KEY__)}`
         : '';
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png${cartoKeyQuery}`, {
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png${cartoKeyQuery}`, {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
+        maxZoom: 20,
+    }).addTo(map);
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png${cartoKeyQuery}`, {
+        subdomains: 'abcd',
+        minZoom: 3,
         maxZoom: 20,
     }).addTo(map);
     L.control.zoom({ position: 'bottomleft' }).addTo(map);

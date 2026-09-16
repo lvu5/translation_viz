@@ -100,7 +100,8 @@
     "University of Information Technology, Vietnam National University Ho Chi Minh City": "Vietnam National University Ho Chi Minh City",
     "TU Darmstadt; INSAIT, Sofia University “St. Kliment Ohridski”": "Technische Universität Darmstadt",
     "Jinesis Lab, University of Toronto": "University of Toronto",
-    "University of California, San Diego": "University of California San Diego"
+    "University of California, San Diego": "University of California San Diego",
+    "NLP Lab, CUET, Bangladesh": "Chittagong University of Engineering & Technology"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -257,7 +258,8 @@
     "Technische Universität Darmstadt": "tu-darmstadt.de",
     "Goethe University Frankfurt": "uni-frankfurt.de",
     "University of Dhaka": "du.ac.bd",
-    "University of California San Diego": "ucsd.edu"
+    "University of California San Diego": "ucsd.edu",
+    "Chittagong University of Engineering & Technology": "cuet.ac.bd"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1326,6 +1328,13 @@
       "lng": -117.16472,
       "city": "San Diego",
       "country": "United States",
+      "precision": "city"
+    },
+    "Chittagong University of Engineering & Technology": {
+      "lat": 22.3384,
+      "lng": 91.83168,
+      "city": "Chittagong",
+      "country": "Bangladesh",
       "precision": "city"
     }
   }

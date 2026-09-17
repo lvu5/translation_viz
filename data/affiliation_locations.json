@@ -259,7 +259,8 @@
     "Goethe University Frankfurt": "uni-frankfurt.de",
     "University of Dhaka": "du.ac.bd",
     "University of California San Diego": "ucsd.edu",
-    "Chittagong University of Engineering & Technology": "cuet.ac.bd"
+    "Chittagong University of Engineering & Technology": "cuet.ac.bd",
+    "University of New Haven": "newhaven.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1335,6 +1336,13 @@
       "lng": 91.83168,
       "city": "Chittagong",
       "country": "Bangladesh",
+      "precision": "city"
+    },
+    "University of New Haven": {
+      "lat": 41.27065,
+      "lng": -72.94705,
+      "city": "West Haven",
+      "country": "United States",
       "precision": "city"
     }
   }

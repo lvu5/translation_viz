@@ -260,7 +260,8 @@
     "University of Dhaka": "du.ac.bd",
     "University of California San Diego": "ucsd.edu",
     "Chittagong University of Engineering & Technology": "cuet.ac.bd",
-    "University of New Haven": "newhaven.edu"
+    "University of New Haven": "newhaven.edu",
+    "University of Miami": "miami.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1342,6 +1343,13 @@
       "lat": 41.27065,
       "lng": -72.94705,
       "city": "West Haven",
+      "country": "United States",
+      "precision": "city"
+    },
+    "University of Miami": {
+      "lat": 25.72149,
+      "lng": -80.26838,
+      "city": "Coral Gables",
       "country": "United States",
       "precision": "city"
     }

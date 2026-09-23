@@ -261,7 +261,8 @@
     "University of California San Diego": "ucsd.edu",
     "Chittagong University of Engineering & Technology": "cuet.ac.bd",
     "University of New Haven": "newhaven.edu",
-    "University of Miami": "miami.edu"
+    "University of Miami": "miami.edu",
+    "Boston University": "bu.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1350,6 +1351,13 @@
       "lat": 25.72149,
       "lng": -80.26838,
       "city": "Coral Gables",
+      "country": "United States",
+      "precision": "city"
+    },
+    "Boston University": {
+      "lat": 42.35843,
+      "lng": -71.05977,
+      "city": "Boston",
       "country": "United States",
       "precision": "city"
     }

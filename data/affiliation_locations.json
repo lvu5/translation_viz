@@ -102,7 +102,8 @@
     "Jinesis Lab, University of Toronto": "University of Toronto",
     "University of California, San Diego": "University of California San Diego",
     "NLP Lab, CUET, Bangladesh": "Chittagong University of Engineering & Technology",
-    "Carnegie Mellon University / Instituto Superior Técnico": "Carnegie Mellon University"
+    "Carnegie Mellon University / Instituto Superior Técnico": "Carnegie Mellon University",
+    "lviv polytechnic national university": "Lviv Polytechnic National University"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -264,7 +265,8 @@
     "Chittagong University of Engineering & Technology": "cuet.ac.bd",
     "University of New Haven": "newhaven.edu",
     "University of Miami": "miami.edu",
-    "Boston University": "bu.edu"
+    "Boston University": "bu.edu",
+    "Lviv Polytechnic National University": "lpnu.ua"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1367,6 +1369,13 @@
       "lng": -71.05977,
       "city": "Boston",
       "country": "United States",
+      "precision": "city"
+    },
+    "Lviv Polytechnic National University": {
+      "lat": 49.83826,
+      "lng": 24.02324,
+      "city": "Lviv",
+      "country": "Ukraine",
       "precision": "city"
     }
   }

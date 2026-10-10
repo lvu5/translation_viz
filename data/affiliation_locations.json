@@ -266,7 +266,8 @@
     "University of New Haven": "newhaven.edu",
     "University of Miami": "miami.edu",
     "Boston University": "bu.edu",
-    "Lviv Polytechnic National University": "lpnu.ua"
+    "Lviv Polytechnic National University": "lpnu.ua",
+    "Florida International University": "fiu.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1376,6 +1377,13 @@
       "lng": 24.02324,
       "city": "Lviv",
       "country": "Ukraine",
+      "precision": "city"
+    },
+    "Florida International University": {
+      "lat": 25.77427,
+      "lng": -80.19366,
+      "city": "Miami",
+      "country": "United States",
       "precision": "city"
     }
   }

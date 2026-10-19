@@ -267,7 +267,8 @@
     "University of Miami": "miami.edu",
     "Boston University": "bu.edu",
     "Lviv Polytechnic National University": "lpnu.ua",
-    "Florida International University": "fiu.edu"
+    "Florida International University": "fiu.edu",
+    "University of Mannheim": "uni-mannheim.de"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1384,6 +1385,13 @@
       "lng": -80.19366,
       "city": "Miami",
       "country": "United States",
+      "precision": "city"
+    },
+    "University of Mannheim": {
+      "lat": 49.4891,
+      "lng": 8.46694,
+      "city": "Mannheim",
+      "country": "Germany",
       "precision": "city"
     }
   }

@@ -103,7 +103,8 @@
     "University of California, San Diego": "University of California San Diego",
     "NLP Lab, CUET, Bangladesh": "Chittagong University of Engineering & Technology",
     "Carnegie Mellon University / Instituto Superior Técnico": "Carnegie Mellon University",
-    "lviv polytechnic national university": "Lviv Polytechnic National University"
+    "lviv polytechnic national university": "Lviv Polytechnic National University",
+    "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -1392,6 +1393,13 @@
       "lng": 8.46694,
       "city": "Mannheim",
       "country": "Germany",
+      "precision": "city"
+    },
+    "Laboratoire Hubert Curien": {
+      "lat": 45.43389,
+      "lng": 4.39,
+      "city": "Saint-Etienne",
+      "country": "France",
       "precision": "city"
     }
   }

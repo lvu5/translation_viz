@@ -104,7 +104,8 @@
     "NLP Lab, CUET, Bangladesh": "Chittagong University of Engineering & Technology",
     "Carnegie Mellon University / Instituto Superior Técnico": "Carnegie Mellon University",
     "lviv polytechnic national university": "Lviv Polytechnic National University",
-    "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien"
+    "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien",
+    "Université Côte d'Azur, CNRS, INRIA, I3S": "Université Côte d'Azur"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -269,7 +270,8 @@
     "Boston University": "bu.edu",
     "Lviv Polytechnic National University": "lpnu.ua",
     "Florida International University": "fiu.edu",
-    "University of Mannheim": "uni-mannheim.de"
+    "University of Mannheim": "uni-mannheim.de",
+    "Université Côte d'Azur": "univ-cotedazur.fr"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1399,6 +1401,13 @@
       "lat": 45.43389,
       "lng": 4.39,
       "city": "Saint-Etienne",
+      "country": "France",
+      "precision": "city"
+    },
+    "Université Côte d'Azur": {
+      "lat": 43.70313,
+      "lng": 7.26608,
+      "city": "Nice",
       "country": "France",
       "precision": "city"
     }

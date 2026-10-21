@@ -271,7 +271,8 @@
     "Lviv Polytechnic National University": "lpnu.ua",
     "Florida International University": "fiu.edu",
     "University of Mannheim": "uni-mannheim.de",
-    "Université Côte d'Azur": "univ-cotedazur.fr"
+    "Université Côte d'Azur": "univ-cotedazur.fr",
+    "New York University": "nyu.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1409,6 +1410,13 @@
       "lng": 7.26608,
       "city": "Nice",
       "country": "France",
+      "precision": "city"
+    },
+    "New York University": {
+      "lat": 40.71427,
+      "lng": -74.00597,
+      "city": "New York",
+      "country": "United States",
       "precision": "city"
     }
   }

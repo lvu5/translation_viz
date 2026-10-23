@@ -272,7 +272,8 @@
     "Florida International University": "fiu.edu",
     "University of Mannheim": "uni-mannheim.de",
     "Université Côte d'Azur": "univ-cotedazur.fr",
-    "New York University": "nyu.edu"
+    "New York University": "nyu.edu",
+    "Virginia Tech": "vt.edu"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1416,6 +1417,13 @@
       "lat": 40.71427,
       "lng": -74.00597,
       "city": "New York",
+      "country": "United States",
+      "precision": "city"
+    },
+    "Virginia Tech": {
+      "lat": 37.22957,
+      "lng": -80.41394,
+      "city": "Blacksburg",
       "country": "United States",
       "precision": "city"
     }

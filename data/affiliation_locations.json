@@ -105,7 +105,8 @@
     "Carnegie Mellon University / Instituto Superior Técnico": "Carnegie Mellon University",
     "lviv polytechnic national university": "Lviv Polytechnic National University",
     "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien",
-    "Université Côte d'Azur, CNRS, INRIA, I3S": "Université Côte d'Azur"
+    "Université Côte d'Azur, CNRS, INRIA, I3S": "Université Côte d'Azur",
+    "Université Jean Monnet, Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Université Jean Monnet"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -273,7 +274,8 @@
     "University of Mannheim": "uni-mannheim.de",
     "Université Côte d'Azur": "univ-cotedazur.fr",
     "New York University": "nyu.edu",
-    "Virginia Tech": "vt.edu"
+    "Virginia Tech": "vt.edu",
+    "Université Jean Monnet": "univ-st-etienne.fr"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1425,6 +1427,13 @@
       "lng": -80.41394,
       "city": "Blacksburg",
       "country": "United States",
+      "precision": "city"
+    },
+    "Université Jean Monnet": {
+      "lat": 45.43389,
+      "lng": 4.39,
+      "city": "Saint-Etienne",
+      "country": "France",
       "precision": "city"
     }
   }

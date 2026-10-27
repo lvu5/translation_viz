@@ -275,7 +275,8 @@
     "Université Côte d'Azur": "univ-cotedazur.fr",
     "New York University": "nyu.edu",
     "Virginia Tech": "vt.edu",
-    "Université Jean Monnet": "univ-st-etienne.fr"
+    "Université Jean Monnet": "univ-st-etienne.fr",
+    "Wrocław University of Science and Technology": "pwr.edu.pl"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1434,6 +1435,13 @@
       "lng": 4.39,
       "city": "Saint-Etienne",
       "country": "France",
+      "precision": "city"
+    },
+    "Wrocław University of Science and Technology": {
+      "lat": 51.10286,
+      "lng": 17.03006,
+      "city": "Wroclaw",
+      "country": "Poland",
       "precision": "city"
     }
   }

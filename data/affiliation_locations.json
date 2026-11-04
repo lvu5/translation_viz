@@ -276,7 +276,8 @@
     "New York University": "nyu.edu",
     "Virginia Tech": "vt.edu",
     "Université Jean Monnet": "univ-st-etienne.fr",
-    "Wrocław University of Science and Technology": "pwr.edu.pl"
+    "Wrocław University of Science and Technology": "pwr.edu.pl",
+    "Fudan University": "fudan.edu.cn"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1442,6 +1443,13 @@
       "lng": 17.03006,
       "city": "Wroclaw",
       "country": "Poland",
+      "precision": "city"
+    },
+    "Fudan University": {
+      "lat": 31.22222,
+      "lng": 121.45806,
+      "city": "Shanghai",
+      "country": "China",
       "precision": "city"
     }
   }

@@ -277,7 +277,8 @@
     "Virginia Tech": "vt.edu",
     "Université Jean Monnet": "univ-st-etienne.fr",
     "Wrocław University of Science and Technology": "pwr.edu.pl",
-    "Fudan University": "fudan.edu.cn"
+    "Fudan University": "fudan.edu.cn",
+    "Imperial College London": "imperial.ac.uk"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1450,6 +1451,13 @@
       "lng": 121.45806,
       "city": "Shanghai",
       "country": "China",
+      "precision": "city"
+    },
+    "Imperial College London": {
+      "lat": 51.50853,
+      "lng": -0.12574,
+      "city": "London",
+      "country": "United Kingdom",
       "precision": "city"
     }
   }

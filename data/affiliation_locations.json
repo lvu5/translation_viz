@@ -278,7 +278,8 @@
     "Université Jean Monnet": "univ-st-etienne.fr",
     "Wrocław University of Science and Technology": "pwr.edu.pl",
     "Fudan University": "fudan.edu.cn",
-    "Imperial College London": "imperial.ac.uk"
+    "Imperial College London": "imperial.ac.uk",
+    "University of Opole": "uni.opole.pl"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1458,6 +1459,13 @@
       "lng": -0.12574,
       "city": "London",
       "country": "United Kingdom",
+      "precision": "city"
+    },
+    "University of Opole": {
+      "lat": 50.67211,
+      "lng": 17.92533,
+      "city": "Opole",
+      "country": "Poland",
       "precision": "city"
     }
   }

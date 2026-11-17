@@ -106,7 +106,8 @@
     "lviv polytechnic national university": "Lviv Polytechnic National University",
     "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien",
     "Université Côte d'Azur, CNRS, INRIA, I3S": "Université Côte d'Azur",
-    "Université Jean Monnet, Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Université Jean Monnet"
+    "Université Jean Monnet, Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Université Jean Monnet",
+    "UNIST": "Ulsan National Institute of Science and Technology"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -279,7 +280,8 @@
     "Wrocław University of Science and Technology": "pwr.edu.pl",
     "Fudan University": "fudan.edu.cn",
     "Imperial College London": "imperial.ac.uk",
-    "University of Opole": "uni.opole.pl"
+    "University of Opole": "uni.opole.pl",
+    "Ulsan National Institute of Science and Technology": "unist.ac.kr"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1466,6 +1468,13 @@
       "lng": 17.92533,
       "city": "Opole",
       "country": "Poland",
+      "precision": "city"
+    },
+    "Ulsan National Institute of Science and Technology": {
+      "lat": 35.53722,
+      "lng": 129.31667,
+      "city": "Ulsan",
+      "country": "South Korea",
       "precision": "city"
     }
   }

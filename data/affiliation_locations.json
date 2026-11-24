@@ -107,7 +107,8 @@
     "Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Laboratoire Hubert Curien",
     "Université Côte d'Azur, CNRS, INRIA, I3S": "Université Côte d'Azur",
     "Université Jean Monnet, Laboratoire Hubert Curien, UMR CNRS 5516, Saint-Étienne, France": "Université Jean Monnet",
-    "UNIST": "Ulsan National Institute of Science and Technology"
+    "UNIST": "Ulsan National Institute of Science and Technology",
+    "AIRI, Skoltech": "Skolkovo Institute of Science and Technology"
   },
   "logo_domains": {
     "University of Liverpool": "www.liverpool.ac.uk",
@@ -281,7 +282,8 @@
     "Fudan University": "fudan.edu.cn",
     "Imperial College London": "imperial.ac.uk",
     "University of Opole": "uni.opole.pl",
-    "Ulsan National Institute of Science and Technology": "unist.ac.kr"
+    "Ulsan National Institute of Science and Technology": "unist.ac.kr",
+    "Skolkovo Institute of Science and Technology": "skoltech.ru"
   },
   "logo_files": {
     "Hebrew University of Jerusalem": "assets/logos/cache/HUJI_LogoEng_only.jpg",
@@ -1475,6 +1477,13 @@
       "lng": 129.31667,
       "city": "Ulsan",
       "country": "South Korea",
+      "precision": "city"
+    },
+    "Skolkovo Institute of Science and Technology": {
+      "lat": 55.68784,
+      "lng": 37.36836,
+      "city": "Skolkovo",
+      "country": "Russia",
       "precision": "city"
     }
   }
